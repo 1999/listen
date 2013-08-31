@@ -1,0 +1,45 @@
+{
+    "name" : "Listen to this!",
+    "version" : "1.0.0",
+    "manifest_version" : 2,
+    "minimum_chrome_version" : "29",
+    "description" : "__MSG_appDescription__",
+    "default_locale" : "ru",
+
+    "app": {
+        "background": {
+            "scripts": [
+                "config.js",
+                "lib/logger.js",
+                "lib/utils.js",
+                "modules/settings.js",
+                "background.js"
+            ]
+        }
+    },
+
+    "icons" : {
+        "128" : "pics/icons/128.png",
+        "48" : "pics/icons/48.png",
+        "16" : "pics/icons/16.png"
+    },
+
+    "kiosk_enabled": true,
+    "offline_enabled": true,
+
+    "permissions" : [
+        "alarms",
+        "app.runtime",
+        "app.window",
+        "fullscreen",
+        "identity",
+        "storage",
+        "syncFileSystem",
+        "unlimitedStorage",
+        "*://*.vk.com/*",
+        "*://*.userapi.com/*",
+        "*://*.vk.me/*",
+        "http://ws.audioscrobbler.com/*",
+        "https://www.google-analytics.com/"
+    ]
+}
