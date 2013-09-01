@@ -1,13 +1,53 @@
 VK = (function () {
     "ust strict";
 
-    return createModule("VK", {
-        searchMusic: function VK_searchMusic() {
+    var BASE_URL = "https://api.vk.com/method/";
 
+    function makeAPIRequest(method, options, onload, onerror) {
+        if (typeof options === "function") {
+            onerror = onload;
+            onload = options;
+            options = {};
+        }
+
+        options.access_token = Settings.get("vkToken");
+        options.v = "5.0";
+
+        loadResource(BASE_URL + method + ".xml", {
+            responseType: "xml",
+            data: options,
+            onload: function (xml) {
+                onload(xml);
+                // http://d.pr/i/SubI - error node
+            },
+            onerror: onerror
+        }, this);
+    }
+
+    return createModule("VK", {
+        searchMusic: function VK_searchMusic(callback) {
+            makeAPIRequest("audio.get", function (xml) {
+                callback(xml);
+            });
         },
 
-        getCurrent: function VK_getCurrent() {
+        getCurrent: function VK_getCurrent(callback) {
+            makeAPIRequest("audio.get", function (xml) {
+                console.log(xml);
+                var output = [];
 
+                [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+                    output.push({
+                        id: audio.querySelector("id").textContent,
+                        duration: audio.querySelector("duration").textContent,
+                        source: audio.querySelector("url").textContent,
+                        artist: audio.querySelector("artist").textContent,
+                        song: audio.querySelector("title").textContent
+                    });
+                });
+
+                callback(output);
+            });
         },
 
         repost: function VK_repost() {

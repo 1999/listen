@@ -15,6 +15,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     localTitle: chrome.i18n.getMessage("localTitle")
                 }, function (html) {
                     $(".content").html(html);
+
+                    // todo parallel
+                    VK.getCurrent(function (songs) {
+                        songs.forEach(function (song) {
+                            song.cloudTitle = "";
+                            song.downloadTitle = "";
+                            song.duration = Math.floor(song.duration / 60) + ":" + (song.duration % 60);
+                        });
+
+                        Templates.render("songs", {songs: songs}, function (html) {
+                            $(".music").html(html);
+
+                            $$(".music span.play").bind("click", function () {
+                                var songElem = this.closestParent("p.song");
+
+                                Templates.render("song-playing", {source: songElem.data("url")}, function (html) {
+                                    songElem.after(html).remove();
+                                });
+                            })
+                        });
+                    });
                 });
             } else {
                 Templates.render("guest", {
@@ -30,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $(".content").html(html);
 
                     $(".auth").bind("click", function () {
+                        this.disabled = "disabled";
                         var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
 
                         chrome.identity.launchWebAuthFlow({
