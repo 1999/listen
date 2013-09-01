@@ -84,7 +84,7 @@ div.pay .btn-link {
 }
 
 /* Info */
-.info {
+.info:not(:empty) {
     padding: 16px;
 }
 
