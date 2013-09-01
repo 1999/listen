@@ -13,6 +13,7 @@
                 "lib/log.js",
                 "lib/utils.js",
                 "modules/settings.js",
+                "modules/templates.js",
                 "background.js"
             ]
         }
@@ -26,6 +27,10 @@
 
     "kiosk_enabled": true,
     "offline_enabled": true,
+
+    "sandbox": {
+        "pages": ["sandbox/page.html"]
+    },
 
     "permissions" : [
         "alarms",

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-throw "Ruby-2.0 is required" if RUBY_VERSION < "2.0"
+# throw "Ruby-2.0 is required" if RUBY_VERSION < "2.0"
 
 require "json"
 require "rake/clean"
@@ -46,17 +46,34 @@ end
 desc "Rebuild config from settings and other data"
 task :rebuildConfig do
 	puts "Rebuilding config file..."
+
 	File.open(File.join(SRC_PATH, "config.js"), "w") do |f|
 		configChunks = {
-			"settings" => JSON.parse(File.open("settings.json").read)
+			"default_settings_local" => JSON.parse(File.open("settings.json").read).local,
+			"default_settings_sync" => JSON.parse(File.open("settings.json").read).sync
 		}
 
-		f.write("CONFIG = " + JSON.generate(configChunks))
+		f.write("Config = " + JSON.generate(configChunks))
+	end
+end
+
+desc "Builds templates into one file"
+task :templates do
+	puts "Combinind templates into one file..."
+
+	combined = Hash.new
+	Dir.glob(File.join("templates", "*.mustache")).each do |fileName|
+		combined[File.basename(fileName, ".mustache")] = File.open(fileName).read
+	end
+
+	File.open(File.join(SRC_PATH, "sandbox", "alltemplates.js"), "w") do |f|
+		f.write("Templates = " + JSON.pretty_generate(combined, {:indent => "    "}))
 	end
 end
 
 desc "Run this after you have cloned the repo"
 task :default do
 	Rake::Task["i18n"].execute
+	Rake::Task["templates"].execute
 	Rake::Task["rebuildConfig"].execute
 end

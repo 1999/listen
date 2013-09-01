@@ -1,6 +1,6 @@
 {
     "local": {
-        "isDebug": true
+        "isDebug": true, /* локальная разработка или нет */
     },
     "sync": {}
 }

@@ -1,50 +1,66 @@
 window.onerror = function(msg, url, line) {
-	var msgError = msg + " in " + url + " (line: " + line + ")";
-	if (Settings.get("isDebug")) {
-		alert(msgError);
-	}
+    var msgError = msg + " in " + url + " (line: " + line + ")";
+    if (Settings.get("isDebug")) {
+        alert(msgError);
+    }
 };
 
 (function () {
-	"use strict";
+    "use strict";
 
-	chrome.runtime.onInstalled.addListener(function (details) {
-		switch (details) {
-			case "install":
-				// ...
-				break;
+    // при загрузке фоновой страницы также загружаем sandbox iframe
+    document.addEventListener("DOMContentLoaded", function () {
+        var iframe = document.createElement("iframe");
+        iframe.setAttribute("src", "sandbox/page.html");
+        iframe.setAttribute("id", "sandbox");
+        document.body.appendChild(iframe);
+    }, false);
 
-			case "update":
-				if (chrome.runtime.getManifest().version === details.previousVersion)
-					return;
+    chrome.runtime.onInstalled.addListener(function (details) {
+        switch (details) {
+            case "install":
+                Logger.writeInitMessage();
+                break;
 
-				// ...
-				break;
-		}
-	});
+            case "update":
+                if (chrome.runtime.getManifest().version === details.previousVersion)
+                    return;
 
-	// message exchange
-	chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
-		var isAsyncResponse = false;
-		console.log(req);
+                Logger.writeInitMessage();
+                break;
+        }
+    });
 
-		switch (req.action) {
-			case "getCurrentStatus":
-				sendResponse(Date.now());
-				break;
-		}
+    // alarms
+    chrome.alarms.onAlarm.addListener(function (alarmInfo) {
+        switch (alarmInfo.name) {
 
-		return isAsyncResponse;
-	});
+        }
+    });
 
-	chrome.app.runtime.onLaunched.addListener(function () {
-		chrome.app.window.create("layout/main.html", {
-			minWidth: 800,
-			minHeight: 480
-		}, function (appWindow) {
-			// ...
-		});
-	});
+    // message exchange
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        var isAsyncResponse = false;
 
-	// chrome.app.runtime.onRestarted.addListener - same
+        switch (req.action) {
+            case "getCurrentStatus":
+                Templates.render("guest", {user: "Dmitry"}, sendResponse);
+                isAsyncResponse = true;
+                break;
+        }
+
+        return isAsyncResponse;
+    });
+
+    // app lifecycle
+    chrome.app.runtime.onLaunched.addListener(function () {
+        chrome.app.window.create("layout/main.html", {
+            minWidth: 800,
+            minHeight: 480
+        }, function (appWindow) {
+            // ...
+        });
+    });
+
+    // chrome.app.runtime.onRestarted.addListener - same
 })();

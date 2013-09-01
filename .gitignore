@@ -19,4 +19,5 @@ node_modules
 
 out
 src/config.js
+src/sandbox/alltemplates.js
 src/_locales
