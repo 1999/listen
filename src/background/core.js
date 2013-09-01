@@ -1,7 +1,7 @@
 window.onerror = function(msg, url, line) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
     if (Settings.get("isDebug")) {
-        alert(msgError);
+        Logger.error(msgError);
     }
 };
 
@@ -44,14 +44,13 @@ window.onerror = function(msg, url, line) {
     chrome.app.runtime.onLaunched.addListener(openAppWindow);
     chrome.app.runtime.onRestarted.addListener(openAppWindow);
 
-    // messages listener
-    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+    // messages listening
+    chrome.runtime.onMessage.addListener(function (req, sender, sendReponse) {
         var isAsyncResponse = false;
 
         switch (req.action) {
             case "renderTemplate":
-                Templates_Backend.render(req.tplName, req.placeholders, sendResponse);
-                isAsyncResponse = true;
+                Templates.
                 break;
         }
 
