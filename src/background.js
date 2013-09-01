@@ -45,7 +45,6 @@ window.onerror = function(msg, url, line) {
         }
     });
 
-    // что делать когда приложениене загружено
     Settings.load(function () {
         // message exchange
         chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
@@ -129,16 +128,17 @@ window.onerror = function(msg, url, line) {
             return isAsyncResponse;
         });
 
-        // app lifecycle
-        chrome.app.runtime.onLaunched.addListener(function () {
+        function openAppWindow() {
             chrome.app.window.create("layout/main.html", {
                 minWidth: 800,
                 minHeight: 540
             }, function (appWindow) {
                 appWindow.contentWindow.id = uuid();
             });
-        });
+        }
 
-        // chrome.app.runtime.onRestarted.addListener - same
+        // app lifecycle
+        chrome.app.runtime.onLaunched.addListener(openAppWindow);
+        chrome.app.runtime.onRestarted.addListener(openAppWindow);
     });
 })();
