@@ -10,7 +10,7 @@
         "background": {
             "scripts": [
                 "config.js",
-                "lib/logger.js",
+                "lib/log.js",
                 "lib/utils.js",
                 "modules/settings.js",
                 "background.js"
