@@ -9,11 +9,6 @@
     "app": {
         "background": {
             "scripts": [
-                "config.js",
-                "lib/log.js",
-                "lib/utils.js",
-                "modules/settings.js",
-                "modules/templates.js",
                 "background.js"
             ]
         }

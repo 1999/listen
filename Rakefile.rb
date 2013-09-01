@@ -4,6 +4,7 @@
 
 require "json"
 require "rake/clean"
+require "open3"
 
 SRC_PATH = "src"
 
@@ -51,7 +52,11 @@ task :rebuildConfig do
         configChunks = {
             "default_settings_local" => JSON.parse(File.open("settings.json").read)["local"],
             "default_settings_sync" => JSON.parse(File.open("settings.json").read)["sync"],
-            "constants" => JSON.parse(File.open("constants.json").read)
+            "constants" => JSON.parse(File.open("constants.json").read),
+            "buildInfo" => {
+                :revision => sysrun("git rev-parse --verify HEAD")[0..9],
+                :date => Time.now.to_i
+            }
         }
 
         f.write("Config = " + JSON.pretty_generate(configChunks, {:indent => "    "}))
@@ -60,7 +65,7 @@ end
 
 desc "Builds templates into one file"
 task :templates do
-    puts "Combinind templates into one file..."
+    puts "Combining templates into one file..."
 
     combined = Hash.new
     Dir.glob(File.join("templates", "*.mustache")).each do |fileName|
@@ -83,4 +88,34 @@ task :default do
     Rake::Task["i18n"].execute
     Rake::Task["templates"].execute
     Rake::Task["rebuildConfig"].execute
+end
+
+########################################################################################################################
+#########################################################################################################################
+#########################################################################################################################
+
+def sysrun(cmd)
+    puts "Exec cmd: " + cmd
+
+    data = {
+        :out => Array.new,
+        :err => Array.new
+    }
+
+    exit_status = 0
+
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+        { :out => stdout, :err => stderr }.each do |key, stream|
+            while (line = stream.gets)
+                data[key].push(line)
+            end
+        end
+
+        # Don't exit until the external process is done
+        exit_status = wait_thr.value.exitstatus.to_i
+        wait_thr.join
+    end
+
+    throw "Error (#{exit_status}) running '#{cmd}': #{data[:err].join()}" if (exit_status > 0 || data[:err].length > 0)
+    data[:out].join
 end

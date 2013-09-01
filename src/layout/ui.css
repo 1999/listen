@@ -2,6 +2,13 @@ html, body {
     overflow-y: visible;
 }
 
+#sandbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: -100%;
+}
+
 .bs-callout {
     margin: 20px 0;
     padding: 15px 30px 15px 15px;

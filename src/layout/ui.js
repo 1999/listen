@@ -1,47 +1,57 @@
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
-    function notifyBackground(action, data, callback) {
-        data = data || {};
-        data.action = action;
-        data.id = window.id;
+    Settings.load(function () {
+        drawBaseUI();
 
-        var args = [data];
-        if (callback)
-            args.push(callback);
+        // отрисовка базового UI (user или guest) и навешивание обработчиков
+        function drawBaseUI() {
+            var vkToken = Settings.get("vkToken");
+            $(".content").empty();
 
-        chrome.runtime.sendMessage.apply(chrome.runtime, args);
-    }
+            if (vkToken) {
+                Templates.render("user", {
+                    placeholder: chrome.i18n.getMessage("searchPlaceholder"),
+                    localTitle: chrome.i18n.getMessage("localTitle")
+                }, function (html) {
+                    $(".content").html(html);
+                });
+            } else {
+                Templates.render("guest", {
+                    welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
+                    welcomeText: chrome.i18n.getMessage("welcomeText"),
+                    faqHeader: chrome.i18n.getMessage("faqHeader"),
+                    faqItems: chrome.i18n.getMessage("faqText", chrome.runtime.getManifest().name).split("|").map(function (text) {
+                        return {text: text};
+                    }),
+                    sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
+                    authVK: chrome.i18n.getMessage("authorizeVK")
+                }, function (html) {
+                    $(".content").html(html);
 
-    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
-        if (req.id !== window.id)
-            return;
+                    $(".auth").bind("click", function () {
+                        var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
 
-        switch (req.action) {
-            case "initialDOM":
-                document.body.innerHTML = req.html;
+                        chrome.identity.launchWebAuthFlow({
+                            url: "https://oauth.vk.com/authorize?" + createRequestParams({
+                                client_id: Config.constants.vk_app_id,
+                                scope: Config.constants.vk_app_scope.join(","),
+                                redirect_uri: baseURL,
+                                display: "page",
+                                v: "5.0",
+                                response_type: "token"
+                            }),
+                            interactive: true
+                        }, function (responseURL) {
+                            var response = parseQuery(responseURL.replace(baseURL + "#", ""));
+                            Settings.set("vkToken", response.access_token);
 
-                if (req.type === "user") {
-
-                } else {
-                    $("button.auth").bind("click", function () {
-                        notifyBackground("authVK");
+                            // @todo redraw every page
+                            drawBaseUI();
+                        });
                     });
-                }
-
-                break;
+                });
+            }
         }
     });
-
-    notifyBackground("getCurrentStatus");
-
-
-
-    // 1. отрисовать гостевой вариант, биндинги на кнопку ВК
-    // 2. отрисовать пользовательский вариант, биндинги на поиск (?), кнопу поиска, локальную кнопку
-    // песни, кнопки rate/блабла вверху, кнопки закрытия BD, кнопку rate cws
-    // биндинг на любые ссылки вида artist:, album:, tag:
-    // бинди
-
-
 }, false);

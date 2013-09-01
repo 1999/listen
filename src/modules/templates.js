@@ -25,6 +25,7 @@ Templates = (function () {
             var requestId = uuid();
             pendingCallbacks[requestId] = callback;
 
+            console.log(iframe.contentWindow);
             iframe.contentWindow.postMessage({id: requestId, tplName: tplName, placeholders: placeholders}, "*");
         }
     });
