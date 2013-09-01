@@ -25,15 +25,32 @@ VK = (function () {
     }
 
     return createModule("VK", {
-        searchMusic: function VK_searchMusic(callback) {
-            makeAPIRequest("audio.get", function (xml) {
-                callback(xml);
+        searchMusic: function VK_searchMusic(query, callback) {
+            makeAPIRequest("audio.search", {
+                q: query,
+                auto_complete: 1,
+                lyrics: 0,
+                performer_only: 0,
+                sort: 2
+            }, function (xml) {
+                var output = [];
+
+                [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+                    output.push({
+                        id: audio.querySelector("id").textContent,
+                        duration: audio.querySelector("duration").textContent,
+                        source: audio.querySelector("url").textContent,
+                        artist: audio.querySelector("artist").textContent,
+                        song: audio.querySelector("title").textContent
+                    });
+                });
+
+                callback(output);
             });
         },
 
         getCurrent: function VK_getCurrent(callback) {
             makeAPIRequest("audio.get", function (xml) {
-                console.log(xml);
                 var output = [];
 
                 [].forEach.call(xml.querySelectorAll("audio"), function (audio) {

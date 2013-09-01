@@ -33,7 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
                                 Templates.render("song-playing", {source: songElem.data("url")}, function (html) {
                                     songElem.after(html).remove();
                                 });
-                            })
+                            });
+                        });
+                    });
+
+                    $("header input[type='search']").bind("keyup", function () {
+                        VK.searchMusic(this.value, function (songs) {
+                            Templates.render("songs", {songs: songs}, function (html) {
+                                $(".music").html(html);
+                            });
                         });
                     });
                 });
