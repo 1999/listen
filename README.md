@@ -1,4 +1,4 @@
 Search. Listen. Scrobble. Repeat.
 ===
 
-Chrome packaged app for listening music
+Chrome packaged app for listening music.
