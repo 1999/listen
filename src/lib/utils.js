@@ -46,8 +46,10 @@
                 self.completed = true;
 
                 // run callback listeners
-                while (callback = self._listeners.shift()) {
-                    callback.call(ctx, self.result);
+                if (self._listeners && self._listeners.length) {
+                    while (callback = self._listeners.shift()) {
+                        callback.call(ctx, self.result);
+                    }
                 }
             });
 
@@ -258,12 +260,35 @@
         xhr.send(sendData);
     };
 
-    function createRequestParams(params) {
-        var output = "";
+    exports.createRequestParams = function (params) {
+        var output = [];
 
         for (var key in params)
             output.push(encodeURIComponent(key) + "=" + encodeURIComponent(params[key]));
 
         return output.join("&");
-    }
+    };
+
+    exports.parseQuery = function (str) {
+        var parts = str.split("&");
+        var output = {};
+        var splitted, key;
+
+        if (!str.length)
+            return output;
+
+        for (var i = 0; i < parts.length; i++) {
+            splitted = parts[i].split("=");
+            key = splitted.shift();
+
+            if (output[key] !== undefined) {
+                output[key] = [output[key]];
+                output[key].push(splitted.join("="));
+            } else {
+                output[key] = splitted.join("=");
+            }
+        }
+
+        return output;
+    };
 })(window);

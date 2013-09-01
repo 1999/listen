@@ -1,6 +1,10 @@
 {
     "local": {
         "isDebug": true, /* локальная разработка или нет */
+        "vkToken": "", /* токен ВКонтакте */
+        "lastfmToken": "" /* токен LastFM */
     },
-    "sync": {}
+    "sync": {
+        "sendUsageStat": true /* посылать статистику использования */
+    }
 }

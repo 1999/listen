@@ -49,11 +49,12 @@ task :rebuildConfig do
 
     File.open(File.join(SRC_PATH, "config.js"), "w") do |f|
         configChunks = {
-            "default_settings_local" => JSON.parse(File.open("settings.json").read).local,
-            "default_settings_sync" => JSON.parse(File.open("settings.json").read).sync
+            "default_settings_local" => JSON.parse(File.open("settings.json").read)["local"],
+            "default_settings_sync" => JSON.parse(File.open("settings.json").read)["sync"],
+            "constants" => JSON.parse(File.open("constants.json").read)
         }
 
-        f.write("Config = " + JSON.generate(configChunks))
+        f.write("Config = " + JSON.pretty_generate(configChunks, {:indent => "    "}))
     end
 end
 

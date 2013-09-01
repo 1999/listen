@@ -56,13 +56,6 @@ header {
     padding: 8px;
 }
 
-header .search {
-    color: white;
-    font-size: 24px;
-    margin-left: 4px;
-    cursor: pointer;
-}
-
 header .local {
     color: white;
     font-size: 24px;

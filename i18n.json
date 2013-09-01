@@ -27,9 +27,13 @@
         "en": "Grant VK Access",
         "ru": "Войти ВКонтакте"
     },
-    "search": {
+    "searchPlaceholder": {
         "en": "Search artists, songs and albums",
         "ru": "Поиск исполнителей, песен и альбомов"
+    },
+    "localTitle": {
+        "en": "Saved songs",
+        "ru": "Сохраненные песни"
     },
     "close": {
         "en": "Close",
