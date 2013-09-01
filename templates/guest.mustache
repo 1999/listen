@@ -1,1 +1,24 @@
-<div>YES {{user}}</div>
+<section class="guest">
+    <h1>{{welcomeHeader}}</h2>
+
+    <p class="lead">{{{welcomeText}}}</p>
+
+    <div class="bs-callout bs-callout-warning">
+        <h4>{{faqHeader}}</h4>
+
+        <ol>
+            {{#faqItems}}
+                <li>{{text}}</li>
+            {{/faqItems}}
+        </ol>
+    </div>
+
+    <form role="form" class="text-center">
+        <div class="checkbox">
+            <label>
+                <input checked name="sendStat" type="checkbox"> {{sendStat}}
+            </label>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg">{{authVK}}</button>
+    </form>
+</section>

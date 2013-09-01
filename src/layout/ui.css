@@ -1,0 +1,152 @@
+html, body {
+    overflow-y: visible;
+}
+
+.bs-callout {
+    margin: 20px 0;
+    padding: 15px 30px 15px 15px;
+    border-left: 5px solid #eee;
+}
+
+.bs-callout h4 {
+    margin-top: 0;
+}
+
+.bs-callout p:last-child,
+.bs-callout ol:last-child {
+    margin-bottom: 0;
+}
+
+.bs-callout code,
+.bs-callout .highlight {
+    background-color: #fff;
+}
+
+/* Variations */
+.bs-callout-danger {
+    background-color: #fcf2f2;
+    border-color: #dFb5b4;
+}
+.bs-callout-warning {
+    background-color: #fefbed;
+    border-color: #f1e7bc;
+}
+.bs-callout-info {
+    background-color: #f0f7fd;
+    border-color: #d0e3f0;
+}
+
+/* Guest page */
+.guest {
+    margin: 0 20px;
+}
+
+.guest .lead:first-of-type {
+    margin-top: 24px;
+}
+
+.guest input[type='checkbox'] {
+    float: none;
+    margin: 0 4px 0 0;
+}
+
+/* Header */
+header {
+    background: rgb(64, 64, 64) url("darknoise.png");
+    padding: 8px;
+}
+
+header .search {
+    color: white;
+    font-size: 24px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+header .local {
+    color: white;
+    font-size: 24px;
+    margin-top: 6px;
+    cursor: pointer;
+}
+
+div.pay {
+    margin: 16px 12px;
+    color: #eee;
+}
+
+div.pay button {
+    margin-right: 8px;
+}
+
+div.pay .btn-link {
+    color: #999;
+}
+
+/* Info */
+.info {
+    padding: 16px;
+}
+
+.info figure {
+    display: inline-block;
+    margin-right: 12px;
+    width: 126px;
+}
+
+.info figcaption {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.info figcaption a {
+    color: #333;
+}
+
+.only-cover {
+    margin: 0 12px 12px 0;
+}
+
+.info .breadcrumb {
+    display: inline-block;
+}
+
+inline-block
+
+.info .breadcrumb a {
+    color: #333;
+}
+
+.info .bs-callout {
+    padding-right: 15px;
+}
+
+.info .bs-callout .form-group {
+    margin: 0;
+}
+
+/* Music */
+.music {
+    padding: 16px;
+}
+
+.song {
+    font-size: 18px;
+}
+
+.song .play,
+.song .cloud,
+.song .download
+ {
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+.song a {
+    color: #333;
+}
+
+.song audio {
+    width: 600px;
+}
