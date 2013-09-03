@@ -105,7 +105,23 @@ window.onerror = function(msg, url, line) {
                         loadResource(req.url, {
                             responseType: "blob",
                             onload: function (blob) {
-                                console.log(blob);
+                                var storageValue = uuid();
+
+                                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
+                                    fs.root.getFile(storageValue, {create: true}, function (fileEntry) {
+                                        fileEntry.createWriter(function (fileWriter) {
+                                            fileWriter.onwriteend = function (evt) {
+                                                sendResponse(fileEntry.toURL());
+                                            };
+
+                                            fileWriter.onerror = function (evt) {
+                                                console.log('Write failed: ' + e.toString());
+                                            };
+
+                                            fileWriter.write(blob);
+                                        });
+                                    });
+                                });
                             },
                             onerror: function (error) {
                                 console.error(error);
@@ -113,7 +129,7 @@ window.onerror = function(msg, url, line) {
                         });
                     }
                 });
-                
+
                 isAsyncResponse = true;
                 break;
         }

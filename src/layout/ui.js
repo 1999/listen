@@ -192,7 +192,7 @@ parallel({
 
                     chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
                         if (coverURL) {
-                            // ...
+                            $("img[data-src='" + album.cover + "']").setAttribute("src", coverURL);
                         }
                     });
                 });
