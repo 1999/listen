@@ -1,8 +1,9 @@
 {
     "local": {
         "isDebug": true, /* локальная разработка или нет */
-        "vkToken": "", /* токен ВКонтакте */
-        "lastfmToken": "" /* токен LastFM */
+        "lastfmToken": "", /* токен LastFM */
+        "songsPlayed": 0,
+        "vkToken": "" /* токен ВКонтакте */
     },
     "sync": {
         "sendUsageStat": true /* посылать статистику использования */
