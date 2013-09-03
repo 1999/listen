@@ -1,12 +1,48 @@
 window.onerror = function(msg, url, line) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
-    if (Settings.get("isDebug")) {
-        alert(msgError);
-    }
+    console.error(msgError);
+
+    // @todo y.mail way?
 };
 
 (function () {
     "use strict";
+
+    // list of callbacks waiting for rendering templates
+    var templatesRenderingCallbacks = {};
+
+    // sandbox messages listener (rendering templates)
+    window.addEventListener("message", function (evt) {
+        if (!templatesRenderingCallbacks[evt.data.id])
+            return;
+
+        templatesRenderingCallbacks[evt.data.id](evt.data.content);
+        delete templatesRenderingCallbacks[evt.data.id];
+    });
+
+    /**
+     * Render mustache templates
+     *
+     * @param {String} tplName
+     * @param {Object} placeholders
+     * @param {Function} callback
+     */
+    function renderTemplate(tplName, placeholders, callback) {
+        if (typeof placeholders === "function") {
+            callback = placeholders;
+            placeholders = {};
+        }
+
+        var iframe = document.getElementById("sandbox");
+        if (!iframe)
+            return callback("");
+
+        var requestId = Math.random() + "";
+        templatesRenderingCallbacks[requestId] = callback;
+
+        iframe.contentWindow.postMessage({id: requestId, tplName: tplName, placeholders: placeholders}, "*");
+    }
+
 
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
@@ -25,11 +61,11 @@ window.onerror = function(msg, url, line) {
     });
 
     // alarms
-    chrome.alarms.onAlarm.addListener(function (alarmInfo) {
-        switch (alarmInfo.name) {
+    // chrome.alarms.onAlarm.addListener(function (alarmInfo) {
+    //     switch (alarmInfo.name) {
 
-        }
-    });
+    //     }
+    // });
 
     function openAppWindow() {
         chrome.app.window.create("main.html", {
@@ -50,7 +86,7 @@ window.onerror = function(msg, url, line) {
 
         switch (req.action) {
             case "renderTemplate":
-                Templates_Backend.render(req.tplName, req.placeholders, sendResponse);
+                renderTemplate(req.tplName, req.placeholders, sendResponse);
                 isAsyncResponse = true;
                 break;
         }
