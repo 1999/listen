@@ -176,13 +176,6 @@ parallel({
                     if (!res.lastfm)
                         return callback("");
 
-                    res.lastfm.albums.forEach(function (album) {
-                        if (!album.cover)
-                            return;
-
-                        chrome.runtime.sendMessage({action: "coverDownload", url: album.cover});
-                    });
-
                     Templates.render("info-artist", {
                         artistDescription: res.lastfm.info,
                         albums: res.lastfm.albums
@@ -191,8 +184,20 @@ parallel({
                 music: function (callback) {
                     Templates.render("songs", {songs: res.vk}, callback);
                 }
-            }, function (res) {
-                fillContent(res.info, res.music);
+            }, function (data) {
+                fillContent(data.info, data.music);
+
+                // update covers
+                res.lastfm.albums.forEach(function (album) {
+                    if (!album.cover)
+                        return;
+
+                    chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
+                        if (coverURL) {
+                            // ...
+                        }
+                    });
+                });
             });
         });
     }
