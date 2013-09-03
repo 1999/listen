@@ -12,12 +12,14 @@ parallel({
     bindClickHandlers();
 
 
-    function fillContent(infoHTML, musicHTML) {
+    function fillContent(infoHTML, musicHTML, callback) {
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
             $(".info").html(infoHTML);
             $(".music").html(musicHTML);
+
+            callback && callback();
         };
 
         $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
@@ -114,6 +116,15 @@ parallel({
                     return drawAlbum(matches[1]);
 
                 drawSearchSongs(searchQuery);
+            },
+            "a[href^='artist:'], a[href^='album:']": function (evt) {
+                evt.preventDefault();
+
+                var headerElem = $("header input[type='search']");
+                var headerBtn = $("header .search");
+
+                headerElem.val(this.attr("href"));
+                headerBtn.click();
             }
         };
 
@@ -183,19 +194,91 @@ parallel({
                     Templates.render("songs", {songs: res.vk}, callback);
                 }
             }, function (data) {
-                fillContent(data.info, data.music);
+                fillContent(data.info, data.music, function () {
+                    res.lastfm.albums.forEach(function (album) {
+                        if (!album.cover)
+                            return;
 
-                // update covers
-                res.lastfm.albums.forEach(function (album) {
-                    if (!album.cover)
-                        return;
+                        // обновляем обложки альбомов
+                        chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
+                            var cover = $("img[data-src='" + album.cover + "']");
+                            var nothing = $(cover.closestParent("figure"), ".nothing");
 
-                    chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
-                        if (coverURL) {
-                            $("img[data-src='" + album.cover + "']").setAttribute("src", coverURL);
-                        }
+                            if (coverURL) {
+                                cover.attr("src", coverURL);
+                            } else {
+                                nothing.removeClass("hidden");
+                                cover.addClass("hidden");
+                            }
+                        });
                     });
                 });
+            });
+        });
+    }
+
+    function drawArtist(artist) {
+        emptyContent();
+
+        parallel({
+            vk: function (callback) {
+                VK.searchMusicByArtist(artist, callback);
+            },
+            lastfm: function (callback) {
+                Lastfm.getArtistInfo(artist, callback);
+            }
+        }, function (res) {
+            parallel({
+                info: function (callback) {
+                    Templates.render("info-artist", {
+                        hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
+                        artistDescription: res.lastfm.info,
+                        albums: res.lastfm.albums
+                    }, callback);
+                },
+                music: function (callback) {
+                    Templates.render("songs", {songs: res.vk}, callback);
+                }
+            }, function (data) {
+                fillContent(data.info, data.music, function () {
+                    res.lastfm.albums.forEach(function (album) {
+                        if (!album.cover)
+                            return;
+
+                        // обновляем обложки альбомов
+                        chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
+                            var cover = $("img[data-src='" + album.cover + "']");
+                            var nothing = $(cover.closestParent("figure"), ".nothing");
+
+                            if (coverURL) {
+                                cover.attr("src", coverURL);
+                            } else {
+                                nothing.removeClass("hidden");
+                                cover.addClass("hidden");
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    function drawAlbum(album) {
+        emptyContent();
+
+        Lastfm.getAlbumInfoByMBID(album, function (album) {
+            var searchSongsTasks = [];
+            album.songs.forEach(function (song) {
+                searchSongsTasks.push(function (callback) {
+                    // todo - error handling
+                    VK.searchMusic(album.artist + " " + song, {count: 1}, function (arr) {
+                        console.log(arr);
+                    });
+                });
+            });
+
+            parallel(searchSongsTasks, function () {
+                // ...
             });
         });
     }

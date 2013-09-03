@@ -59,7 +59,6 @@ Lastfm = (function () {
                             albums.push({
                                 title: album.querySelector("name").textContent,
                                 cover: image ? image.textContent : "",
-                                source: "",
                                 mbid: album.querySelector("mbid").textContent
                             });
                         });
@@ -70,6 +69,55 @@ Lastfm = (function () {
                     });
                 }
             }, callback);
+        },
+
+        getAlbumInfoByMBID: function Lastfm_getAlbumInfoByMBID(mbid, callback) {
+            makeAPIRequest("album.getinfo", {mbid: mbid}, function (xml) {
+                var cover = (xml.querySelector("album > image[size='large']") || xml.querySelector("album > image[size='medium']") || xml.querySelector("album > image[size='small']"));
+
+                var output = {
+                    artist: xml.querySelector("album > artist").textContent,
+                    title: xml.querySelector("album > name").textContent,
+                    albumDescription: xml.querySelector("album > wiki > summary").textContent,
+                    fullDescription: xml.querySelector("album > wiki > content").textContent,
+                    cover: cover ? cover.textContent : "",
+                    songs: []
+                };
+
+                [].forEach.call(xml.querySelectorAll("album > tracks > track"), function (track) {
+                    output.songs.push(track.querySelector("name").textContent);
+                });
+
+                callback(output);
+            }, function () {
+                callback(null);
+            });
+        },
+
+        getAlbumInfo: function Lastfm_getAlbumInfo(artist, album, callback) {
+            makeAPIRequest("album.getinfo", {
+                artist: artist,
+                album: album
+            }, function (xml) {
+                var cover = (xml.querySelector("album > image[size='large']") || xml.querySelector("album > image[size='medium']") || xml.querySelector("album > image[size='small']"));
+
+                var output = {
+                    artist: xml.querySelector("album > artist").textContent,
+                    title: xml.querySelector("album > name").textContent,
+                    albumDescription: xml.querySelector("album > wiki > summary").textContent,
+                    fullDescription: xml.querySelector("album > wiki > content").textContent,
+                    cover: cover ? cover.textContent : "",
+                    songs: []
+                };
+
+                [].forEach.call(xml.querySelectorAll("album > tracks > track"), function (track) {
+                    output.songs.push(track.querySelector("name").textContent);
+                });
+
+                callback(output);
+            }, function () {
+                callback(null);
+            });
         }
     });
 })();

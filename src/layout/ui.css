@@ -126,6 +126,17 @@ div.pay .btn-link {
     width: 126px;
 }
 
+.info figure .loading {
+    background: url(loading.gif) 50% 50% no-repeat;
+}
+
+.info figure .nothing {
+    width: 126px;
+    height: 126px;
+    line-height: 126px;
+    font-size: 28px;
+}
+
 .info figcaption {
     overflow: hidden;
     text-overflow: ellipsis;

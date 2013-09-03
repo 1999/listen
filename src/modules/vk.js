@@ -24,58 +24,64 @@ VK = (function () {
         }, this);
     }
 
+    function xmlToArray(xml) {
+        var output = [];
+        var cloudTitle = chrome.i18n.getMessage("cloudTitle");
+        var downloadTitle = chrome.i18n.getMessage("downloadTitle");
+
+        [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+            var duration = audio.querySelector("duration").textContent;
+
+            output.push({
+                id: audio.querySelector("id").textContent,
+                source: audio.querySelector("url").textContent,
+                artist: audio.querySelector("artist").textContent,
+                song: audio.querySelector("title").textContent,
+                duration: Math.floor(duration / 60) + ":" + (duration % 60),
+                cloudTitle: cloudTitle,
+                downloadTitle: downloadTitle
+            });
+        });
+
+        return output;
+    }
+
+
     return createModule("VK", {
-        searchMusic: function VK_searchMusic(query, callback) {
-            makeAPIRequest("audio.search", {
+        searchMusic: function VK_searchMusic(query, params, callback) {
+            if (typeof params === "function") {
+                callback = params;
+                params = {};
+            }
+
+            params = copyOwnProperties(params, {
                 q: query,
                 auto_complete: 1,
                 lyrics: 0,
                 performer_only: 0,
                 sort: 2
+            });
+
+            makeAPIRequest("audio.search", params, function (xml) {
+                callback(xmlToArray(xml));
+            });
+        },
+
+        searchMusicByArtist: function VK_searchMusic(query, callback) {
+            makeAPIRequest("audio.search", {
+                q: query,
+                auto_complete: 1,
+                lyrics: 0,
+                performer_only: 1,
+                sort: 2
             }, function (xml) {
-                var output = [];
-                var cloudTitle = chrome.i18n.getMessage("cloudTitle");
-                var downloadTitle = chrome.i18n.getMessage("downloadTitle");
-
-                [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
-                    var duration = audio.querySelector("duration").textContent;
-
-                    output.push({
-                        id: audio.querySelector("id").textContent,
-                        source: audio.querySelector("url").textContent,
-                        artist: audio.querySelector("artist").textContent,
-                        song: audio.querySelector("title").textContent,
-                        duration: Math.floor(duration / 60) + ":" + (duration % 60),
-                        cloudTitle: cloudTitle,
-                        downloadTitle: downloadTitle
-                    });
-                });
-
-                callback(output);
+                callback(xmlToArray(xml));
             });
         },
 
         getCurrent: function VK_getCurrent(callback) {
             makeAPIRequest("audio.get", function (xml) {
-                var output = [];
-                var cloudTitle = chrome.i18n.getMessage("cloudTitle");
-                var downloadTitle = chrome.i18n.getMessage("downloadTitle");
-
-                [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
-                    var duration = audio.querySelector("duration").textContent;
-
-                    output.push({
-                        id: audio.querySelector("id").textContent,
-                        source: audio.querySelector("url").textContent,
-                        artist: audio.querySelector("artist").textContent,
-                        song: audio.querySelector("title").textContent,
-                        duration: Math.floor(duration / 60) + ":" + (duration % 60),
-                        cloudTitle: cloudTitle,
-                        downloadTitle: downloadTitle
-                    });
-                });
-
-                callback(output);
+                callback(xmlToArray(xml));
             });
         },
 

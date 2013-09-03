@@ -21,7 +21,7 @@ window.onerror = function(msg, url, line) {
     });
 
     /**
-     * Render mustache templates
+     * Отрисовка mustache-шаблонов
      *
      * @param {String} tplName
      * @param {Object} placeholders
@@ -41,6 +41,64 @@ window.onerror = function(msg, url, line) {
         templatesRenderingCallbacks[requestId] = callback;
 
         iframe.contentWindow.postMessage({id: requestId, tplName: tplName, placeholders: placeholders}, "*");
+    }
+
+    /**
+     * Скачивание обложек для альбомов
+     *
+     * @param {String} url
+     * @param {Function} callback
+     */
+    function downloadCover(url, callback) {
+        var storageKey = "cover." + url;
+
+        chrome.storage.local.get(storageKey, function (items) {
+            if (items[storageKey]) {
+                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
+                    fs.root.getFile(items[storageKey], {create: false}, function (fileEntry) {
+                        callback(fileEntry.toURL());
+                    }, function (err) {
+                        // в chrome.storage.local запись есть, а в песочнице нет, атата!
+                        chrome.storage.local.remove(storageKey);
+                        callback("");
+                    });
+                }, function (err) {
+                    callback("");
+                });
+            } else {
+                loadResource(url, {
+                    responseType: "blob",
+                    onload: function (blob) {
+                        var storageValue = uuid();
+
+                        (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
+                            fs.root.getFile(storageValue, {create: true}, function (fileEntry) {
+                                fileEntry.createWriter(function (fileWriter) {
+                                    fileWriter.onwriteend = function (evt) {
+                                        var records = {};
+                                        records[storageKey] = storageValue;
+                                        chrome.storage.local.set(records);
+
+                                        callback(fileEntry.toURL());
+                                    };
+
+                                    fileWriter.onerror = function (evt) {
+                                        console.error("Write failed: " + evt);
+                                        callback("");
+                                    };
+
+                                    fileWriter.write(blob);
+                                });
+                            });
+                        });
+                    },
+                    onerror: function (error) {
+                        console.error(error);
+                        callback("");
+                    }
+                });
+            }
+        });
     }
 
 
@@ -89,47 +147,7 @@ window.onerror = function(msg, url, line) {
                 break;
 
             case "coverDownload":
-                var storageKey = "cover." + req.url;
-                chrome.storage.local.get(storageKey, function (items) {
-                    if (items[storageKey]) {
-                        (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
-                            fs.root.getFile(items[storageKey], {create: false}, function (fileEntry) {
-                                sendResponse(fileEntry.toURL());
-                            }, function (err) {
-                                // todo
-                            });
-                        }, function (err) {
-                            // todo
-                        });
-                    } else {
-                        loadResource(req.url, {
-                            responseType: "blob",
-                            onload: function (blob) {
-                                var storageValue = uuid();
-
-                                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
-                                    fs.root.getFile(storageValue, {create: true}, function (fileEntry) {
-                                        fileEntry.createWriter(function (fileWriter) {
-                                            fileWriter.onwriteend = function (evt) {
-                                                sendResponse(fileEntry.toURL());
-                                            };
-
-                                            fileWriter.onerror = function (evt) {
-                                                console.log('Write failed: ' + e.toString());
-                                            };
-
-                                            fileWriter.write(blob);
-                                        });
-                                    });
-                                });
-                            },
-                            onerror: function (error) {
-                                console.error(error);
-                            }
-                        });
-                    }
-                });
-
+                downloadCover(req.url, sendResponse);
                 isAsyncResponse = true;
                 break;
         }
