@@ -77,6 +77,17 @@ Settings = (function () {
             chrome.storage[currentPrefs[key].storageType].set(storageData);
         },
 
+        remove: function Settings_remove(key) {
+            var storageKey = "settings." + key;
+            if (!currentPrefs[storageKey])
+                throw new Error("Can't remove preference (" + key + ") which was not described in config.js settings part");
+
+            chrome.storage[currentPrefs[storageKey].storageType].remove(storageKey);
+
+            currentPrefs[storageKey].isDefault = true;
+            currentPrefs[storageKey].value = Config["default_settings_" + currentPrefs[storageKey].storageType][key];
+        },
+
         /**
          * Является ли значение настройки установленным пользователем вручную
          * @return {Boolean}
