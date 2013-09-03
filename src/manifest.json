@@ -38,6 +38,8 @@
         "*://*.userapi.com/*",
         "*://*.vk.me/*",
         "http://ws.audioscrobbler.com/*",
+        "http://*.last.fm/*",
+        "http://*.images-amazon.com/*",
         "https://www.google-analytics.com/"
     ]
 }

@@ -71,8 +71,6 @@ window.onerror = function(msg, url, line) {
         chrome.app.window.create("main.html", {
             minWidth: 800,
             minHeight: 540
-        }, function (appWindow) {
-            appWindow.contentWindow.id = uuid();
         });
     }
 
@@ -88,6 +86,21 @@ window.onerror = function(msg, url, line) {
             case "renderTemplate":
                 renderTemplate(req.tplName, req.placeholders, sendResponse);
                 isAsyncResponse = true;
+                break;
+
+            case "coverDownload":
+                console.log(req.url);
+
+                loadResource(req.url, {
+                    responseType: "blob",
+                    onload: function (blob) {
+                        console.log(blob);
+                    },
+                    onerror: function (error) {
+                        console.error(error);
+                    }
+                }, this);
+
                 break;
         }
 

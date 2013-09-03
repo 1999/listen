@@ -67,6 +67,7 @@
 
             return null;
         },
+
         /**
          * Bind event listener to node
          * @param {String} evtType
@@ -83,6 +84,18 @@
 
             return this;
         },
+
+        /**
+         * Unbind event listener to node
+         * @param {String} evtType
+         * @param {Function} callback
+         * @return {HTMLElement} refers to this
+         */
+        unbind: function (evtType, callback) {
+            this.removeEventListener(evtType, callback, false);
+            return this;
+        },
+
         /**
          * Remove node
          * @return {HTMLElement} refers to this

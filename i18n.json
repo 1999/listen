@@ -39,8 +39,16 @@
         "en": "Close",
         "ru": "Закрыть"
     },
+    "cloudTitle": {
+        "en": "Save info Google Drive cloud for further local access",
+        "ru": "Сохранить в облако Google Drive для локального доступа"
+    },
+    "downloadTitle": {
+        "en": "Download file",
+        "ru": "Скачать файл"
+    },
     "advLastFM": {
-        "en": "",
+        "en": "@todo",
         "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Чтобы он был таким же классным, начните скробблить свою музыку в LastFM!"
     },
     "happyBirthday": {

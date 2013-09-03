@@ -34,14 +34,20 @@ VK = (function () {
                 sort: 2
             }, function (xml) {
                 var output = [];
+                var cloudTitle = chrome.i18n.getMessage("cloudTitle");
+                var downloadTitle = chrome.i18n.getMessage("downloadTitle");
 
                 [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+                    var duration = audio.querySelector("duration").textContent;
+
                     output.push({
                         id: audio.querySelector("id").textContent,
-                        duration: audio.querySelector("duration").textContent,
                         source: audio.querySelector("url").textContent,
                         artist: audio.querySelector("artist").textContent,
-                        song: audio.querySelector("title").textContent
+                        song: audio.querySelector("title").textContent,
+                        duration: Math.floor(duration / 60) + ":" + (duration % 60),
+                        cloudTitle: cloudTitle,
+                        downloadTitle: downloadTitle
                     });
                 });
 
@@ -52,14 +58,20 @@ VK = (function () {
         getCurrent: function VK_getCurrent(callback) {
             makeAPIRequest("audio.get", function (xml) {
                 var output = [];
+                var cloudTitle = chrome.i18n.getMessage("cloudTitle");
+                var downloadTitle = chrome.i18n.getMessage("downloadTitle");
 
                 [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+                    var duration = audio.querySelector("duration").textContent;
+
                     output.push({
                         id: audio.querySelector("id").textContent,
-                        duration: audio.querySelector("duration").textContent,
                         source: audio.querySelector("url").textContent,
                         artist: audio.querySelector("artist").textContent,
-                        song: audio.querySelector("title").textContent
+                        song: audio.querySelector("title").textContent,
+                        duration: Math.floor(duration / 60) + ":" + (duration % 60),
+                        cloudTitle: cloudTitle,
+                        downloadTitle: downloadTitle
                     });
                 });
 
