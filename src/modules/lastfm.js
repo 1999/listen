@@ -69,9 +69,7 @@ Lastfm = (function () {
                         callback([]);
                     });
                 }
-            }, function (data) {
-                callback(data.info ? data : null);
-            });
+            }, callback);
         }
     });
 })();

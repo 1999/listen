@@ -14,7 +14,7 @@ parallel({
 
     function fillContent(infoHTML, musicHTML) {
         var onTransitionEnd = function () {
-            this.unbind(onTransitionEnd);
+            this.unbind("transitionend", onTransitionEnd);
 
             $(".info").html(infoHTML);
             $(".music").html(musicHTML);
@@ -40,7 +40,7 @@ parallel({
                 placeholder: chrome.i18n.getMessage("searchPlaceholder"),
                 localTitle: chrome.i18n.getMessage("localTitle")
             }, function (html) {
-                $(document.body).addClass("user").html(html);
+                $(document.body).addClass("user").removeClass("guest").html(html);
 
                 drawCurrentAudio();
             });
@@ -55,7 +55,7 @@ parallel({
                 sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
                 authVK: chrome.i18n.getMessage("authorizeVK")
             }, function (html) {
-                $(document.body).addClass("guest").html(html);
+                $(document.body).addClass("guest").removeClass("user").html(html);
             });
         }
     }
@@ -173,10 +173,8 @@ parallel({
         }, function (res) {
             parallel({
                 info: function (callback) {
-                    if (!res.lastfm)
-                        return callback("");
-
                     Templates.render("info-artist", {
+                        hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: res.lastfm.info,
                         albums: res.lastfm.albums
                     }, callback);
