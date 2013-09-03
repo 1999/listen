@@ -89,18 +89,32 @@ window.onerror = function(msg, url, line) {
                 break;
 
             case "coverDownload":
-                console.log(req.url);
-
-                loadResource(req.url, {
-                    responseType: "blob",
-                    onload: function (blob) {
-                        console.log(blob);
-                    },
-                    onerror: function (error) {
-                        console.error(error);
+                var storageKey = "cover." + req.url;
+                chrome.storage.local.get(storageKey, function (items) {
+                    if (items[storageKey]) {
+                        (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
+                            fs.root.getFile(items[storageKey], {create: false}, function (fileEntry) {
+                                sendResponse(fileEntry.toURL());
+                            }, function (err) {
+                                // todo
+                            });
+                        }, function (err) {
+                            // todo
+                        });
+                    } else {
+                        loadResource(req.url, {
+                            responseType: "blob",
+                            onload: function (blob) {
+                                console.log(blob);
+                            },
+                            onerror: function (error) {
+                                console.error(error);
+                            }
+                        });
                     }
-                }, this);
-
+                });
+                
+                isAsyncResponse = true;
                 break;
         }
 
