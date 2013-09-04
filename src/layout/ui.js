@@ -4,8 +4,11 @@ parallel({
     },
     settings: function (callback) {
         Settings.load(callback);
+    },
+    syncfs: function (callback) {
+        SyncFS.requestCurrentFilesNum(callback);
     }
-}, function () {
+}, function (res) {
     "use strict";
 
     drawBaseUI();
@@ -40,7 +43,8 @@ parallel({
         if (vkToken) {
             Templates.render("user", {
                 placeholder: chrome.i18n.getMessage("searchPlaceholder"),
-                localTitle: chrome.i18n.getMessage("localTitle")
+                localTitle: chrome.i18n.getMessage("localTitle"),
+                localFilesCounter: res.syncfs ? res.syncfs : ""
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
@@ -90,14 +94,49 @@ parallel({
                     drawBaseUI();
                 });
             },
-            // закрытие окна уведомления
+            // список локальных треков в облаке Google Drive
+            "header span.local": function (evt) {
+                SyncFS.requestCurrentFilesList(function (files) {
+                    // output.push({
+                    //     id: audio.querySelector("id").textContent,
+                    //     source: audio.querySelector("url").textContent,
+                    //     artist: audio.querySelector("artist").textContent,
+                    //     song: audio.querySelector("title").textContent,
+                    //     duration: Math.floor(duration / 60) + ":" + strpad(duration % 60),
+                    //     cloudTitle: cloudTitle,
+                    //     downloadTitle: downloadTitle
+                    // });
+
+                    Templates.render("songs", {songs: songs}, function (music) {
+                        fillContent("", music);
+                    });
+                });
+            },
+            // проигрывание песни
             ".music span.play": function (evt) {
                 var songElem = this.closestParent("p.song");
 
+                var songsPlayed = Settings.get("songsPlayed");
+                Settings.set("songsPlayed", songsPlayed + 1);
+
                 // todo - переключение
                 Templates.render("song-playing", {source: songElem.data("url")}, function (html) {
-                    songElem.after(html).remove();
+                    var songPlayingElem = $(html);
+                    $(songPlayingElem, "audio").bind("timeupdate", function (evt) {
+                        // за 3 секунды до конца ЗАПОМИНАЕМ ТЕКУЩУЮ ГРОМКОСТЬ и начинаем снижать громкость
+                        // за секунду до конца включаем следующую запись с минимальной громкости и за 3 секунды доводим ее до ПРЕДЫДУЩЕЙ
+                        // console.log(this.currentTime, this.duration);
+                    });
+
+                    songElem.after(songPlayingElem).remove();
                 });
+            },
+            // скачивание песни в sync file system
+            ".music span.cloud": function (evt) {
+                var songElem = this.closestParent("p.song");
+                var songURL = songElem.data("url");
+
+                SyncFS.queueFile(this.data("title"), songURL);
             },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {

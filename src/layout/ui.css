@@ -78,8 +78,12 @@ header {
 header .local {
     color: white;
     font-size: 24px;
-    margin-top: 6px;
     cursor: pointer;
+}
+
+header .local::before {
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 header .search {

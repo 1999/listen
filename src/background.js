@@ -101,6 +101,45 @@ window.onerror = function(msg, url, line) {
         });
     }
 
+    /**
+     * Save into sync file system
+     *
+     * @param {String} url
+     */
+    function saveGoogleDrive(title, url) {
+        console.log(arguments);
+        loadResource(url, {
+            responseType: "blob",
+            onload: function (blob) {
+                console.log("yes");
+                console.log(new Blob([blob, "{}"], {type: "application/octet-stream"}));
+
+                return;
+
+                chrome.syncFileSystem.requestFileSystem(function (fs) {
+                    fs.root.getFile(title + ".mp3", {create: true}, function (fileEntry) {
+                        fileEntry.createWriter(function (fileWriter) {
+                            fileWriter.onwriteend = function (evt) {
+                                console.log(fileEntry.toURL());
+                                // callback(fileEntry.toURL());
+                            };
+
+                            fileWriter.onerror = function (evt) {
+                                // console.error("Write failed: " + evt);
+                                // callback("");
+                            };
+
+                            fileWriter.write(blob);
+                        });
+                    });
+                });
+            },
+            onerror: function (error) {
+                console.error(error);
+            }
+        });
+    }
+
 
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
@@ -149,6 +188,10 @@ window.onerror = function(msg, url, line) {
             case "coverDownload":
                 downloadCover(req.url, sendResponse);
                 isAsyncResponse = true;
+                break;
+
+            case "saveGoogleDrive":
+                saveGoogleDrive(req.title, req.url);
                 break;
         }
 

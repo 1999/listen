@@ -24,6 +24,11 @@ VK = (function () {
         }, this);
     }
 
+    function strpad(str) {
+        str = str + "";
+        return (str.length === 1) ? "0" + str : str;
+    }
+
     function xmlToArray(xml) {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
@@ -37,7 +42,7 @@ VK = (function () {
                 source: audio.querySelector("url").textContent,
                 artist: audio.querySelector("artist").textContent,
                 song: audio.querySelector("title").textContent,
-                duration: Math.floor(duration / 60) + ":" + (duration % 60),
+                duration: Math.floor(duration / 60) + ":" + strpad(duration % 60),
                 cloudTitle: cloudTitle,
                 downloadTitle: downloadTitle
             });
