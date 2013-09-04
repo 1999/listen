@@ -1,0 +1,8 @@
+{
+    "default_settings_local": {
+        "isDebug": false
+    },
+    "constants": {
+        "vk_app_id": 2671008
+    }
+}
