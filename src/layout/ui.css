@@ -91,6 +91,11 @@ header .search {
     margin-left: 8px;
 }
 
+header audio {
+    width: 300px;
+    margin-left: 12px;
+}
+
 div.pay {
     margin: 16px 12px;
     color: #eee;
@@ -173,13 +178,22 @@ div.pay .btn-link {
 
 /* Music */
 .music {
-    padding: 16px;
+    padding: 16px 0 16px;
     position: relative;
     z-index: 2;
 }
 
 .song {
-    font-size: 18px;
+    padding: 5px 16px;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.song-playing-bg {
+    position: absolute;
+    padding: 5px 0;
+    background: #e8e8e8;
 }
 
 .song .play,
@@ -192,8 +206,4 @@ div.pay .btn-link {
 
 .song a {
     color: #333;
-}
-
-.song audio {
-    width: 600px;
 }

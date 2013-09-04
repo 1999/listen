@@ -11,8 +11,7 @@ parallel({
 }, function (res) {
     "use strict";
 
-    drawBaseUI();
-    bindClickHandlers();
+    drawBaseUI(bindClickHandlers);
 
 
     function fillContent(infoHTML, musicHTML, callback) {
@@ -36,7 +35,7 @@ parallel({
     }
 
     // отрисовка базового UI (user или guest) и навешивание обработчиков
-    function drawBaseUI() {
+    function drawBaseUI(callback) {
         var vkToken = Settings.get("vkToken");
         $(document.body).empty();
 
@@ -47,6 +46,7 @@ parallel({
                 localFilesCounter: res.syncfs ? res.syncfs : ""
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
+                callback && callback();
 
                 drawCurrentAudio();
             });
@@ -62,6 +62,7 @@ parallel({
                 authVK: chrome.i18n.getMessage("authorizeVK")
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
+                callback && callback();
             });
         }
     }
@@ -112,24 +113,30 @@ parallel({
                     });
                 });
             },
-            // проигрывание песни
+            // проигрывание песни и постановка на паузу
             ".music span.play": function (evt) {
                 var songElem = this.closestParent("p.song");
+                var headerAudio = $("header audio");
 
-                var songsPlayed = Settings.get("songsPlayed");
-                Settings.set("songsPlayed", songsPlayed + 1);
+                if (this.hasClass("glyphicon-play")) {
+                    if (headerAudio.attr("src") === songElem.data("url")) {
+                        headerAudio.play();
+                    } else {
+                        headerAudio.attr("src", songElem.data("url")).removeClass("hidden").play();
+                    }
 
-                // todo - переключение
-                Templates.render("song-playing", {source: songElem.data("url")}, function (html) {
-                    var songPlayingElem = $(html);
-                    $(songPlayingElem, "audio").bind("timeupdate", function (evt) {
-                        // за 3 секунды до конца ЗАПОМИНАЕМ ТЕКУЩУЮ ГРОМКОСТЬ и начинаем снижать громкость
-                        // за секунду до конца включаем следующую запись с минимальной громкости и за 3 секунды доводим ее до ПРЕДЫДУЩЕЙ
-                        // console.log(this.currentTime, this.duration);
-                    });
+                    if (!this.hasClass("played")) {
+                        var songsPlayed = Settings.get("songsPlayed");
+                        Settings.set("songsPlayed", songsPlayed + 1);
 
-                    songElem.after(songPlayingElem).remove();
-                });
+                        this.addClass("played");
+                    }
+
+                    this.removeClass("glyphicon-play").addClass("glyphicon-pause");
+                } else {
+                    headerAudio.pause();
+                    this.addClass("glyphicon-play").removeClass("glyphicon-pause");
+                }
             },
             // скачивание песни в sync file system
             ".music span.cloud": function (evt) {
@@ -200,6 +207,27 @@ parallel({
 
             lastButton.click();
         });
+
+        var headerAudioElem = $("header audio");
+        if (headerAudioElem) {
+            headerAudioElem.bind("play", function () {
+                // очищаем текущий прогресс-элемент
+                var progressElem = $("div.song-playing-bg") || $("<div class='song-playing-bg'>&nbsp;</div>");
+                var source = this.attr("src");
+
+                var songElem;
+                $$("p.song").each(function () {
+                    if (this.data("url") === source) {
+                        songElem = this;
+                    }
+                });
+
+                songElem.before(progressElem.css("width", "0"));
+            }).bind("timeupdate", function () {
+                var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
+                $("div.song-playing-bg").css("width", width);
+            });
+        }
     }
 
     function drawCurrentAudio() {
@@ -307,10 +335,21 @@ parallel({
 
         Lastfm.getAlbumInfoByMBID(album, function (album) {
             var searchSongsTasks = [];
+
+            // todo no songs in album?
+            //
+
+            // .. throttling
+
             album.songs.forEach(function (song) {
+
                 searchSongsTasks.push(function (callback) {
+                    var searchQuery = (album.artist + " " + song).replace(/\-/g, " ").split(" ").map(function (word) {
+                        return word.toLowerCase();
+                    });
+
                     // todo - error handling
-                    VK.searchMusic(album.artist + " " + song, {count: 1}, function (arr) {
+                    VK.searchMusic(searchQuery, {count: 1}, function (arr) {
                         console.log(arr);
                     });
                 });

@@ -7,6 +7,7 @@ require "rake/clean"
 require "open3"
 
 SRC_PATH = "src"
+BUILD_PATH = "build"
 
 # Get some environment info and setup
 # CLEAN.include(WORKING_SRC)
@@ -24,7 +25,7 @@ task :i18n do
     FileUtils.remove_dir(localesDir, true)
 
     # create new data
-    JSON.parse(File.open("i18n.json").read).each do |i18nKey, value|
+    JSON.parse(File.open(File.join(BUILD_PATH, "i18n.json")).read).each do |i18nKey, value|
         i18nKeys.push(i18nKey)
 
         value.each do |locale, data|
@@ -48,11 +49,14 @@ desc "Rebuild config from settings and other data"
 task :rebuildConfig do
     puts "Rebuilding config file..."
 
+    settings = JSON.parse(File.open(File.join(BUILD_PATH, "settings.json")).read)
+    constants = JSON.parse(File.open(File.join(BUILD_PATH, "constants.json")).read)
+
     File.open(File.join(SRC_PATH, "config.js"), "w") do |f|
         configChunks = {
-            "default_settings_local" => JSON.parse(File.open("settings.json").read)["local"],
-            "default_settings_sync" => JSON.parse(File.open("settings.json").read)["sync"],
-            "constants" => JSON.parse(File.open("constants.json").read),
+            "default_settings_local" => settings["local"],
+            "default_settings_sync" => settings["sync"],
+            "constants" => constants,
             "buildInfo" => {
                 :revision => sysrun("git rev-parse --verify HEAD")[0..9],
                 :date => Time.now.to_i
