@@ -46,7 +46,9 @@ parallel({
                 localFilesCounter: res.syncfs ? res.syncfs : ""
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
+
                 callback && callback();
+                CPA.sendAppView("User");
 
                 drawCurrentAudio();
             });
@@ -62,6 +64,9 @@ parallel({
                 authVK: chrome.i18n.getMessage("authorizeVK")
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
+
+                CPA.sendAppView("Guest");
+
                 callback && callback();
             });
         }
