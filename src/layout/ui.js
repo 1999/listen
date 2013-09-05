@@ -224,8 +224,13 @@ parallel({
 
                 songElem.before(progressElem.css("width", "0"));
             }).bind("timeupdate", function () {
-                var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
-                $("div.song-playing-bg").css("width", width);
+                var playingBg = $("div.song-playing-bg");
+                if (playingBg) {
+                    var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
+                    $("div.song-playing-bg").css("width", width);
+                }
+            }).bind("progress", function (evt) {
+                // @todo http://www.sitepoint.com/essential-audio-and-video-events-for-html5/
             });
         }
     }

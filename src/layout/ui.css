@@ -124,7 +124,7 @@ div.pay .btn-link {
 }
 
 .info:not(:empty) {
-    padding: 16px;
+    padding: 16px 16px 0;
     position: relative;
     z-index: 2;
 }
@@ -188,6 +188,13 @@ div.pay .btn-link {
     margin: 0;
     position: relative;
     z-index: 2;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.song .duration {
+    margin-left: 8px;
 }
 
 .song-playing-bg {
