@@ -1,5 +1,7 @@
 {
     "vk_app_id": 3853446,
     "vk_app_scope": ["audio", "status", "offline"],
-    "lastfm_api_key": "33d53f603c3f548e9bc4a3b4a1430a67"
+    "lastfm_api_key": "33d53f603c3f548e9bc4a3b4a1430a67",
+    "ga_app_id": "listen_app",
+    "ga_app_counter": "UA-20919085-8"
 }
