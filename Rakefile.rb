@@ -5,8 +5,10 @@
 require "json"
 require "rake/clean"
 require "open3"
+require "crxmake"
 
 SRC_PATH = "src"
+OUT_PATH = "out"
 BUILD_PATH = "build"
 
 # Get some environment info and setup
@@ -49,21 +51,9 @@ desc "Rebuild config from settings and other data"
 task :rebuildConfig do
     puts "Rebuilding config file..."
 
-    settings = JSON.parse(File.open(File.join(BUILD_PATH, "settings.json")).read)
-    constants = JSON.parse(File.open(File.join(BUILD_PATH, "constants.json")).read)
-
+    jsConfig = buildConfig
     File.open(File.join(SRC_PATH, "config.js"), "w") do |f|
-        configChunks = {
-            "default_settings_local" => settings["local"],
-            "default_settings_sync" => settings["sync"],
-            "constants" => constants,
-            "buildInfo" => {
-                :revision => sysrun("git rev-parse --verify HEAD")[0..9],
-                :date => Time.now.to_i
-            }
-        }
-
-        f.write("Config = " + JSON.pretty_generate(configChunks, {:indent => "    "}))
+        f.write(jsConfig)
     end
 end
 
@@ -87,12 +77,33 @@ task :templates do
     end
 end
 
-desc "Run this after you have cloned the repo"
-task :default do
-    Rake::Task["i18n"].execute
-    Rake::Task["templates"].execute
-    Rake::Task["rebuildConfig"].execute
+desc "Build ZIP for Chrome Web Store"
+task :build => [:i18n, :templates] do
+    puts "Building ZIP file for Chrome Web Store..."
+
+    FileUtils.remove_dir(OUT_PATH, true)
+    FileUtils.cp_r(SRC_PATH, OUT_PATH)
+
+    tweaks = JSON.parse(File.open(File.join(BUILD_PATH, "config.cws.json")).read)
+    jsConfig = buildConfig(tweaks)
+
+    File.open(File.join(OUT_PATH, "config.js"), "w") do |f|
+        f.write(jsConfig)
+    end
+
+    #
+    CrxMake.zip(
+        :ex_dir => OUT_PATH,
+        :pkey => File.join(Dir.home, "Dropbox", "Keys", "ListenApp.pem"),
+        :zip_output => File.join(OUT_PATH, "app.zip"),
+        :verbose => false,
+        :ignorefile => /\.swp/,
+        :ignoredir => /\.(?:svn|git|cvs)/
+    )
 end
+
+desc "Run this after you have cloned the repo"
+task :default => [:i18n, :templates, :rebuildConfig]
 
 ########################################################################################################################
 #########################################################################################################################
@@ -122,4 +133,35 @@ def sysrun(cmd)
 
     throw "Error (#{exit_status}) running '#{cmd}': #{data[:err].join()}" if (exit_status > 0 || data[:err].length > 0)
     data[:out].join
+end
+
+def buildConfig(tweak_map = {})
+    settings = JSON.parse(File.open(File.join(BUILD_PATH, "settings.json")).read)
+    constants = JSON.parse(File.open(File.join(BUILD_PATH, "constants.json")).read)
+
+    configChunks = {
+        "default_settings_local" => mergeChunks(settings["local"], tweak_map["default_settings_local"]),
+        "default_settings_sync" => mergeChunks(settings["sync"], tweak_map["default_settings_sync"]),
+        "constants" => mergeChunks(constants, tweak_map["constants"]),
+        "buildInfo" => {
+            :revision => sysrun("git rev-parse --verify HEAD")[0..9],
+            :date => Time.now.to_i
+        }
+    }
+
+    "Config = " + JSON.pretty_generate(configChunks, {:indent => "    "})
+end
+
+def mergeChunks(original, tweak)
+    if !tweak.nil?
+        tweak.each do |key, value|
+            if value.nil?
+                original.delete(key)
+            else
+                original[key] = value
+            end
+        end
+    end
+
+    original
 end
