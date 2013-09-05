@@ -89,7 +89,8 @@ Lastfm = (function () {
                 [].forEach.call(xml.querySelectorAll("album > tracks > track"), function (track) {
                     output.songs.push({
                         number: track.getAttribute("rank"),
-                        title: track.querySelector("name").textContent
+                        title: track.querySelector("name").textContent,
+                        duration: track.querySelector("duration").textContent
                     });
                 });
 

@@ -42,6 +42,7 @@ VK = (function () {
                 source: audio.querySelector("url").textContent,
                 artist: audio.querySelector("artist").textContent,
                 song: audio.querySelector("title").textContent,
+                originalDuration: duration,
                 duration: Math.floor(duration / 60) + ":" + strpad(duration % 60),
                 cloudTitle: cloudTitle,
                 downloadTitle: downloadTitle

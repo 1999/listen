@@ -298,18 +298,8 @@ parallel({
                         if (!album.cover)
                             return;
 
-                        // обновляем обложки альбомов
-                        chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
-                            var cover = $("img[data-src='" + album.cover + "']");
-                            var nothing = $(cover.closestParent("figure"), ".nothing");
-
-                            if (coverURL) {
-                                cover.attr("src", coverURL);
-                            } else {
-                                nothing.removeClass("hidden");
-                                cover.addClass("hidden");
-                            }
-                        });
+                        // загружаем обложку альбома
+                        Covers.load(album.cover);
                     });
                 });
             });
@@ -345,18 +335,8 @@ parallel({
                         if (!album.cover)
                             return;
 
-                        // обновляем обложки альбомов
-                        chrome.runtime.sendMessage({action: "coverDownload", url: album.cover}, function (coverURL) {
-                            var cover = $("img[data-src='" + album.cover + "']");
-                            var nothing = $(cover.closestParent("figure"), ".nothing");
-
-                            if (coverURL) {
-                                cover.attr("src", coverURL);
-                            } else {
-                                nothing.removeClass("hidden");
-                                cover.addClass("hidden");
-                            }
-                        });
+                        // обновляем обложку альбома
+                        Covers.load(album.cover);
                     });
                 });
             });
@@ -394,18 +374,15 @@ parallel({
                 }
             }, function (res) {
                 fillContent(res.info, res.music);
+                Covers.load(album.cover);
 
                 if (!album.songs.length)
                     return;
 
-                var songs = new Array(album.songs.length);
-                var onSongsReady = function () {
-
-                };
-
                 (function parseSongsList(songRank) {
                     window.setTimeout(function () {
                         var song = album.songs[songRank].title;
+                        var duration = album.songs[songRank].duration;
                         var originalRank = album.songs[songRank].number;
                         var searchQuery = [];
 
@@ -417,9 +394,19 @@ parallel({
                             searchQuery.push(word);
                         });
 
-                        VK.searchMusic(searchQuery.join(" "), {count: 1}, function (arr) {
+                        // существует множество ремиксов, отсеиваем их поиском по длительности песни
+                        VK.searchMusic(searchQuery.join(" "), {count: 10}, function (arr) {
                             if (arr.length) {
-                                Templates.render("songs", {songs: [arr[0]]}, function (html) {
+                                var trackIndex = 0; // по умолчанию отдаем первый трек
+
+                                for (var i = 0; i < arr.length; i++) {
+                                    if (arr[i].originalDuration == duration) {
+                                        trackIndex = i;
+                                        break;
+                                    }
+                                }
+
+                                Templates.render("songs", {songs: [arr[trackIndex]]}, function (html) {
                                     $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
                                 });
                             }
