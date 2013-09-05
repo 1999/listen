@@ -332,7 +332,7 @@ parallel({
                 info: function (callback) {
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: res.lastfm.info,
+                        artistDescription: createValidHTML(res.lastfm.info),
                         albums: res.lastfm.albums
                     }, callback);
                 },
@@ -377,7 +377,7 @@ parallel({
                         albumCover: album.cover,
                         artist: album.artist,
                         title: album.title,
-                        albumDescription: album.albumDescription
+                        albumDescription: createValidHTML(album.albumDescription)
                     }, callback);
                 },
                 music: function (callback) {

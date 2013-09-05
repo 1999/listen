@@ -151,6 +151,22 @@
         return result;
     };
 
+    exports.createValidHTML = function (html) {
+        var doc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
+
+        try {
+            doc.documentElement.innerHTML = html;
+        } catch (ex) {
+            return html;
+        }
+
+        [].forEach.call(doc.querySelectorAll("a[href]"), function (anchor) {
+            anchor.setAttribute("target", "_blank");
+        });
+
+        return doc.documentElement.innerHTML;
+    };
+
     exports.resolveURL = function (baseURL, relativeURL) {
         var html = document.implementation.createHTMLDocument("");
         var base = html.createElement("base");
