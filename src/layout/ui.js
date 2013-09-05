@@ -240,14 +240,13 @@ parallel({
                 var audioSource = this.attr("src");
                 var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
                 var matchesSelectorFn = Element.prototype.webkitMatchesSelector || Element.prototype.matchesSelector;
-                var nextSong;
 
                 if (!songPlaying)
                     return;
 
-                $(songPlaying, "span.play").click();
-                nextSong = songPlaying.nextSibling;
+                $(songPlaying, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play");
 
+                var nextSong = songPlaying.nextSibling;
                 if (nextSong && matchesSelectorFn.call(nextSong, "p.song")) {
                     $(nextSong, "span.play").click();
                 }
