@@ -181,9 +181,11 @@ div.pay .btn-link {
     padding: 16px 0 16px;
     position: relative;
     z-index: 2;
+    clear: both;
 }
 
-.song {
+.song,
+.song-queue {
     padding: 5px 16px;
     margin: 0;
     position: relative;

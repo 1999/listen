@@ -152,7 +152,8 @@ parallel({
             },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {
-                var searchQuery = $("header input[type='search']").val();
+                var searchElem = $("header input[type='search']");
+                var searchQuery = searchElem.val();
                 var matches;
 
                 if (!searchQuery.length)
@@ -160,11 +161,11 @@ parallel({
 
                 matches = searchQuery.match(/^artist:(.+)/);
                 if (matches)
-                    return drawArtist(matches[1]);
+                    return drawArtist(matches[1], searchElem.data("mbid"));
 
                 matches = searchQuery.match(/^album:(.+)/);
                 if (matches)
-                    return drawAlbum(matches[1]);
+                    return drawAlbum(matches[1], searchElem.data("mbid"));
 
                 drawSearchSongs(searchQuery);
             },
@@ -173,6 +174,10 @@ parallel({
 
                 var headerElem = $("header input[type='search']");
                 var headerBtn = $("header .search");
+                var searchMBID = this.data("mbid");
+
+                if (searchMBID.length)
+                    headerElem.data("mbid", searchMBID);
 
                 headerElem.val(this.attr("href"));
                 headerBtn.click();
@@ -212,6 +217,8 @@ parallel({
 
             lastButton.click();
         });
+
+        // keyup - сбрасывать mbid в searchfield
 
         var headerAudioElem = $("header audio");
         if (headerAudioElem) {
@@ -278,6 +285,7 @@ parallel({
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: res.lastfm.info,
+                        artist: searchQuery,
                         albums: res.lastfm.albums
                     }, callback);
                 },
@@ -308,7 +316,8 @@ parallel({
         });
     }
 
-    function drawArtist(artist) {
+    // todo mbid support
+    function drawArtist(artist, mbid) {
         emptyContent();
 
         parallel({
@@ -354,33 +363,73 @@ parallel({
         });
     }
 
-    function drawAlbum(album) {
+    function drawAlbum(album, mbid) {
         emptyContent();
+        console.log(album);
 
-        Lastfm.getAlbumInfoByMBID(album, function (album) {
-            var searchSongsTasks = [];
+        if (!mbid)
+            return console.log("sorry");
 
-            // todo no songs in album?
-            //
-
-            // .. throttling
-
-            album.songs.forEach(function (song) {
-
-                searchSongsTasks.push(function (callback) {
-                    var searchQuery = (album.artist + " " + song).replace(/\-/g, " ").split(" ").map(function (word) {
-                        return word.toLowerCase();
+        Lastfm.getAlbumInfoByMBID(mbid, function (album) {
+            parallel({
+                info: function (callback) {
+                    Templates.render("info-album", {
+                        albumCover: album.cover,
+                        artist: album.artist,
+                        title: album.title,
+                        albumDescription: album.albumDescription
+                    }, callback);
+                },
+                music: function (callback) {
+                    var queueSongs = [];
+                    album.songs.forEach(function (song) {
+                        queueSongs.push({
+                            artist: album.artist,
+                            song: song.title,
+                            number: song.number
+                        });
                     });
 
-                    // todo - error handling
-                    VK.searchMusic(searchQuery, {count: 1}, function (arr) {
-                        console.log(arr);
-                    });
-                });
-            });
+                    Templates.render("song-queue", {songs: queueSongs}, callback);
+                }
+            }, function (res) {
+                fillContent(res.info, res.music);
 
-            parallel(searchSongsTasks, function () {
-                // ...
+                if (!album.songs.length)
+                    return;
+
+                var songs = new Array(album.songs.length);
+                var onSongsReady = function () {
+
+                };
+
+                (function parseSongsList(songRank) {
+                    window.setTimeout(function () {
+                        var song = album.songs[songRank].title;
+                        var originalRank = album.songs[songRank].number;
+                        var searchQuery = [];
+
+                        (album.artist + " " + song).replace(/\-/g, " ").replace(/[\.|,]/g, " ").split(" ").forEach(function (word) {
+                            word = word.toLowerCase().trim();
+                            if (!word.length)
+                                return;
+
+                            searchQuery.push(word);
+                        });
+
+                        VK.searchMusic(searchQuery.join(" "), {count: 1}, function (arr) {
+                            if (arr.length) {
+                                Templates.render("songs", {songs: [arr[0]]}, function (html) {
+                                    $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
+                                });
+                            }
+
+                            if (songRank < album.songs.length - 1) {
+                                parseSongsList(songRank + 1);
+                            }
+                        });
+                    }, 350);
+                })(0);
             });
         });
     }
