@@ -236,6 +236,21 @@ parallel({
                 }
             }).bind("progress", function (evt) {
                 // @todo http://www.sitepoint.com/essential-audio-and-video-events-for-html5/
+            }).bind("ended", function () {
+                var audioSource = this.attr("src");
+                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
+                var matchesSelectorFn = Element.prototype.webkitMatchesSelector || Element.prototype.matchesSelector;
+                var nextSong;
+
+                if (!songPlaying)
+                    return;
+
+                $(songPlaying, "span.play").click();
+                nextSong = songPlaying.nextSibling;
+
+                if (nextSong && matchesSelectorFn.call(nextSong, "p.song")) {
+                    $(nextSong, "span.play").click();
+                }
             });
         }
     }

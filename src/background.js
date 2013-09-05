@@ -111,8 +111,26 @@ window.onerror = function(msg, url, line) {
         loadResource(url, {
             responseType: "blob",
             onload: function (blob) {
-                console.log("yes");
-                console.log(new Blob([blob, "{}"], {type: "application/octet-stream"}));
+                // console.log("yes");
+                // console.log(new Blob([blob, "{}"], {type: "application/octet-stream"}));
+                //
+                console.log("Blob size is " + blob.size);
+                var tagBlob1 = blob.slice(0, 128);
+                var tagBlob2 = blob.slice(blob.size - 128);
+
+                var reader1 = new FileReader;
+                reader1.onloadend = function () {
+                    console.log("Read result1: " + reader1.result);
+                };
+
+                reader1.readAsText(tagBlob1);
+
+                var reader2 = new FileReader;
+                reader2.onloadend = function () {
+                    console.log("Read result2: " + reader2.result);
+                };
+
+                reader2.readAsText(tagBlob2);
 
                 return;
 
@@ -166,6 +184,7 @@ window.onerror = function(msg, url, line) {
 
     function openAppWindow() {
         chrome.app.window.create("main.html", {
+            id: uuid(),
             minWidth: 800,
             minHeight: 540
         });
