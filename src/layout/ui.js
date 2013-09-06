@@ -122,11 +122,17 @@ parallel({
             ".music span.play": function (evt) {
                 var songElem = this.closestParent("p.song");
                 var headerAudio = $("header audio");
+                var currentPlayingSource = headerAudio.attr("src");
+                var currentPlayingSongElem;
 
                 if (this.hasClass("glyphicon-play")) {
-                    if (headerAudio.attr("src") === songElem.data("url")) {
+                    if (currentPlayingSource === songElem.data("url")) {
                         headerAudio.play();
                     } else {
+                        currentPlayingSongElem = $(".music p.song[data-url='" + currentPlayingSource + "']");
+                        if (currentPlayingSongElem)
+                            $(currentPlayingSongElem, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play")
+
                         headerAudio.attr("src", songElem.data("url")).removeClass("hidden").play();
                     }
 
@@ -243,6 +249,22 @@ parallel({
                 }
             }).bind("progress", function (evt) {
                 // @todo http://www.sitepoint.com/essential-audio-and-video-events-for-html5/
+            }).bind("play", function () {
+                var audioSource = this.attr("src");
+                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
+
+                if (!songPlaying)
+                    return;
+
+                $(songPlaying, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
+            }).bind("pause", function () {
+                var audioSource = this.attr("src");
+                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
+
+                if (!songPlaying)
+                    return;
+
+                $(songPlaying, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play");
             }).bind("ended", function () {
                 var audioSource = this.attr("src");
                 var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
