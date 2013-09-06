@@ -154,7 +154,7 @@ parallel({
                 var songElem = this.closestParent("p.song");
                 var songURL = songElem.data("url");
 
-                SyncFS.queueFile(this.data("title"), songURL);
+                SyncFS.queueFile(this.data("artist"), this.data("title"), songURL);
             },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {

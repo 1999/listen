@@ -38,10 +38,11 @@ SyncFS = (function () {
             });
         },
 
-        queueFile: function SyncFS_queueFile(title, url) {
+        queueFile: function SyncFS_queueFile(artist, title, url) {
             chrome.runtime.sendMessage({
                 action: "saveGoogleDrive",
                 url: url,
+                artist: artist,
                 title: title
             });
         }

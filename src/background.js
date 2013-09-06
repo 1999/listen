@@ -95,48 +95,127 @@ window.onerror = function(msg, url, line) {
      *
      * @param {String} url
      */
-    function saveGoogleDrive(title, url) {
+    function saveGoogleDrive(artist, title, url) {
         console.log(arguments);
+
         loadResource(url, {
             responseType: "blob",
             onload: function (blob) {
-                // console.log("yes");
-                // console.log(new Blob([blob, "{}"], {type: "application/octet-stream"}));
-                //
                 console.log("Blob size is " + blob.size);
-                var tagBlob1 = blob.slice(0, 128);
-                var tagBlob2 = blob.slice(blob.size - 128);
 
-                var reader1 = new FileReader;
-                reader1.onloadend = function () {
-                    console.log("Read result1: " + reader1.result);
-                };
+                var tagStart = blob.size - 128;
 
-                reader1.readAsText(tagBlob1);
+                parallel({
+                    tag: function (callback) {
+                        var reader = new FileReader;
+                        reader.onloadend = function () {
+                            callback(reader.result);
+                        };
 
-                var reader2 = new FileReader;
-                reader2.onloadend = function () {
-                    console.log("Read result2: " + reader2.result);
-                };
+                        reader.readAsText(blob.slice(tagStart, tagStart + 3, "text/plain"));
+                    },
+                    artist: function (callback) {
+                        var reader = new FileReader;
+                        reader.onloadend = function () {
+                            callback(reader.result);
+                        };
 
-                reader2.readAsText(tagBlob2);
+                        reader.readAsText(blob.slice(tagStart + 33, tagStart + 63, "text/plain"));
+                    },
+                    title: function (callback) {
+                        var reader = new FileReader;
+                        reader.onloadend = function () {
+                            callback(reader.result);
+                        };
 
-                return;
+                        reader.readAsText(blob.slice(tagStart + 3, tagStart + 33, "text/plain"));
+                    }
+                }, function (res) {
+                    var needsChanges = false;
+                    var resultBlob;
 
-                chrome.syncFileSystem.requestFileSystem(function (fs) {
-                    fs.root.getFile(title + ".mp3", {create: true}, function (fileEntry) {
-                        fileEntry.createWriter(function (fileWriter) {
-                            fileWriter.onwriteend = function (evt) {
-                                console.log(fileEntry.toURL());
-                                // callback(fileEntry.toURL());
-                            };
+                    // todo нужно не просто создавать строку, а забивать остаток мусором
 
-                            fileWriter.onerror = function (evt) {
-                                // console.error("Write failed: " + evt);
-                                // callback("");
-                            };
+                    if (res.tag === "TAG") {
+                        if (res.artist !== artist)
+                            needsChanges = true;
 
-                            fileWriter.write(blob);
+                        if (res.title !== title)
+                            needsChanges = true;
+
+                        if (needsChanges) {
+                            var tagString = "TAG";
+
+                            if (title.length < 30) {
+                                tagString += title;
+                                while (tagString < 33) {
+                                    tagString += " ";
+                                }
+                            } else {
+                                tagString += title.substr(0, 30);
+                            }
+
+                            if (artist.length < 30) {
+                                tagString += artist;
+                                while (tagString < 63) {
+                                    tagString += " ";
+                                }
+                            } else {
+                                tagString += artist.substr(0, 30);
+                            }
+
+                            while (tagString < 128) {
+                                tagString += " ";
+                            }
+
+                            var tagBlob = new Blob([tagString], {type: "text/plain"});
+                            resultBlob = new Blob([blob, tagBlob], {type: "audio/mpeg"});
+                        } else {
+                            resultBlob = blob;
+                        }
+                    } else {
+                        var tagString = "TAG";
+
+                        if (title.length < 30) {
+                            tagString += title;
+                            while (tagString < 33) {
+                                tagString += " ";
+                            }
+                        } else {
+                            tagString += title.substr(0, 30);
+                        }
+
+                        if (artist.length < 30) {
+                            tagString += artist;
+                            while (tagString < 63) {
+                                tagString += " ";
+                            }
+                        } else {
+                            tagString += artist.substr(0, 30);
+                        }
+
+                        while (tagString < 128) {
+                            tagString += " ";
+                        }
+
+                        var tagBlob = new Blob([tagString], {type: "text/plain"});
+                        resultBlob = new Blob([blob, tagBlob], {type: "audio/mpeg"});
+                    }
+
+                    chrome.syncFileSystem.requestFileSystem(function (fs) {
+                        fs.root.getFile(uuid() + ".mp3", {create: true}, function (fileEntry) {
+                            fileEntry.createWriter(function (fileWriter) {
+                                fileWriter.onwriteend = function (evt) {
+                                    console.log(fileEntry.toURL());
+                                };
+
+                                fileWriter.onerror = function (evt) {
+                                    console.error("Write failed: " + evt);
+                                    // callback("");
+                                };
+
+                                fileWriter.write(resultBlob);
+                            });
                         });
                     });
                 });
@@ -199,7 +278,7 @@ window.onerror = function(msg, url, line) {
                 break;
 
             case "saveGoogleDrive":
-                saveGoogleDrive(req.title, req.url);
+                saveGoogleDrive(req.artist, req.title, req.url);
                 break;
         }
 
