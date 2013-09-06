@@ -50,35 +50,22 @@ window.onerror = function(msg, url, line) {
      * @param {Function} callback
      */
     function downloadCover(url, callback) {
-        var storageKey = "cover." + url;
+        var fileName = md5(url);
 
-        chrome.storage.local.get(storageKey, function (items) {
-            if (items[storageKey]) {
-                (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
-                    fs.root.getFile(items[storageKey], {create: false}, function (fileEntry) {
-                        callback(fileEntry.toURL());
-                    }, function (err) {
-                        // в chrome.storage.local запись есть, а в песочнице нет, атата!
-                        chrome.storage.local.remove(storageKey);
-                        callback("");
-                    });
-                }, function (err) {
-                    callback("");
-                });
-            } else {
+        (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
+            fs.root.getFile(fileName, {create: false}, function (fileEntry) {
+                callback(fileEntry.toURL());
+            }, function (err) {
+                if ([err.NOT_FOUND_ERR, err.NOT_READABLE_ERR].indexOf(err.code) === -1)
+                    return callback("");
+
                 loadResource(url, {
                     responseType: "blob",
                     onload: function (blob) {
-                        var storageValue = uuid();
-
                         (window.requestFileSystem || window.webkitRequestFileSystem)(window.PERSISTENT, 0, function (fs) {
-                            fs.root.getFile(storageValue, {create: true}, function (fileEntry) {
+                            fs.root.getFile(fileName, {create: true}, function (fileEntry) {
                                 fileEntry.createWriter(function (fileWriter) {
                                     fileWriter.onwriteend = function (evt) {
-                                        var records = {};
-                                        records[storageKey] = storageValue;
-                                        chrome.storage.local.set(records);
-
                                         callback(fileEntry.toURL());
                                     };
 
@@ -93,11 +80,13 @@ window.onerror = function(msg, url, line) {
                         });
                     },
                     onerror: function (error) {
-                        console.error(error);
+                        console.error("Download failed: " + error);
                         callback("");
                     }
                 });
-            }
+            });
+        }, function (err) {
+            callback("");
         });
     }
 

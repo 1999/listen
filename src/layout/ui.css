@@ -146,6 +146,12 @@ div.pay .btn-link {
     font-size: 28px;
 }
 
+.info figure.only-cover .nothing {
+    width: 174px;
+    height: 174px;
+    line-height: 174px;
+}
+
 .info figcaption {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -156,12 +162,14 @@ div.pay .btn-link {
     color: #333;
 }
 
-.only-cover {
+.info .only-cover {
     margin: 0 12px 12px 0;
+    width: 174px;
 }
 
 .info .breadcrumb {
     display: inline-block;
+    max-width: calc(100% - 174px - 12px);
 }
 
 .info .breadcrumb a {

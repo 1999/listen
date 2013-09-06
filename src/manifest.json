@@ -40,6 +40,7 @@
         "http://ws.audioscrobbler.com/*",
         "http://*.last.fm/*",
         "http://*.images-amazon.com/*",
+        "http://images.amazon.com/*",
         "https://www.google-analytics.com/"
     ]
 }

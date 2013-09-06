@@ -373,8 +373,9 @@ parallel({
                     Templates.render("song-queue", {songs: queueSongs}, callback);
                 }
             }, function (res) {
-                fillContent(res.info, res.music);
-                Covers.load(album.cover);
+                fillContent(res.info, res.music, function () {
+                    Covers.load(album.cover);
+                });
 
                 if (!album.songs.length)
                     return;

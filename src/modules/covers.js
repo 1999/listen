@@ -11,10 +11,7 @@ Covers = (function () {
                     cover.attr("src", coverURL);
                 } else {
                     cover.addClass("hidden");
-
-                    if (nothing) {
-                        nothing.removeClass("hidden");
-                    }
+                    nothing.removeClass("hidden");
                 }
             });
         }
