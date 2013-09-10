@@ -26,7 +26,7 @@ Lastfm = (function () {
         }, this);
     }
 
-    return createModule("Lastfm", {
+    return {
         getArtistInfo: function Lastfm_getInfo(searchQuery, callback) {
             parallel({
                 info: function (callback) {
@@ -125,5 +125,5 @@ Lastfm = (function () {
                 callback(null);
             });
         }
-    });
+    };
 })();

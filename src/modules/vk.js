@@ -53,7 +53,7 @@ VK = (function () {
     }
 
 
-    return createModule("VK", {
+    return {
         searchMusic: function VK_searchMusic(query, params, callback) {
             if (typeof params === "function") {
                 callback = params;
@@ -98,5 +98,5 @@ VK = (function () {
         getProfileData: function VK_getProfileData() {
 
         }
-    });
+    };
 })();

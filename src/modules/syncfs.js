@@ -1,7 +1,8 @@
 SyncFS = (function () {
     "use strict";
 
-    return createModule("SyncFS", {
+
+    return {
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
             chrome.syncFileSystem.requestFileSystem(function (fs) {
                 var dirReader = fs.root.createReader();
@@ -46,5 +47,5 @@ SyncFS = (function () {
                 title: title
             });
         }
-    });
+    };
 })();

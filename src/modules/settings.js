@@ -18,7 +18,8 @@ Settings = (function () {
         }
     });
 
-    return createModule("Settings", {
+
+    return {
         load: function Settings_load(callback) {
             parallel({
                 local: function (callback) {
@@ -115,5 +116,5 @@ Settings = (function () {
 
             return output;
         }
-    });
+    };
 })();

@@ -1,7 +1,8 @@
 Templates = (function () {
     "use strict";
 
-    return createModule("Templates", {
+
+    return {
         render: function (tplName, placeholders, callback) {
             if (typeof placeholders === "function") {
                 callback = placeholders;
@@ -14,5 +15,5 @@ Templates = (function () {
                 placeholders: placeholders
             }, callback);
         }
-    });
+    };
 })();

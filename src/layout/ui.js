@@ -4,9 +4,6 @@ parallel({
     },
     settings: function (callback) {
         Settings.load(callback);
-    },
-    syncfs: function (callback) {
-        SyncFS.requestCurrentFilesNum(callback);
     }
 }, function (res) {
     "use strict";
@@ -43,7 +40,7 @@ parallel({
             Templates.render("user", {
                 placeholder: chrome.i18n.getMessage("searchPlaceholder"),
                 localTitle: chrome.i18n.getMessage("localTitle"),
-                localFilesCounter: res.syncfs ? res.syncfs : ""
+                localFilesCounter: ""
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
@@ -52,6 +49,8 @@ parallel({
 
                 drawCurrentAudio();
             });
+
+            // todo syncfs
         } else {
             Templates.render("guest", {
                 welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),

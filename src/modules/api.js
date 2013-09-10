@@ -1,9 +1,9 @@
 API = (function () {
     "use strict";
 
-    return createModule("API", {
+    return {
         clearAuth: function API_clearAuth() {
             Settings.remove("vkToken");
         }
-    });
+    };
 })();
