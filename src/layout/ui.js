@@ -44,7 +44,7 @@ parallel({
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
                 callback && callback();
-                listen.stat.sendAppView("User");
+                CPA.sendAppView("User");
 
                 drawCurrentAudio();
 
@@ -69,7 +69,7 @@ parallel({
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
 
-                listen.stat.sendAppView("Guest");
+                CPA.sendAppView("Guest");
 
                 callback && callback();
             });

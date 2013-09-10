@@ -1,6 +1,7 @@
 Covers = (function () {
     "use strict";
 
+
     return {
         load: function Covers_load(url) {
             chrome.runtime.sendMessage({action: "coverDownload", url: url}, function (coverURL) {

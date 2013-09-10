@@ -16,7 +16,6 @@
                 "background/modules/syncfs.js",
                 "background/modules/cpa.js",
                 "background/modules/covers.js",
-                "background/api.js",
                 "background/core.js"
             ]
         }

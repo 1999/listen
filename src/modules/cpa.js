@@ -1,6 +1,8 @@
-APIProto = {
-    stat: {
-        sendEvent: function APIProto_stat_sendEvent() {
+CPA = (function() {
+    "use strict";
+
+    return {
+        sendEvent: function CPA_sendEvent() {
             var args = [].slice.call(arguments, 0, 4);
 
             chrome.runtime.sendMessage({
@@ -10,7 +12,7 @@ APIProto = {
             });
         },
 
-        changePermittedState: function APIProto_stat_changePermittedState(permitted) {
+        changePermittedState: function CPA_changePermittedState(permitted) {
             chrome.runtime.sendMessage({
                 action: "stat",
                 method: "changePermittedState",
@@ -18,12 +20,12 @@ APIProto = {
             });
         },
 
-        sendAppView: function APIProto_stat_sendAppView(viewName) {
+        sendAppView: function CPA_sendAppView(viewName) {
             chrome.runtime.sendMessage({
                 action: "stat",
                 method: "sendAppView",
                 args: [viewName]
             });
         }
-    }
-};
+    };
+})();
