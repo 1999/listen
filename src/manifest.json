@@ -1,6 +1,6 @@
 {
     "name" : "Listen!",
-    "version" : "1.0.0",
+    "version" : "1.0",
     "manifest_version" : 2,
     "minimum_chrome_version" : "29",
     "description" : "__MSG_appDescription__",
@@ -9,10 +9,14 @@
     "app": {
         "background": {
             "scripts": [
+                "config.js",
                 "lib/utils.js",
+                "lib/cpa.js",
                 "background/modules/templates.js",
                 "background/modules/syncfs.js",
+                "background/modules/cpa.js",
                 "background/modules/covers.js",
+                "background/api.js",
                 "background/core.js"
             ]
         }

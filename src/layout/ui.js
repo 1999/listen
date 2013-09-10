@@ -39,15 +39,20 @@ parallel({
         if (vkToken) {
             Templates.render("user", {
                 placeholder: chrome.i18n.getMessage("searchPlaceholder"),
-                localTitle: chrome.i18n.getMessage("localTitle"),
-                localFilesCounter: ""
+                localTitle: chrome.i18n.getMessage("localTitle")
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
                 callback && callback();
-                CPA.sendAppView("User");
+                listen.stat.sendAppView("User");
 
                 drawCurrentAudio();
+
+                SyncFS.requestCurrentFilesNum(function (num) {
+                    if (num) {
+                        $("header span.local").text(num);
+                    }
+                })
             });
 
             // todo syncfs
@@ -64,7 +69,7 @@ parallel({
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
 
-                CPA.sendAppView("Guest");
+                listen.stat.sendAppView("Guest");
 
                 callback && callback();
             });

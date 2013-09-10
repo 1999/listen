@@ -38,6 +38,8 @@ window.onerror = function(msg, url, line) {
             id: uuid(),
             minWidth: 800,
             minHeight: 540
+        }, function (appWindow) {
+            appWindow.contentWindow.listen = Object.create(APIProto);
         });
     }
 
@@ -50,6 +52,10 @@ window.onerror = function(msg, url, line) {
         var isAsyncResponse = false;
 
         switch (req.action) {
+            case "stat":
+                CPA[req.method] && CPA[req.method].apply(CPA, req.args);
+                break;
+
             case "renderTemplate":
                 Templates.render(req.tplName, req.placeholders, sendResponse);
                 isAsyncResponse = true;
