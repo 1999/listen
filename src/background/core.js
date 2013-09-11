@@ -64,6 +64,10 @@ window.onerror = function(msg, url, line) {
                 isAsyncResponse = true;
                 break;
 
+            case "currentSyncFSCounter":
+                sendResponse(SyncFS.getCurrentCounterValue());
+                break;
+
             case "saveGoogleDrive":
                 SyncFS.save(req.artist, req.title, req.url);
                 break;

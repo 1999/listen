@@ -1,6 +1,12 @@
 SyncFS = (function () {
     "use strict";
 
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        if (req.action === "syncFsCounterUpdted") {
+            $("header span.local span.counter").text(req.value);
+        }
+    });
+
 
     return {
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
@@ -22,21 +28,9 @@ SyncFS = (function () {
         },
 
         requestCurrentFilesNum: function SyncFS_requestCurrentFilesNum(callback) {
-            chrome.syncFileSystem.requestFileSystem(function (fs) {
-                var dirReader = fs.root.createReader();
-
-                dirReader.readEntries(function (results) {
-                    var output = 0;
-
-                    for (var i = 0; i < results.length; i++) {
-                        if (/\.mp3$/.test(results.item(i).name)) {
-                            output += 1;
-                        }
-                    }
-
-                    callback(output);
-                });
-            });
+            chrome.runtime.sendMessage({
+                action: "currentSyncFSCounter"
+            }, callback);
         },
 
         queueFile: function SyncFS_queueFile(artist, title, url) {

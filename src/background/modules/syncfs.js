@@ -5,19 +5,14 @@ SyncFS = (function() {
     var NULLSTRING = String.fromCharCode(0);
 
     var pendingDownloads = []; // список URL скачиваемых файлов
+    var cachedCounter = -1;
 
     chrome.syncFileSystem.onFileStatusChanged.addListener(function (details) {
-        console.log(details);
-
-        if (details.status !== "synced" || details.direction !== "remote_to_local")
+        if (details.direction !== "remote_to_local")
             return;
 
-        switch (details.status) {
-            case "added":
-            case "updated":
-            case "deleted":
-                break;
-        }
+        cachedCounter = -1;
+        updateCurrentCounter();
     });
 
 
@@ -74,8 +69,56 @@ SyncFS = (function() {
         reader.readAsBinaryString(blob);
     }
 
+    function updateCurrentCounter() {
+        chrome.syncFileSystem.requestFileSystem(function (fs) {
+            var dirReader = fs.root.createReader();
+
+            dirReader.readEntries(function (results) {
+                cachedCounter = 0;
+
+                for (var i = 0; i < results.length; i++) {
+                    if (/\.mp3$/.test(results.item(i).name)) {
+                        cachedCounter += 1;
+                    }
+                }
+
+                notifyAppWindows();
+            });
+        });
+    }
+
+    function notifyAppWindows() {
+        chrome.runtime.sendMessage({
+            action: "syncFsCounterUpdted",
+            value: SyncFS.getCurrentCounterValue()
+        });
+    }
+
 
     return {
+        /**
+         * Возвращает текущее состояние счетчика
+         */
+        getCurrentCounterValue: function SyncFS_getCurrentCounterValue() {
+            if (cachedCounter === -1) {
+                updateCurrentCounter();
+                return "...";
+            }
+
+            var output;
+
+            if (cachedCounter > 0) {
+                output = cachedCounter;
+                if (pendingDownloads.length) {
+                    output += "+";
+                }
+            } else {
+                output = pendingDownloads.length ? "..." : "";
+            }
+
+            return output;
+        },
+
         /**
          * Save file into sync filesystem
          *
@@ -84,6 +127,15 @@ SyncFS = (function() {
          * @param {String} url
          */
         save: function SyncFS_save(artist, title, url) {
+            artist = artist.trim();
+            title = title.trim();
+
+            if (pendingDownloads.indexOf(url) !== -1)
+                return;
+
+            pendingDownloads.push(url);
+            notifyAppWindows();
+
             loadResource(url, {
                 responseType: "blob",
                 onload: function (blob) {
@@ -119,7 +171,11 @@ SyncFS = (function() {
                             fs.root.getFile(artist + " - " + title + ".mp3", {create: true}, function (fileEntry) {
                                 fileEntry.createWriter(function (fileWriter) {
                                     fileWriter.onwriteend = function (evt) {
-                                        console.log(fileEntry.toURL());
+                                        var index = pendingDownloads.indexOf(url);
+                                        pendingDownloads.splice(index, 1);
+
+                                        cachedCounter += 1;
+                                        notifyAppWindows();
                                     };
 
                                     fileWriter.onprogress = function (evt) {
@@ -129,7 +185,11 @@ SyncFS = (function() {
 
                                     fileWriter.onerror = function (evt) {
                                         console.error("Write failed: " + evt);
-                                        // callback("");
+
+                                        var index = pendingDownloads.indexOf(url);
+                                        pendingDownloads.splice(index, 1);
+
+                                        notifyAppWindows();
                                     };
 
                                     fileWriter.write(blob);
@@ -140,7 +200,11 @@ SyncFS = (function() {
                 },
                 onerror: function (error) {
                     console.error(error);
-                    // todo
+
+                    var index = pendingDownloads.indexOf(url);
+                    pendingDownloads.splice(index, 1);
+
+                    notifyAppWindows();
                 },
                 onprogress: function (percents) {
                     console.log("[%s] %i percents downloaded", url, percents);

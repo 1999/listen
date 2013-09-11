@@ -49,10 +49,8 @@ parallel({
                 drawCurrentAudio();
 
                 SyncFS.requestCurrentFilesNum(function (num) {
-                    if (num) {
-                        $("header span.local").text(num);
-                    }
-                })
+                    $("header span.local span.counter").text(num);
+                });
             });
 
             // todo syncfs
@@ -99,6 +97,8 @@ parallel({
                 }, function (responseURL) {
                     var response = parseQuery(responseURL.replace(baseURL + "#", ""));
                     Settings.set("vkToken", response.access_token);
+
+                    // stat
 
                     // @todo redraw every page
                     drawBaseUI();
