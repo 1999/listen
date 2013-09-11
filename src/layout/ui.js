@@ -171,11 +171,17 @@ parallel({
 
                 matches = searchQuery.match(/^artist:(.+)/);
                 if (matches)
-                    return drawArtist(matches[1], searchElem.data("mbid"));
+                    return drawArtist(matches[1]);
 
-                matches = searchQuery.match(/^album:(.+)/);
-                if (matches)
-                    return drawAlbum(matches[1], searchElem.data("mbid"));
+                var mbid = searchElem.data("mbid");
+                var artist = searchElem.data("artist");
+                var album = searchElem.data("album");
+
+                if (mbid.length)
+                    return drawAlbum({mbid: mbid});
+
+                if (artist.length && album.length)
+                    return drawAlbum({artist: artist, album: album});
 
                 drawSearchSongs(searchQuery);
             },
@@ -184,12 +190,20 @@ parallel({
 
                 var headerElem = $("header input[type='search']");
                 var headerBtn = $("header .search");
-                var searchMBID = this.data("mbid");
 
-                if (searchMBID.length)
-                    headerElem.data("mbid", searchMBID);
+                var mbid = this.data("mbid");
+                var artist = this.data("artist");
+                var album = this.data("album");
 
-                headerElem.val(this.attr("href"));
+                if (mbid.length) {
+                    headerElem.data("mbid", mbid);
+                } else if (artist.length && album.length) {
+                    headerElem.data({artist: artist, album: album});
+                }
+
+                var searchValue = /^artist:/.test(this.attr("href")) ? this.attr("href") : artist + " - " + album;
+                headerElem.val(searchValue);
+
                 headerBtn.click();
             }
         };
@@ -227,8 +241,6 @@ parallel({
 
             lastButton.click();
         });
-
-        // keyup - сбрасывать mbid в searchfield
 
         var headerAudioElem = $("header audio");
         if (headerAudioElem) {
@@ -283,6 +295,13 @@ parallel({
                 if (nextSong && matchesSelectorFn.call(nextSong, "p.song")) {
                     $(nextSong, "span.play").click();
                 }
+            });
+        }
+
+        var headerSearchInput = $("header input[type='search']");
+        if (headerSearchInput) {
+            headerSearchInput.bind("keyup", function () {
+                this.removeData();
             });
         }
     }
@@ -349,6 +368,7 @@ parallel({
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: createValidHTML(res.lastfm.info),
+                        artist: artist,
                         albums: res.lastfm.albums
                     }, callback);
                 },
@@ -369,14 +389,10 @@ parallel({
         });
     }
 
-    function drawAlbum(album, mbid) {
+    function drawAlbum(searchData) {
         emptyContent();
-        console.log(album);
 
-        if (!mbid)
-            return console.log("sorry");
-
-        Lastfm.getAlbumInfoByMBID(mbid, function (album) {
+        Lastfm.getAlbumInfo(searchData, function (album) {
             parallel({
                 info: function (callback) {
                     Templates.render("info-album", {

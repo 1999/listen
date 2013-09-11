@@ -338,7 +338,7 @@
             }
 
             for (var dataKey in data)
-                this.dataset[dataKey] = data[key];
+                this.dataset[dataKey] = data[dataKey];
 
             return this;
         },
