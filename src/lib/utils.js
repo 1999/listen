@@ -416,7 +416,7 @@
             url += "?" + params;
 
         xhr.open(method, url, true);
-        xhr.timeout = options.timeout || 25000;
+        xhr.timeout = (options.timeout !== undefined) ? options.timeout : 25000;
 
         switch (options.responseType) {
             case "blob":

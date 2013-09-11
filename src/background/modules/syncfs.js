@@ -138,6 +138,7 @@ SyncFS = (function() {
 
             loadResource(url, {
                 responseType: "blob",
+                timeout: 0,
                 onload: function (blob) {
                     var tagStart = blob.size - 128;
 
