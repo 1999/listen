@@ -4,6 +4,23 @@ SyncFS = (function() {
     var ID3V1_START = "TAG";
     var NULLSTRING = String.fromCharCode(0);
 
+    var pendingDownloads = []; // список URL скачиваемых файлов
+
+    chrome.syncFileSystem.onFileStatusChanged.addListener(function (details) {
+        console.log(details);
+
+        if (details.status !== "synced" || details.direction !== "remote_to_local")
+            return;
+
+        switch (details.status) {
+            case "added":
+            case "updated":
+            case "deleted":
+                break;
+        }
+    });
+
+
     /**
      * Создание безопасной строки длиной bytesLength байт
      *
