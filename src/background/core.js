@@ -38,8 +38,6 @@ window.onerror = function(msg, url, line) {
             id: uuid(),
             minWidth: 800,
             minHeight: 540
-        }, function (appWindow) {
-            appWindow.contentWindow.listen = Object.create(APIProto);
         });
     }
 
@@ -67,7 +65,7 @@ window.onerror = function(msg, url, line) {
                 break;
 
             case "saveGoogleDrive":
-                saveGoogleDrive(req.artist, req.title, req.url);
+                SyncFS.save(req.artist, req.title, req.url);
                 break;
         }
 

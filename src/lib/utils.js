@@ -437,10 +437,21 @@
             };
         }
 
+        if (options.onprogress) {
+            xhr.onprogress = function (evt) {
+                var percents = Math.floor((evt.position / evt.totalSize) * 100);
+                options.onprogress.call(ctx, percents);
+            };
+        }
+
         if (options.onerror) {
-            xhr.onabort = xhr.onerror = function (evt) {
+            xhr.onerror = function (evt) {
                 options.onerror.call(ctx, evt.type);
             };
+
+            xhr.onabort = function (evt) {
+                options.onerror.call(ctx, evt.type);
+            }
         }
 
         xhr.send(sendData);
