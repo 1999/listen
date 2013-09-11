@@ -106,17 +106,9 @@ parallel({
             },
             // список локальных треков в облаке Google Drive
             "header span.local": function (evt) {
-                SyncFS.requestCurrentFilesList(function (files) {
-                    // output.push({
-                    //     id: audio.querySelector("id").textContent,
-                    //     source: audio.querySelector("url").textContent,
-                    //     artist: audio.querySelector("artist").textContent,
-                    //     song: audio.querySelector("title").textContent,
-                    //     duration: Math.floor(duration / 60) + ":" + strpad(duration % 60),
-                    //     cloudTitle: cloudTitle,
-                    //     downloadTitle: downloadTitle
-                    // });
+                emptyContent();
 
+                SyncFS.requestCurrentFilesList(function (songs) {
                     Templates.render("songs", {songs: songs}, function (music) {
                         fillContent("", music);
                     });

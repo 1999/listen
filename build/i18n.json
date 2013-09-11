@@ -78,5 +78,13 @@
     "repostVK": {
         "en": "VK repost",
         "ru": "Сделать репост ВКонтакте"
+    },
+    "unknownArtist": {
+        "en": "Unknown artist",
+        "ru": "Неизвестный исполнитель"
+    },
+    "unknownTrack": {
+        "en": "Unknown song",
+        "ru": "Неизвестный трек"
     }
 }
