@@ -68,20 +68,16 @@
         "ru": "Я уже оценил приложение"
     },
     "moneyMaker": {
-        "en": "<strong>$1</strong> must stay as a free app without advertisements. You can become a part of the app's history by transferring any amount of money to <a href='$2' target='_blank'>developer's Yandex.Money account</a> or by reposting <a href='$3' target='_blank'>this</a> record to your wall in VK social network.",
-        "ru": "<strong>$1</strong> должно оставаться бесплатным приложением без рекламы. Ты можешь поспособствовать этому, переведя любую сумму на <a href='$2' target='_blank'>этот счет</a> в Яндекс.Деньгах, или сделав репост <a href='$3' target='_blank'>этой</a> записи ВКонтакте на свою стену."
-    },
-    "moneyMakerPost": {
-        "en": "Я уже прослушал $1 песен в приложении $2 для Google Chrome. Оно реально классное и удобное! С помощью него можно слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для прослушивания без интернета и даже (sic!) скачивать на компьютер. А еще с помощью базы данных от LastFM можно знакомиться с альбомами целиком, а также похожими исполнителями.|Дружок! Если ты пользуешься Google Chrome, то ты просто обязан установить себе это приложение из Chrome Web Store. После этого твоя жизнь станет насыщенней, твоя зарплата увеличится, тебя перестанут игнорировать девушки (парни тоже перестанут), а карма несомненно вырастет до небес.|Хватит это читать, установи $2 сейчас же!",
-        "ru": "Я уже прослушал $1 песен в приложении $2 для Google Chrome. Оно реально классное и удобное! С помощью него можно слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для прослушивания без интернета и даже (sic!) скачивать на компьютер. А еще с помощью базы данных от LastFM можно знакомиться с альбомами целиком, а также похожими исполнителями.|Дружок! Если ты пользуешься Google Chrome, то ты просто обязан установить себе это приложение из Chrome Web Store. После этого твоя жизнь станет насыщенней, твоя зарплата увеличится, тебя перестанут игнорировать девушки (парни тоже перестанут), а карма несомненно вырастет до небес.|Хватит это читать, установи $2 сейчас же!"
+        "en": "<strong>$1</strong> must stay as a free app without advertisements. You can become a part of the app's history by transferring any amount of money to <a href='$2' target='_blank'>developer's Yandex.Money account</a> or by rating $1 app in <a href='$3' target='_blank'>Chrome Web Store</a>.",
+        "ru": "<strong>$1</strong> должно оставаться бесплатным приложением без рекламы. Ты можешь поспособствовать этому, переведя любую сумму на <a href='$2' target='_blank'>этот счет</a> в Яндекс.Деньгах или оценив приложение в <a href='$3' target='_blank'>Chrome Web Store</a>."
     },
     "yandexMoney": {
         "en": "Pay via Yandex.Money",
         "ru": "Перевести через Я.Деньги"
     },
-    "repostVK": {
-        "en": "VK repost",
-        "ru": "Сделать репост ВКонтакте"
+    "rateCWS": {
+        "en": "Rate in Web Store",
+        "ru": "Оценить в Web Store"
     },
     "unknownArtist": {
         "en": "Unknown artist",

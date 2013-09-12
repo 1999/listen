@@ -81,6 +81,8 @@ parallel({
         var routes = {
             // ВК-авторизация
             ".auth": function (evt) {
+                var btn = this;
+
                 this.disabled = "disabled";
                 var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
 
@@ -96,9 +98,19 @@ parallel({
                     interactive: true
                 }, function (responseURL) {
                     var response = parseQuery(responseURL.replace(baseURL + "#", ""));
+                    if (!response.access_token) {
+                        btn.removeAttr("disabled");
+                        return;
+                    }
+
                     Settings.set("vkToken", response.access_token);
 
-                    // stat
+                    chrome.storage.local.get("installId", function (records) {
+                        CPA.sendEvent("Lyfecycle", "Authorized", {
+                            id: records.installId,
+                            uid: response.user_id
+                        });
+                    });
 
                     // @todo redraw every page
                     drawBaseUI();
@@ -201,22 +213,16 @@ parallel({
             "header .closePay": function (evt) {
                 Settings.set("headerRateCounter", 0);
                 $("header div.pay").remove();
+
+                evt.stopImmediatePropagation();
             },
-            "header .vkrepost": function (evt) {
-                var postText = chrome.i18n.getMessage("moneyMakerPost", [Settings.get("songsPlayed"), chrome.runtime.getManifest().name]);
-
-                VK.postWall(postText, function (xml) {
-                    console.log(xml);
-                });
-
-                // Settings.set("headerRateCounter", 0);
-                // $("header div.pay").remove();
+            "header .cwsrate": function (evt) {
+                window.open(Config.constants.cws_app_link + "/reviews");
+                $("header .closePay").click();
             },
             "header .yamoney": function (evt) {
                 window.open(Config.constants.yamoney_link);
-
-                Settings.set("headerRateCounter", 0);
-                $("header div.pay").remove();
+                $("header .closePay").click();
             }
         };
 
@@ -300,9 +306,9 @@ parallel({
 
                 if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
                     Templates.render("header-pay", {
-                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.vk_repost_link]),
+                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
                         payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                        vkRepost: chrome.i18n.getMessage("repostVK"),
+                        cwsRate: chrome.i18n.getMessage("rateCWS"),
                         close: chrome.i18n.getMessage("close")
                     }, function (html) {
                         $("header").append(html);
