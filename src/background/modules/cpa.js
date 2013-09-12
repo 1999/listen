@@ -19,9 +19,19 @@ CPA = (function () {
         },
 
         sendEvent: function CPA_sendEvent() {
-            var args = [].slice.call(arguments, 0, 4);
-            if (args.length === 4)
-                args[3] = parseInt(args[3], 10);
+            var args = [];
+
+            for (var i = 0, len = Math.min(arguments.length, 4); i < len; i++) {
+                if (i === 3) {
+                    args.push(parseInt(arguments[3], 10));
+                } else {
+                    if (typeof arguments[i] === "object") {
+                        args.push(JSON.stringify(arguments[i]));
+                    } else {
+                        args.push(arguments[i] + "");
+                    }
+                }
+            }
 
             tracker.sendEvent.apply(tracker, args);
         },

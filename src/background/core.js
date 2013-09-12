@@ -19,16 +19,30 @@ window.onerror = function(msg, url, line) {
 
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
-        switch (details) {
+        switch (details.reason) {
             case "install":
-                // ...
+                var installId = "{" + uuid() + "}";
+                chrome.storage.local.set({installId: installId});
+
+                CPA.sendEvent("Lyfecycle", "Install", {
+                    id: installId,
+                    ver: chrome.runtime.getManifest().version
+                });
+
                 break;
 
             case "update":
                 if (chrome.runtime.getManifest().version === details.previousVersion)
                     return;
 
-                // ...
+                chrome.storage.local.get("installId", function (records) {
+                    CPA.sendEvent("Lyfecycle", "Update", {
+                        prev: details.previousVersion,
+                        curr: chrome.runtime.getManifest().version,
+                        id: records.installId
+                    });
+                });
+
                 break;
         }
     });
