@@ -1,6 +1,13 @@
 Covers = (function () {
     "use strict";
 
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        if (req.action === "coverDownload") {
+            Covers.request(req.url, sendResponse);
+            return true;
+        }
+    });
+
 
     return {
         request: function Covers_request(url, callback) {

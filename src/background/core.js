@@ -44,35 +44,4 @@ window.onerror = function(msg, url, line) {
     // app lifecycle
     chrome.app.runtime.onLaunched.addListener(openAppWindow);
     chrome.app.runtime.onRestarted.addListener(openAppWindow);
-
-    // messages listener
-    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
-        var isAsyncResponse = false;
-
-        switch (req.action) {
-            case "stat":
-                CPA[req.method] && CPA[req.method].apply(CPA, req.args);
-                break;
-
-            case "renderTemplate":
-                Templates.render(req.tplName, req.placeholders, sendResponse);
-                isAsyncResponse = true;
-                break;
-
-            case "coverDownload":
-                Covers.request(req.url, sendResponse);
-                isAsyncResponse = true;
-                break;
-
-            case "currentSyncFSCounter":
-                sendResponse(SyncFS.getCurrentCounterValue());
-                break;
-
-            case "saveGoogleDrive":
-                SyncFS.save(req.artist, req.title, req.url);
-                break;
-        }
-
-        return isAsyncResponse;
-    });
 })();

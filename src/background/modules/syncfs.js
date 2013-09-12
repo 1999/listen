@@ -15,6 +15,14 @@ SyncFS = (function() {
         updateCurrentCounter();
     });
 
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        if (req.action === "currentSyncFSCounter") {
+            sendResponse(SyncFS.getCurrentCounterValue());
+        } else if (req.action === "saveGoogleDrive") {
+            SyncFS.save(req.artist, req.title, req.url);
+        }
+    });
+
 
     /**
      * Создание безопасной строки длиной bytesLength байт

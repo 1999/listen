@@ -13,6 +13,13 @@ Templates = (function () {
         delete pendingCallbacks[evt.data.id];
     });
 
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        if (req.action === "renderTemplate") {
+            Templates.render(req.tplName, req.placeholders, sendResponse);
+            return true;
+        }
+    });
+
 
     return {
         /**

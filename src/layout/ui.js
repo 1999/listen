@@ -180,7 +180,7 @@ parallel({
             "a[href^='artist:'], a[href^='album:']": function (evt) {
                 evt.preventDefault();
 
-                var headerElem = $("header input[type='search']");
+                var headerElem = $("header input[type='search']").removeData();
                 var headerBtn = $("header .search");
 
                 var mbid = this.data("mbid");
@@ -294,11 +294,13 @@ parallel({
         if (headerSearchInput) {
             headerSearchInput.bind("keyup", function () {
                 this.removeData();
-            });
+            }).bind("search", drawCurrentAudio);
         }
     }
 
     function drawCurrentAudio() {
+        emptyContent();
+
         VK.getCurrent(function (songs) {
             Templates.render("songs", {songs: songs}, function (music) {
                 fillContent("", music);

@@ -2,6 +2,20 @@ html, body {
     overflow-y: visible;
 }
 
+input[type="search"] {
+    -webkit-appearance: searchfield !important;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button !important;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: searchfield-decoration !important;
+}
+
 body.guest {
 
 }
@@ -88,6 +102,11 @@ header .local::before {
 
 header .local .counter {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+header input[type="search"] {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 header .search {

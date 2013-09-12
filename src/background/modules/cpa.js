@@ -4,6 +4,12 @@ CPA = (function () {
     var service = analytics.getService(Config.constants.ga_app_id);
     var tracker = service.getTracker(Config.constants.ga_app_counter);
 
+    chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
+        if (req.action === "stat") {
+            CPA[req.method] && CPA[req.method].apply(CPA, req.args);
+        }
+    });
+
 
     return {
         changePermittedState: function CPA_changePermittedState(permitted) {
