@@ -21,6 +21,8 @@ window.onerror = function(msg, url, line) {
     chrome.runtime.onInstalled.addListener(function (details) {
         switch (details.reason) {
             case "install":
+                CPA.changePermittedState(true);
+
                 var installId = "{" + uuid() + "}";
                 chrome.storage.local.set({installId: installId});
 

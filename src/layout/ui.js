@@ -79,6 +79,9 @@ parallel({
         var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
 
         var routes = {
+            "input[name='sendStat']": function (evt) {
+                CPA.changePermittedState(this.checked);
+            },
             // ВК-авторизация
             ".auth": function (evt) {
                 var btn = this;

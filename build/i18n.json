@@ -8,16 +8,16 @@
         "ru": "Привет, дружок!"
 	},
     "welcomeText": {
-        "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even save files on your local computer - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
-        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер. А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
+        "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even download files on your local computer (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
+        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
     },
     "faqHeader": {
         "en": "Tiny FAQ",
-        "ru": "Небольшое ЧаВО"
+        "ru": "Небольшое FAQ"
     },
     "faqText": {
         "en": "$1 app doesn't have access to VK website and it won't add download icons on any of the website's pages;|<strong>You can and you should</strong> scrobble your playing songs into the LastFM service;|You help us very much when you agree to send statistics about the app;|$1 app is designed only for finding out the new music.",
-        "ru": "Приложение $1 не имеет доступа к сайту ВКонтакте напрямую и не будет добавлять кнопки скачивания музыки на сайте - это делается в самом приложении;|Через приложение можно и нужно скробблить данные на LastFM;|Отправляя статистику о работе приложение вы спасаете котиков;|Приложение $1 предназначено только для ознакомления с музыкой."
+        "ru": "Приложение $1 не имеет доступа к сайту ВКонтакте напрямую и не будет добавлять кнопки скачивания музыки на сайте;|Через приложение можно и нужно скробблить данные на LastFM;|Отправляя статистику о работе приложение вы спасаете котиков;|Приложение $1 предназначено только для ознакомления с музыкой."
     },
     "faqSendStatCheckbox": {
         "en": "I agree to send statistics",
