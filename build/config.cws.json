@@ -3,6 +3,7 @@
         "isDebug": false
     },
     "constants": {
-        "vk_app_id": 2671008
+        "vk_app_id": 2671008,
+        "header_rate_limit": 100
     }
 }

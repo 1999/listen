@@ -91,8 +91,13 @@ VK = (function () {
             });
         },
 
-        repost: function VK_repost() {
-
+        postWall: function VK_postWall(text, callback) {
+            makeAPIRequest("wall.post", {
+                message: text,
+                services: "twitter,facebook"
+            }, function (xml) {
+                callback(xml);
+            });
         },
 
         getProfileData: function VK_getProfileData() {

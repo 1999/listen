@@ -197,6 +197,26 @@ parallel({
                 headerElem.val(searchValue);
 
                 headerBtn.click();
+            },
+            "header .closePay": function (evt) {
+                Settings.set("headerRateCounter", 0);
+                $("header div.pay").remove();
+            },
+            "header .vkrepost": function (evt) {
+                var postText = chrome.i18n.getMessage("moneyMakerPost", [Settings.get("songsPlayed"), chrome.runtime.getManifest().name]);
+
+                VK.postWall(postText, function (xml) {
+                    console.log(xml);
+                });
+
+                // Settings.set("headerRateCounter", 0);
+                // $("header div.pay").remove();
+            },
+            "header .yamoney": function (evt) {
+                window.open(Config.constants.yamoney_link);
+
+                Settings.set("headerRateCounter", 0);
+                $("header div.pay").remove();
             }
         };
 
@@ -274,6 +294,21 @@ parallel({
 
                 $(songPlaying, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play");
             }).bind("ended", function () {
+                var currentCnt = Settings.get("headerRateCounter") + 1;
+                var payElem = $("header div.pay");
+                Settings.set("headerRateCounter", currentCnt);
+
+                if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
+                    Templates.render("header-pay", {
+                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.vk_repost_link]),
+                        payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                        vkRepost: chrome.i18n.getMessage("repostVK"),
+                        close: chrome.i18n.getMessage("close")
+                    }, function (html) {
+                        $("header").append(html);
+                    });
+                }
+
                 var audioSource = this.attr("src");
                 var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
                 var matchesSelectorFn = Element.prototype.webkitMatchesSelector || Element.prototype.matchesSelector;
