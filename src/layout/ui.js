@@ -162,10 +162,14 @@ parallel({
             },
             // скачивание песни в sync file system
             ".music span.cloud": function (evt) {
+                if (this.hasClass("pending"))
+                    return;
+
                 var songElem = this.closestParent("p.song");
                 var songURL = songElem.data("url");
 
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL);
+                this.addClass("pending");
             },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {
