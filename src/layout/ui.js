@@ -342,7 +342,11 @@ parallel({
         if (headerSearchInput) {
             headerSearchInput.bind("keyup", function () {
                 this.removeData();
-            }).bind("search", drawCurrentAudio);
+            }).bind("search", function () {
+                if (!this.val().length) {
+                    drawCurrentAudio();
+                }
+            });
         }
     }
 
