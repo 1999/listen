@@ -28,6 +28,10 @@ Lastfm = (function () {
 
     return {
         getArtistInfo: function Lastfm_getInfo(searchQuery, callback) {
+            searchQuery = searchQuery.split(" ").map(function (part) {
+                return part.charAt(0).toUpperCase() + part.substr(1).toLowerCase();
+            }).join(" ");
+
             parallel({
                 info: function (callback) {
                     makeAPIRequest("artist.getinfo", {artist: searchQuery}, function (xml) {
