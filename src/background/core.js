@@ -26,11 +26,15 @@ window.onerror = function(msg, url, line) {
                 var installId = "{" + uuid() + "}";
                 chrome.storage.local.set({installId: installId});
 
-                CPA.sendEvent("Lyfecycle", "Install", {
+                var lyfecycleParams = {
                     id: installId,
                     ver: chrome.runtime.getManifest().version
-                });
+                };
 
+                CPA.sendEvent("Lyfecycle", "Install", lyfecycleParams);
+
+                var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
+                chrome.runtime.setUninstallUrl(uninstallUrl);
                 break;
 
             case "update":
@@ -43,6 +47,14 @@ window.onerror = function(msg, url, line) {
                         curr: chrome.runtime.getManifest().version,
                         id: records.installId
                     });
+
+                    var lyfecycleParams = {
+                        id: records.installId,
+                        ver: chrome.runtime.getManifest().version
+                    };
+
+                    var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
+                    chrome.runtime.setUninstallUrl(uninstallUrl);
                 });
 
                 break;

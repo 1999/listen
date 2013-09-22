@@ -6,5 +6,6 @@
     "ga_app_counter": "UA-20919085-8",
     "header_rate_limit": 3,
     "yamoney_link": "https://money.yandex.ru/direct-payment.xml?sum_k=300&receiver=41001236185316",
-    "cws_app_link": "https://chrome.google.com/webstore/detail/bggaejdaachpiaibkedeoadbglgdjpab"
+    "cws_app_link": "https://chrome.google.com/webstore/detail/bggaejdaachpiaibkedeoadbglgdjpab",
+    "goodbye_page_link": "http://staypositive.ru/goodbye-listenvkapp.html"
 }
