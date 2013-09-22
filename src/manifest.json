@@ -1,6 +1,6 @@
 {
     "name" : "Listen!",
-    "version" : "1.0",
+    "version" : "2.0",
     "manifest_version" : 2,
     "minimum_chrome_version" : "30",
     "description" : "__MSG_appDescription__",
@@ -43,13 +43,7 @@
         "storage",
         "syncFileSystem",
         "unlimitedStorage",
-        "*://*.vk.com/*",
-        "*://*.userapi.com/*",
-        "*://*.vk.me/*",
-        "http://ws.audioscrobbler.com/*",
-        "http://*.last.fm/*",
-        "http://*.images-amazon.com/*",
-        "http://images.amazon.com/*",
-        "https://www.google-analytics.com/"
+        "*://*/*",
+        {"mediaGalleries": ["read"]}
     ]
 }
