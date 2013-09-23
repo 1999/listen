@@ -12,6 +12,8 @@ VK = (function () {
 
         options.access_token = Settings.get("vkToken");
         options.v = "5.0";
+        options.count = 300;
+        options.offset = options.offset || 0;
 
         loadResource(BASE_URL + method + ".xml", {
             responseType: "xml",
@@ -33,6 +35,7 @@ VK = (function () {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
         var downloadTitle = chrome.i18n.getMessage("downloadTitle");
+        var count = parseInt(xml.querySelector("count").textContent, 10);
 
         [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
             var duration = audio.querySelector("duration").textContent;
@@ -49,17 +52,15 @@ VK = (function () {
             });
         });
 
-        return output;
+        return {
+            count: output.length ? count : 0,
+            songs: output
+        };
     }
 
 
     return {
         searchMusic: function VK_searchMusic(query, params, callback) {
-            if (typeof params === "function") {
-                callback = params;
-                params = {};
-            }
-
             params = copyOwnProperties(params, {
                 q: query,
                 auto_complete: 1,
@@ -73,20 +74,22 @@ VK = (function () {
             });
         },
 
-        searchMusicByArtist: function VK_searchMusic(query, callback) {
-            makeAPIRequest("audio.search", {
+        searchMusicByArtist: function VK_searchMusic(query, params, callback) {
+            params = copyOwnProperties(params, {
                 q: query,
                 auto_complete: 1,
                 lyrics: 0,
                 performer_only: 1,
                 sort: 2
-            }, function (xml) {
+            });
+
+            makeAPIRequest("audio.search", params, function (xml) {
                 callback(xmlToArray(xml));
             });
         },
 
-        getCurrent: function VK_getCurrent(callback) {
-            makeAPIRequest("audio.get", function (xml) {
+        getCurrent: function VK_getCurrent(offset, callback) {
+            makeAPIRequest("audio.get", {offset: offset}, function (xml) {
                 callback(xmlToArray(xml));
             });
         }

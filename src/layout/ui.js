@@ -8,7 +8,7 @@ parallel({
 }, function (res) {
     "use strict";
 
-    drawBaseUI(bindClickHandlers);
+    drawBaseUI(bindHandlers);
 
 
     function fillContent(infoHTML, musicHTML, callback) {
@@ -75,7 +75,7 @@ parallel({
     }
 
     // биндинги
-    function bindClickHandlers() {
+    function bindHandlers() {
         var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
 
         var routes = {
@@ -170,6 +170,37 @@ parallel({
 
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL);
                 this.addClass("pending");
+            },
+            ".music div.more": function (evt) {
+                var totalSongsListed = $$(".music p.song").length;
+                var self = this;
+                var searchType = this.data("type");
+                var queryString = this.data("query");
+
+                var onDataReady = function (data) {
+                    Templates.render("songs", {songs: data.songs}, function (music) {
+                        var newTotalSongsListed = totalSongsListed + data.songs.length;
+                        self.before(music);
+
+                        if (newTotalSongsListed >= data.count) {
+                            self.remove();
+                        }
+                    });
+                };
+
+                switch (searchType) {
+                    case "current":
+                        VK.getCurrent(totalSongsListed, onDataReady);
+                        break;
+
+                    case "artist":
+                        VK.searchMusicByArtist(queryString, {offset: totalSongsListed}, onDataReady);
+                        break;
+
+                    case "global":
+                        VK.searchMusic(queryString, {offset: totalSongsListed}, onDataReady);
+                        break;
+                }
             },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {
@@ -348,13 +379,26 @@ parallel({
                 }
             });
         }
+
+        window.onscroll = function () {
+            // console.log([document.body.scrollTop + document.body.clientHeight, document.body.scrollHeight]);
+
+            // var goPos = this.scrollHeight - 160;
+            //         if (this.scrollTop + this.clientHeight > goPos) {
+        };
     }
 
     function drawCurrentAudio() {
         emptyContent();
 
-        VK.getCurrent(function (songs) {
-            Templates.render("songs", {songs: songs}, function (music) {
+        VK.getCurrent(0, function (data) {
+            var more = (data.count > data.songs.length);
+
+            Templates.render("songs", {
+                songs: data.songs,
+                more: more,
+                type: "current"
+            }, function (music) {
                 fillContent("", music);
             });
         });
@@ -365,7 +409,7 @@ parallel({
 
         parallel({
             vk: function (callback) {
-                VK.searchMusic(searchQuery, callback);
+                VK.searchMusic(searchQuery, {}, callback);
             },
             lastfm: function (callback) {
                 Lastfm.getArtistInfo(searchQuery, callback);
@@ -398,12 +442,12 @@ parallel({
     }
 
     // todo mbid support
-    function drawArtist(artist, mbid) {
+    function drawArtist(artist) {
         emptyContent();
 
         parallel({
             vk: function (callback) {
-                VK.searchMusicByArtist(artist, callback);
+                VK.searchMusicByArtist(artist, {}, callback);
             },
             lastfm: function (callback) {
                 Lastfm.getArtistInfo(artist, callback);
@@ -419,7 +463,14 @@ parallel({
                     }, callback);
                 },
                 music: function (callback) {
-                    Templates.render("songs", {songs: res.vk}, callback);
+                    var more = (res.vk.count > res.vk.songs.length);
+
+                    Templates.render("songs", {
+                        songs: res.vk.songs,
+                        more: more,
+                        type: "artist",
+                        query: artist
+                    }, callback);
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
@@ -484,18 +535,18 @@ parallel({
                         });
 
                         // существует множество ремиксов, отсеиваем их поиском по длительности песни
-                        VK.searchMusic(searchQuery.join(" "), {count: 10}, function (arr) {
-                            if (arr.length) {
+                        VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
+                            if (data.count) {
                                 var trackIndex = 0; // по умолчанию отдаем первый трек
 
-                                for (var i = 0; i < arr.length; i++) {
-                                    if (arr[i].originalDuration == duration) {
+                                for (var i = 0; i < data.songs.length; i++) {
+                                    if (data.songs[i].originalDuration == duration) {
                                         trackIndex = i;
                                         break;
                                     }
                                 }
 
-                                Templates.render("songs", {songs: [arr[trackIndex]]}, function (html) {
+                                Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
                                     $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
                                 });
                             }

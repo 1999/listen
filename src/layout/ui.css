@@ -215,6 +215,15 @@ div.pay .btn-link {
     clear: both;
 }
 
+.music .more {
+    margin: 12px 0 0;
+    cursor: pointer;
+}
+
+.music .more::before {
+    content: "__MSG_more__...";
+}
+
 .song,
 .song-queue {
     padding: 5px 16px;
