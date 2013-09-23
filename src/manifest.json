@@ -43,7 +43,6 @@
         "storage",
         "syncFileSystem",
         "unlimitedStorage",
-        "*://*/*",
-        {"mediaGalleries": ["read"]}
+        "*://*/*"
     ]
 }
