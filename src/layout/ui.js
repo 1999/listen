@@ -431,7 +431,14 @@ parallel({
                     }, callback);
                 },
                 music: function (callback) {
-                    Templates.render("songs", {songs: res.vk}, callback);
+                    var more = (res.vk.count > res.vk.songs.length);
+
+                    Templates.render("songs", {
+                        songs: res.vk.songs,
+                        more: more,
+                        type: "global",
+                        query: searchQuery
+                    }, callback);
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
