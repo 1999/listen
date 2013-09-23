@@ -172,15 +172,18 @@ parallel({
                 this.addClass("pending");
             },
             ".music div.more": function (evt) {
+                if (this.hasClass("loading"))
+                    return;
+
                 var totalSongsListed = $$(".music p.song").length;
-                var self = this;
+                var self = this.addClass("loading");
                 var searchType = this.data("type");
                 var queryString = this.data("query");
 
                 var onDataReady = function (data) {
                     Templates.render("songs", {songs: data.songs}, function (music) {
                         var newTotalSongsListed = totalSongsListed + data.songs.length;
-                        self.before(music);
+                        self.removeClass("loading").before(music);
 
                         if (newTotalSongsListed >= data.count) {
                             self.remove();
@@ -381,10 +384,13 @@ parallel({
         }
 
         window.onscroll = function () {
-            // console.log([document.body.scrollTop + document.body.clientHeight, document.body.scrollHeight]);
+            var pageHeight = Math.max(document.body.offsetHeight, document.body.clientHeight);
+            var scrollTop = window.innerHeight + window.scrollY;
+            var more = $(".music div.more");
 
-            // var goPos = this.scrollHeight - 160;
-            //         if (this.scrollTop + this.clientHeight > goPos) {
+            if (scrollTop + 160 >= pageHeight && more) {
+                more.click();
+            }
         };
     }
 
