@@ -13,16 +13,66 @@ Sounds = (function () {
 
         audioElem.bind("ended", function () {
             var src = this.attr("src");
+            var isPlayerPaused = $("header span.playpause").hasClass("paused");
+            var mode = Settings.get("songsPlayingMode");
 
-            songsPlaying[src].remove();
+            songsPlaying[src].dom.remove();
             delete songsPlaying[src];
 
+            if (isPlayerPaused)
+                return;
+
+            switch (mode) {
+                case "shuffle":
+                    var songs = [].slice.call($$(".music p.song"), 0).sort(function () {
+                        return (Math.random() < 0.5);
+                    });
+
+                    Sounds.play(songs[0]);
+                    break;
+
+                case "repeat":
+                    var songContainer = $(".music p.song[data-url='" + src + "']");
+                    Sounds.play(songContainer);
+                    break;
+
+                default:
+                    var endedSongContainer = $(".music p.song[data-url='" + src + "']");
+                    var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+                    var node = endedSongContainer.nextSibling;
+                    var nextSongContainer;
+
+                    while (node) {
+                        if (matchesSelectorFn.call(node, "p.song")) {
+                            nextSongContainer = node;
+                            break;
+                        }
+
+                        node = node.nextSibling;
+                    }
+
+                    if (nextSongContainer) {
+                        Sounds.play(nextSongContainer);
+                    }
+
+                    break;
+            }
         }).bind("timeupdate", function () {
+            var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+            var songContainer = this.closestParent("p.song");
+            var progressElem = songContainer.previousSibling;
 
+            if (!progressElem || !matchesSelectorFn.call(progressElem, "div.song-playing-bg")) {
+                progressElem = $("<div class='song-playing-bg'>&nbsp;</div>");
+                songContainer.before(progressElem.css("width", "0"));
+            }
+
+            var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
+            progressElem.css("width", width);
         }).bind("play", function () {
-
+            // ...
         }).bind("pause", function () {
-
+            // ...
         });
 
         document.body.append(audioElem);
@@ -35,13 +85,16 @@ Sounds = (function () {
     /**
      * @param {String} src
      * @param {Float} newVolume
+     * @param {Number} msForInterval
      * @param {Boolean} smoothStart (true - резкий старт, плавный финиш)
+     * @param {Function} callback
      */
-    function smoothInterval(src, newVolume, smoothStart) {
+    function smoothInterval(src, newVolume, msForInterval, smoothStart, callback) {
         var songData = songsPlaying[src];
         var volumeDiff = newVolume - songData.dom.volume;
 
-        var iterationsNum = 100;
+        var defaultIterationsNum = 100;
+        var iterationsNum = Math.ceil(msForInterval * defaultIterationsNum / FADING_TIMEOUT_MS);
         var increase = Math.PI / iterationsNum;
         var counter = 0;
 
@@ -54,6 +107,8 @@ Sounds = (function () {
 
             if (yPos >= 1) {
                 clearInterval(songData.interval);
+                callback && callback.call(songData.dom);
+
                 return;
             }
 
@@ -68,42 +123,67 @@ Sounds = (function () {
          * @param {HTMLElement|Undefined} elem
          */
         play: function Sounds_play(elem) {
-
-
-
-
-
             if (elem) {
-                var src = elem.data("url");
-                if (songsPlaying[src])
+                var originalAudioSrc = elem.data("url");
+                if (songsPlaying[originalAudioSrc])
                     return;
 
-                Settings.get("volume")
+                createAudioElem(originalAudioSrc);
+                $(elem, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
 
-                var audioElem = createAudioElem(src);
+                Object.keys(songsPlaying).forEach(function (audioSrc) {
+                    var audioElem = songsPlaying[audioSrc].dom;
 
-                // FADING_TIMEOUT_MS
+                    if (audioSrc === originalAudioSrc) {
+                        smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS, true);
+                    } else {
+                        smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
+                            songsPlaying[audioSrc].dom.remove();
+                            delete songsPlaying[audioSrc];
+                        });
+                    }
+
+                    audioElem.play();
+                });
             } else {
+                var songsSources = Object.keys(songsPlaying);
 
+                if (songsSources.length) {
+                    songsSources.forEach(function (audioSrc) {
+                        var audioElem = songsPlaying[audioSrc].dom;
+                        var isStarting = (audioElem.currentTime * 1000 < FADING_TIMEOUT_MS);
+                        var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
+
+                        if (isStarting) {
+                            smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS - audioElem.currentTime * 1000, true);
+                        } else if (isEnding) {
+                            smoothInterval(audioSrc, 0, (audioElem.duration - audioElem.currentTime) * 1000, false);
+                        }
+
+                        audioElem.play();
+                    });
+                } else {
+                    this.play($(".music p.song"));
+                }
             }
 
-            // если elem нет
-                // если нет текущей играющей песни (песен), выйти
-                // песни - current и next, при ended current next становится current, next - другая или null
-                // у каждой играбщей песни есть уровень громкости, не зависящий от общего level
-                // продолжить играть песни
-                // найти p.song с таким URL, как у песни "current", поменять ему иконку на pause
-            // иначе
-                // если
-
-            // поменять иконку play на pause в header
+            $("header span.playpause").removeClass("paused");
         },
 
-        /**
-         * @param {HTMLElement|Undefined} elem
-         */
-        pause: function Sounds_pause(elem) {
-            // clear timeouts
+        pause: function Sounds_pause() {
+            Object.keys(songsPlaying).forEach(function (audioSrc) {
+                var audioElem = songsPlaying[audioSrc].dom;
+                var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
+
+                if (isEnding)
+                    return;
+
+                smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
+                    this.pause();
+                });
+            });
+
+            $("header span.playpause").removeClass("paused");
         },
 
         /**
@@ -114,14 +194,14 @@ Sounds = (function () {
 
             Object.keys(songsPlaying).forEach(function (audioSrc) {
                 var audioElem = songsPlaying[audioSrc].dom;
-                var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
                 var isStarting = (audioElem.currentTime * 1000 < FADING_TIMEOUT_MS);
+                var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
 
-                if (isEnding)
+                if (audioElem.paused || isEnding)
                     return;
 
                 if (isStarting) {
-                    smoothInterval(audioSrc, newLevel, true);
+                    smoothInterval(audioSrc, newLevel, FADING_TIMEOUT_MS - audioElem.currentTime * 1000, true);
                 } else {
                     audioElem.volume = newLevel;
                 }
