@@ -19,6 +19,23 @@ Sounds = (function () {
             songsPlaying[src].dom.remove();
             delete songsPlaying[src];
 
+            // обновляем rate counter
+            var currentCnt = Settings.get("headerRateCounter") + 1;
+            var payElem = $("header div.pay");
+            Settings.set("headerRateCounter", currentCnt);
+
+            // при достижении header_rate_limit показываем слой с кнопками
+            if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
+                Templates.render("header-pay", {
+                    payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                    payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                    cwsRate: chrome.i18n.getMessage("rateCWS"),
+                    close: chrome.i18n.getMessage("close")
+                }, function (html) {
+                    $("header").append(html);
+                });
+            }
+
             if (isPlayerPaused)
                 return;
 
@@ -59,7 +76,7 @@ Sounds = (function () {
             }
         }).bind("timeupdate", function () {
             var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-            var songContainer = this.closestParent("p.song");
+            var songContainer = $(".music p.song[data-url='" + this.attr("src") + "']");
             var progressElem = songContainer.previousSibling;
 
             if (!progressElem || !matchesSelectorFn.call(progressElem, "div.song-playing-bg")) {
@@ -69,10 +86,6 @@ Sounds = (function () {
 
             var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
             progressElem.css("width", width);
-        }).bind("play", function () {
-            // ...
-        }).bind("pause", function () {
-            // ...
         });
 
         document.body.append(audioElem);
@@ -91,7 +104,8 @@ Sounds = (function () {
      */
     function smoothInterval(src, newVolume, msForInterval, smoothStart, callback) {
         var songData = songsPlaying[src];
-        var volumeDiff = newVolume - songData.dom.volume;
+        var oldVolume = songData.dom.volume;
+        var volumeDiff = newVolume - oldVolume;
 
         var defaultIterationsNum = 100;
         var iterationsNum = Math.ceil(msForInterval * defaultIterationsNum / FADING_TIMEOUT_MS);
@@ -106,6 +120,8 @@ Sounds = (function () {
             counter += increase;
 
             if (yPos >= 1) {
+                songData.dom.volume = newVolume;
+
                 clearInterval(songData.interval);
                 callback && callback.call(songData.dom);
 
@@ -113,7 +129,7 @@ Sounds = (function () {
             }
 
             var diff = volumeDiff * yPos;
-            songData.dom.volume += diff;
+            songData.dom.volume = oldVolume + diff;
         }, FADING_TIMEOUT_MS / iterationsNum);
     }
 
@@ -128,8 +144,14 @@ Sounds = (function () {
                 if (songsPlaying[originalAudioSrc])
                     return;
 
+                if (elem.hasClass("played")) {
+                    var songsPlayed = Settings.get("songsPlayed");
+                    Settings.set("songsPlayed", songsPlayed + 1);
+                }
+
+                elem.addClass("played");
                 createAudioElem(originalAudioSrc);
-                $(elem, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
+                $(elem, "span.glyphicon-play").addClass("glyphicon-pause").removeClass("glyphicon-play");
 
                 Object.keys(songsPlaying).forEach(function (audioSrc) {
                     var audioElem = songsPlaying[audioSrc].dom;

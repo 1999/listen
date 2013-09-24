@@ -9,12 +9,17 @@
             </button>
         </div>
         <div class="form-group">
-            <audio class="hidden" controls></audio>
+            <span class="playpause"></span>
+            <span class="mode shuffle"></span>
+            <span class="mode repeat"></span>
+            <input type="range" min="0" max="1" step="0.01">
         </div>
         <div class="form-group pull-right">
-            <span class="glyphicon glyphicon-cloud-download local" title="{{localTitle}}">
-                <span class="counter"></span>
-            </span>
+            <button type="button" class="btn btn-link btn-lg local">
+                <span class="glyphicon glyphicon-cloud-download">
+                    <span class="counter"></span>
+                </span>
+            </button>
         </div>
     </form>
 </header>

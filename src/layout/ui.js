@@ -130,34 +130,14 @@ parallel({
                 });
             },
             // проигрывание песни и постановка на паузу
-            ".music span.play": function (evt) {
-                var songElem = this.closestParent("p.song");
-                var headerAudio = $("header audio");
-                var currentPlayingSource = headerAudio.attr("src");
-                var currentPlayingSongElem;
+            ".music span.glyphicon-play, .music span.glyphicon-pause": function (evt) {
+                var play = this.hasClass("glyphicon-play");
 
-                if (this.hasClass("glyphicon-play")) {
-                    if (currentPlayingSource === songElem.data("url")) {
-                        headerAudio.play();
-                    } else {
-                        currentPlayingSongElem = $(".music p.song[data-url='" + currentPlayingSource + "']");
-                        if (currentPlayingSongElem)
-                            $(currentPlayingSongElem, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play")
-
-                        headerAudio.attr("src", songElem.data("url")).removeClass("hidden").play();
-                    }
-
-                    if (!this.hasClass("played")) {
-                        var songsPlayed = Settings.get("songsPlayed");
-                        Settings.set("songsPlayed", songsPlayed + 1);
-
-                        this.addClass("played");
-                    }
-
-                    this.removeClass("glyphicon-play").addClass("glyphicon-pause");
+                if (play) {
+                    var songContainer = this.closestParent("p.song");
+                    Sounds.play(songContainer);
                 } else {
-                    headerAudio.pause();
-                    this.addClass("glyphicon-play").removeClass("glyphicon-pause");
+                    Sounds.pause();
                 }
             },
             // скачивание песни в sync file system
@@ -300,77 +280,6 @@ parallel({
 
             lastButton.click();
         });
-
-        var headerAudioElem = $("header audio");
-        if (headerAudioElem) {
-            headerAudioElem.bind("play", function () {
-                // очищаем текущий прогресс-элемент
-                var progressElem = $("div.song-playing-bg") || $("<div class='song-playing-bg'>&nbsp;</div>");
-                var source = this.attr("src");
-
-                var songElem;
-                $$("p.song").each(function () {
-                    if (this.data("url") === source) {
-                        songElem = this;
-                    }
-                });
-
-                songElem.before(progressElem.css("width", "0"));
-            }).bind("timeupdate", function () {
-                var playingBg = $("div.song-playing-bg");
-                if (playingBg) {
-                    var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
-                    $("div.song-playing-bg").css("width", width);
-                }
-            }).bind("progress", function (evt) {
-                // @todo http://www.sitepoint.com/essential-audio-and-video-events-for-html5/
-            }).bind("play", function () {
-                var audioSource = this.attr("src");
-                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
-
-                if (!songPlaying)
-                    return;
-
-                $(songPlaying, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
-            }).bind("pause", function () {
-                var audioSource = this.attr("src");
-                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
-
-                if (!songPlaying)
-                    return;
-
-                $(songPlaying, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play");
-            }).bind("ended", function () {
-                var currentCnt = Settings.get("headerRateCounter") + 1;
-                var payElem = $("header div.pay");
-                Settings.set("headerRateCounter", currentCnt);
-
-                if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
-                    Templates.render("header-pay", {
-                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                        payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                        cwsRate: chrome.i18n.getMessage("rateCWS"),
-                        close: chrome.i18n.getMessage("close")
-                    }, function (html) {
-                        $("header").append(html);
-                    });
-                }
-
-                var audioSource = this.attr("src");
-                var songPlaying = $(".music p.song[data-url='" + audioSource + "']");
-                var matchesSelectorFn = Element.prototype.webkitMatchesSelector || Element.prototype.matchesSelector;
-
-                if (!songPlaying)
-                    return;
-
-                $(songPlaying, "span.play").removeClass("glyphicon-pause").addClass("glyphicon-play");
-
-                var nextSong = songPlaying.nextSibling;
-                if (nextSong && matchesSelectorFn.call(nextSong, "p.song")) {
-                    $(nextSong, "span.play").click();
-                }
-            });
-        }
 
         var headerSearchInput = $("header input[type='search']");
         if (headerSearchInput) {
