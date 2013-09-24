@@ -1,5 +1,5 @@
 VK = (function () {
-    "ust strict";
+    "use strict";
 
     var BASE_URL = "https://api.vk.com/method/";
 
