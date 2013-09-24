@@ -125,6 +125,12 @@ header .player button:first-of-type {
     margin-left: 20px;
 }
 
+header input[type='range'] {
+    margin-left: 12px;
+    vertical-align: middle;
+    width: 80px;
+}
+
 div.pay {
     margin: 16px 12px;
     color: #eee;

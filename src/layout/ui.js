@@ -129,6 +129,26 @@ parallel({
                     });
                 });
             },
+            // проигрывание песни из шапки
+            "header span.playpause": function (evt) {
+
+            },
+            // включение режима "shuffle"
+            "header span.mode.shuffle": function (evt) {
+                if (this.hasClass("active")) {
+                    Sounds.disableMode();
+                } else {
+                    Sounds.enableMode("shuffle");
+                }
+            },
+            // включение режима "repeat"
+            "header span.mode.repeat": function (evt) {
+                if (this.hasClass("active")) {
+                    Sounds.disableMode();
+                } else {
+                    Sounds.enableMode("repeat");
+                }
+            },
             // проигрывание песни и постановка на паузу
             ".music span.glyphicon-play, .music span.glyphicon-pause": function (evt) {
                 var play = this.hasClass("glyphicon-play");
@@ -289,6 +309,13 @@ parallel({
                 if (!this.val().length) {
                     drawCurrentAudio();
                 }
+            });
+        }
+
+        var headerRangeInput = $("header input[type='range']");
+        if (headerRangeInput) {
+            headerRangeInput.bind("change", function () {
+                Sounds.changeVolumeLevel(this.value);
             });
         }
 
