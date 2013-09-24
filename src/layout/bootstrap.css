@@ -2385,7 +2385,7 @@ input[type="button"].btn-block {
 
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url('glyphicons-halflings-regular.woff') format('woff');
+  src: url('glyphicons-halflings-regular.svg') format('svg');
 }
 
 .glyphicon {
