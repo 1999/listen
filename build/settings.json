@@ -4,7 +4,9 @@
         "isDebug": true, /* локальная разработка или нет */
         "lastfmToken": "", /* токен LastFM */
         "songsPlayed": 0,
-        "vkToken": "" /* токен ВКонтакте */
+        "songsPlayingMode": "", /* shuffle или repeat */
+        "vkToken": "", /* токен ВКонтакте */
+        "volume": 0.8 /* громкость */
     },
     "sync": {
         "sendUsageStat": true /* посылать статистику использования */
