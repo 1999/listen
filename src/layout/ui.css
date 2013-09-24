@@ -115,9 +115,14 @@ header .search {
     margin-left: 8px;
 }
 
-header audio {
-    width: 300px;
-    margin-left: 12px;
+header .player button {
+    padding-left: 6px;
+    padding-right: 6px;
+    color: white !important;
+}
+
+header .player button:first-of-type {
+    margin-left: 20px;
 }
 
 div.pay {

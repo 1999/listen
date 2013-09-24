@@ -1,7 +1,7 @@
 Sounds = (function () {
     "use strict";
 
-    var FADING_TIMEOUT_MS = 1500; // время затухания текущей композиции
+    var FADING_TIMEOUT_MS = 2000; // время затухания текущей композиции
 
     // список играющих песен, где ключ - URL песни, а значение - объект вида:
     // {HTMLAudioElement} "dom", {Number} "interval" (interval id), {Number} "iteration"
@@ -10,54 +10,65 @@ Sounds = (function () {
     function createAudioElem(src) {
         var audioElem = new Audio(src);
         audioElem.volume = 0;
+        audioElem.bind("ended", onEnded).bind("timeupdate", onTimeUpdate);
 
-        audioElem.bind("ended", function () {
-            var src = this.attr("src");
-            var isPlayerPaused = $("header span.playpause").hasClass("paused");
-            var mode = Settings.get("songsPlayingMode");
+        document.body.append(audioElem);
+        songsPlaying[src] = {
+            dom: audioElem,
+            interval: 0
+        };
+    }
 
-            songsPlaying[src].dom.remove();
-            delete songsPlaying[src];
+    function onTimeUpdate() {
+        var audioSrc = this.attr("src");
+        var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var isEnding = (this.duration - this.currentTime < FADING_TIMEOUT_MS / 1000);
 
-            // обновляем rate counter
-            var currentCnt = Settings.get("headerRateCounter") + 1;
-            var payElem = $("header div.pay");
-            Settings.set("headerRateCounter", currentCnt);
+        if (!progressElem) {
+            progressElem = $("<div>&nbsp;</div>").addClass("song-playing-bg").data("url", audioSrc).css("width", "0");
 
-            // при достижении header_rate_limit показываем слой с кнопками
-            if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
-                Templates.render("header-pay", {
-                    payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                    payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                    cwsRate: chrome.i18n.getMessage("rateCWS"),
-                    close: chrome.i18n.getMessage("close")
-                }, function (html) {
-                    $("header").append(html);
-                });
+            if (songContainer) {
+                songContainer.before(progressElem);
             }
+        }
 
-            if (isPlayerPaused)
-                return;
+        var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
+        progressElem.css("width", width);
 
-            switch (mode) {
-                case "shuffle":
-                    var songs = [].slice.call($$(".music p.song"), 0).sort(function () {
-                        return (Math.random() < 0.5);
-                    });
+        if (!isEnding)
+            return;
 
-                    Sounds.play(songs[0]);
-                    break;
+        var isPlayerPaused = $("header span.playpause").hasClass("paused");
+        var mode = Settings.get("songsPlayingMode");
 
-                case "repeat":
-                    var songContainer = $(".music p.song[data-url='" + src + "']");
-                    Sounds.play(songContainer);
-                    break;
+        if (isPlayerPaused || this.hasClass("ending"))
+            return;
 
-                default:
-                    var endedSongContainer = $(".music p.song[data-url='" + src + "']");
-                    var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-                    var node = endedSongContainer.nextSibling;
-                    var nextSongContainer;
+        // переключение на следующий трек должно срабатывать только 1 раз
+        this.addClass("ending");
+
+        switch (mode) {
+            case "shuffle":
+                var songs = [].slice.call($$(".music p.song"), 0).sort(function () {
+                    return (Math.random() < 0.5);
+                });
+
+                Sounds.play(songs[0]);
+                break;
+
+            case "repeat":
+                var songContainer = $(".music p.song[data-url='" + src + "']");
+                Sounds.play(songContainer);
+                break;
+
+            default:
+                var endedSongContainer = $(".music p.song[data-url='" + src + "']");
+                var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+                var node, nextSongContainer;
+
+                if (endedSongContainer) {
+                    node = endedSongContainer.nextSibling;
 
                     while (node) {
                         if (matchesSelectorFn.call(node, "p.song")) {
@@ -67,32 +78,45 @@ Sounds = (function () {
 
                         node = node.nextSibling;
                     }
+                } else {
+                    nextSongContainer = $(".music p.song");
+                }
 
-                    if (nextSongContainer) {
-                        Sounds.play(nextSongContainer);
-                    }
+                if (nextSongContainer) {
+                    Sounds.play(nextSongContainer);
+                }
 
-                    break;
-            }
-        }).bind("timeupdate", function () {
-            var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-            var songContainer = $(".music p.song[data-url='" + this.attr("src") + "']");
-            var progressElem = songContainer.previousSibling;
+                break;
+        }
+    }
 
-            if (!progressElem || !matchesSelectorFn.call(progressElem, "div.song-playing-bg")) {
-                progressElem = $("<div class='song-playing-bg'>&nbsp;</div>");
-                songContainer.before(progressElem.css("width", "0"));
-            }
+    function onEnded() {
+        var src = this.attr("src");
 
-            var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
-            progressElem.css("width", width);
-        });
+        songsPlaying[src].dom.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate).remove();
+        delete songsPlaying[src];
 
-        document.body.append(audioElem);
-        songsPlaying[src] = {
-            dom: audioElem,
-            interval: 0
-        };
+        var progressElem = $(".music div.song-playing-bg[data-url='" + src + "']");
+        if (progressElem) {
+            progressElem.remove();
+        }
+
+        // обновляем rate counter
+        var currentCnt = Settings.get("headerRateCounter") + 1;
+        var payElem = $("header div.pay");
+        Settings.set("headerRateCounter", currentCnt);
+
+        // при достижении header_rate_limit показываем слой с кнопками
+        if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
+            Templates.render("header-pay", {
+                payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                cwsRate: chrome.i18n.getMessage("rateCWS"),
+                close: chrome.i18n.getMessage("close")
+            }, function (html) {
+                $("header").append(html);
+            });
+        }
     }
 
     /**
@@ -140,17 +164,18 @@ Sounds = (function () {
          */
         play: function Sounds_play(elem) {
             if (elem) {
-                var originalAudioSrc = elem.data("url");
-                if (songsPlaying[originalAudioSrc])
-                    return;
-
                 if (elem.hasClass("played")) {
                     var songsPlayed = Settings.get("songsPlayed");
                     Settings.set("songsPlayed", songsPlayed + 1);
                 }
 
                 elem.addClass("played");
-                createAudioElem(originalAudioSrc);
+
+                var originalAudioSrc = elem.data("url");
+                if (!songsPlaying[originalAudioSrc]) {
+                    createAudioElem(originalAudioSrc);
+                }
+
                 $(elem, "span.glyphicon-play").addClass("glyphicon-pause").removeClass("glyphicon-play");
 
                 Object.keys(songsPlaying).forEach(function (audioSrc) {
@@ -159,9 +184,17 @@ Sounds = (function () {
                     if (audioSrc === originalAudioSrc) {
                         smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS, true);
                     } else {
+                        var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
+                        $(songContainer, "span.glyphicon-play, span.glyphicon-pause").addClass("glyphicon-play").removeClass("glyphicon-pause");
+
                         smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
-                            songsPlaying[audioSrc].dom.remove();
+                            songsPlaying[audioSrc].dom.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate).remove();
                             delete songsPlaying[audioSrc];
+
+                            var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+                            if (progressElem) {
+                                progressElem.remove();
+                            }
                         });
                     }
 
@@ -205,6 +238,7 @@ Sounds = (function () {
                 });
             });
 
+            $$(".music span.glyphicon-play, span.glyphicon-pause").addClass("glyphicon-play").removeClass("glyphicon-pause");
             $("header span.playpause").removeClass("paused");
         },
 
