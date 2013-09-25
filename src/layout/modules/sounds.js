@@ -39,7 +39,7 @@ Sounds = (function () {
         if (!isEnding)
             return;
 
-        var isPlayerPaused = $("header span.playpause").hasClass("paused");
+        var isPlayerPaused = $("header span.playpause").addClass("glyphicon-pause").removeClass("glyphicon-play");
         var mode = Settings.get("songsPlayingMode");
 
         if (isPlayerPaused || this.hasClass("ending"))
@@ -176,7 +176,7 @@ Sounds = (function () {
                     createAudioElem(originalAudioSrc);
                 }
 
-                $(elem, "span.glyphicon-play").addClass("glyphicon-pause").removeClass("glyphicon-play");
+                $(elem, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
 
                 Object.keys(songsPlaying).forEach(function (audioSrc) {
                     var audioElem = songsPlaying[audioSrc].dom;
@@ -185,16 +185,17 @@ Sounds = (function () {
                         smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS, true);
                     } else {
                         var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-                        $(songContainer, "span.glyphicon-play, span.glyphicon-pause").addClass("glyphicon-play").removeClass("glyphicon-pause");
+                        $(songContainer, "span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
+
+                        audioElem.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate);
+                        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+                        if (progressElem) {
+                            progressElem.remove();
+                        }
 
                         smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
-                            songsPlaying[audioSrc].dom.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate).remove();
+                            audioElem.remove();
                             delete songsPlaying[audioSrc];
-
-                            var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-                            if (progressElem) {
-                                progressElem.remove();
-                            }
                         });
                     }
 
@@ -209,10 +210,14 @@ Sounds = (function () {
                         var isStarting = (audioElem.currentTime * 1000 < FADING_TIMEOUT_MS);
                         var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
 
-                        if (isStarting) {
-                            smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS - audioElem.currentTime * 1000, true);
-                        } else if (isEnding) {
+                        if (isEnding) {
                             smoothInterval(audioSrc, 0, (audioElem.duration - audioElem.currentTime) * 1000, false);
+                        } else {
+                            var msForInterval = isStarting ? FADING_TIMEOUT_MS - audioElem.currentTime * 1000 : FADING_TIMEOUT_MS;
+                            smoothInterval(audioSrc, Settings.get("volume"), msForInterval, true);
+
+                            var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
+                            $(songContainer, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
                         }
 
                         audioElem.play();
@@ -222,7 +227,33 @@ Sounds = (function () {
                 }
             }
 
-            $("header span.playpause").removeClass("paused");
+            $("header span.playpause").addClass("glyphicon-pause").removeClass("glyphicon-play");
+        },
+
+        playNext: function Sounds_playNext() {
+            var songsKeys = Object.keys(songsPlaying);
+
+            if (songsKeys.length) {
+                // can be paused
+                // can be ending and new song can be started
+
+                // var songContainer = $(".music p.song[data-url='" +  + "']")
+            } else {
+                this.play();
+            }
+        },
+
+        playPrev: function Sounds_playPrev() {
+            var songsKeys = Object.keys(songsPlaying);
+
+            if (songsKeys.length) {
+                // can be paused
+                // can be ending and new song can be started
+
+                // var songContainer = $(".music p.song[data-url='" +  + "']")
+            } else {
+                this.play();
+            }
         },
 
         pause: function Sounds_pause() {
@@ -238,8 +269,8 @@ Sounds = (function () {
                 });
             });
 
-            $$(".music span.glyphicon-play, span.glyphicon-pause").addClass("glyphicon-play").removeClass("glyphicon-pause");
-            $("header span.playpause").removeClass("paused");
+            $$(".music span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
+            $("header span.playpause").removeClass("glyphicon-pause").addClass("glyphicon-play");
         },
 
         /**

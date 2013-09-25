@@ -115,19 +115,39 @@ header .search {
     margin-left: 8px;
 }
 
-header .player button {
-    padding-left: 6px;
-    padding-right: 6px;
-    color: white !important;
+header .player-buttons,
+header .player-mode,
+header .player-volume {
+    position: relative;
+    top: 2px;
+    margin-left: 16px;
 }
 
-header .player button:first-of-type {
-    margin-left: 20px;
+header .player-buttons .glyphicon,
+header .player-mode .glyphicon,
+header .player-volume .glyphicon {
+    display: inline-block;
+    cursor: pointer;
+    padding: 10px 6px;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
+}
+
+header .player-buttons .glyphicon {
+    color: white;
+}
+
+header .player-mode .mode {
+    color: #666;
+}
+
+header .player-mode .mode.active {
+    color: white;
+    text-shadow: 0 0 3px white;
 }
 
 header input[type='range'] {
-    margin-left: 12px;
-    vertical-align: middle;
     width: 80px;
 }
 

@@ -39,7 +39,10 @@ parallel({
         if (vkToken) {
             Templates.render("user", {
                 placeholder: chrome.i18n.getMessage("searchPlaceholder"),
-                localTitle: chrome.i18n.getMessage("localTitle")
+                localTitle: chrome.i18n.getMessage("localTitle"),
+                volume: Settings.get("volume"),
+                isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
+                isRepeated: (Settings.get("songsPlayingMode") === "repeat")
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
@@ -131,26 +134,30 @@ parallel({
             },
             // проигрывание песни из шапки
             "header span.playpause": function (evt) {
-
-            },
-            // включение режима "shuffle"
-            "header span.mode.shuffle": function (evt) {
-                if (this.hasClass("active")) {
-                    Sounds.disableMode();
+                if (this.hasClass("glyphicon-play")) {
+                    Sounds.play();
                 } else {
-                    Sounds.enableMode("shuffle");
+                    Sounds.pause();
                 }
             },
-            // включение режима "repeat"
-            "header span.mode.repeat": function (evt) {
+            // переход к предыдущей песне
+            "header span.prev": function (evt) {
+                Sounds.playPrev();
+            },
+            // переход к следующей песне
+            "header span.next": function (evt) {
+                Sounds.playNext();
+            },
+            // включение режимов "shuffle" и "repeat"
+            "header span.mode": function (evt) {
                 if (this.hasClass("active")) {
                     Sounds.disableMode();
                 } else {
-                    Sounds.enableMode("repeat");
+                    Sounds.enableMode(this.data("mode"));
                 }
             },
             // проигрывание песни и постановка на паузу
-            ".music span.glyphicon-play, .music span.glyphicon-pause": function (evt) {
+            ".music span.play": function (evt) {
                 var play = this.hasClass("glyphicon-play");
 
                 if (play) {
