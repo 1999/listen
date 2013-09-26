@@ -10,6 +10,21 @@ CPA = (function () {
         }
     });
 
+    chrome.alarms.onAlarm.addListener(function (alarmInfo) {
+        if (alarmInfo.name !== "dayuse")
+            return;
+
+        chrome.storage.local.get("installId", function (records) {
+            CPA.sendEvent("Lyfecycle", "Dayuse", {
+                id: records.installId,
+                ver: chrome.runtime.getManifest().version,
+                played: Settings.get("songsPlayed"),
+                songsPlayingMode: Settings.get("songsPlayingMode"),
+                header: Settings.get("headerPay")
+            });
+        });
+    });
+
 
     return {
         changePermittedState: function CPA_changePermittedState(permitted) {

@@ -123,7 +123,7 @@ parallel({
                 });
             },
             // список локальных треков в облаке Google Drive
-            "header span.local": function (evt) {
+            "header .local": function (evt) {
                 emptyContent();
 
                 SyncFS.requestCurrentFilesList(function (songs) {
@@ -259,16 +259,28 @@ parallel({
                 headerBtn.click();
             },
             "header .closePay": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.close += 1;
+                Settings.set("headerPay", headerPay);
+
                 Settings.set("headerRateCounter", 0);
                 $("header div.pay").remove();
 
                 evt.stopImmediatePropagation();
             },
             "header .cwsrate": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.ratecws += 1;
+                Settings.set("headerPay", headerPay);
+
                 window.open(Config.constants.cws_app_link + "/reviews");
                 $("header .closePay").click();
             },
             "header .yamoney": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.yamoney += 1;
+                Settings.set("headerPay", headerPay);
+
                 window.open(Config.constants.yamoney_link);
                 $("header .closePay").click();
             }

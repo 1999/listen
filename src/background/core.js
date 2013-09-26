@@ -19,6 +19,8 @@ window.onerror = function(msg, url, line) {
 
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
+        var currentVersion = chrome.runtime.getManifest().version;
+
         switch (details.reason) {
             case "install":
                 CPA.changePermittedState(true);
@@ -28,29 +30,34 @@ window.onerror = function(msg, url, line) {
 
                 var lyfecycleParams = {
                     id: installId,
-                    ver: chrome.runtime.getManifest().version
+                    ver: currentVersion
                 };
 
                 CPA.sendEvent("Lyfecycle", "Install", lyfecycleParams);
 
                 var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
                 chrome.runtime.setUninstallUrl(uninstallUrl);
+
+                setDayUseAlarm();
                 break;
 
             case "update":
-                if (chrome.runtime.getManifest().version === details.previousVersion)
+                if (currentVersion === details.previousVersion)
                     return;
+
+                if (/^1\./.test(details.previousVersion))
+                    setDayUseAlarm();
 
                 chrome.storage.local.get("installId", function (records) {
                     CPA.sendEvent("Lyfecycle", "Update", {
                         prev: details.previousVersion,
-                        curr: chrome.runtime.getManifest().version,
+                        curr: currentVersion,
                         id: records.installId
                     });
 
                     var lyfecycleParams = {
                         id: records.installId,
-                        ver: chrome.runtime.getManifest().version
+                        ver: currentVersion
                     };
 
                     var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
@@ -66,6 +73,13 @@ window.onerror = function(msg, url, line) {
             id: uuid(),
             minWidth: 800,
             minHeight: 540
+        });
+    }
+
+    function setDayUseAlarm() {
+        chrome.alarms.create("dayuse", {
+            delayInMinutes: 24 * 60,
+            periodInMinutes: 24 * 60
         });
     }
 
