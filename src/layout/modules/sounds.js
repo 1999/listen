@@ -185,7 +185,9 @@ Sounds = (function () {
                         smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS, true);
                     } else {
                         var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-                        $(songContainer, "span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
+                        if (songContainer) {
+                            $(songContainer, "span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
+                        }
 
                         audioElem.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate);
                         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
