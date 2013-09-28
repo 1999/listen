@@ -128,7 +128,17 @@ parallel({
 
                 SyncFS.requestCurrentFilesList(function (songs) {
                     Templates.render("songs", {songs: songs}, function (music) {
-                        fillContent("", music);
+                        fillContent("", music, function () {
+                            $$(".music p.song").each(function () {
+                                var audioSrc = this.data("url");
+                                var durationElem = $(this, ".duration");
+
+                                var audio = new Audio(audioSrc);
+                                audio.bind("durationchange", function () {
+                                    durationElem.html(Math.floor(audio.duration / 60) + ":" + strpad(Math.ceil(audio.duration) % 60));
+                                });
+                            });
+                        });
                     });
                 });
             },
