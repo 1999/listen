@@ -39,7 +39,7 @@ Sounds = (function () {
         if (!isEnding)
             return;
 
-        var isPlayerPaused = $("header span.playpause").addClass("glyphicon-pause").removeClass("glyphicon-play");
+        var isPlayerPaused = $("header span.playpause").hasClass("glyphicon-play");
         var mode = Settings.get("songsPlayingMode");
 
         if (isPlayerPaused || this.hasClass("ending"))
@@ -58,12 +58,12 @@ Sounds = (function () {
                 break;
 
             case "repeat":
-                var songContainer = $(".music p.song[data-url='" + src + "']");
+                var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
                 Sounds.play(songContainer);
                 break;
 
             default:
-                var endedSongContainer = $(".music p.song[data-url='" + src + "']");
+                var endedSongContainer = $(".music p.song[data-url='" + audioSrc + "']");
                 var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
                 var node, nextSongContainer;
 
