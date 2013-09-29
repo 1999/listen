@@ -90,5 +90,13 @@
     "more": {
         "en": "More",
         "ru": "Еще"
+    },
+    "modeShuffle": {
+        "en": "Shuffle songs",
+        "ru": "Проигрывать в случайном порядке"
+    },
+    "modeRepeat": {
+        "en": "Repeat playing track",
+        "ru": "Повторять проигрываемый трек"
     }
 }

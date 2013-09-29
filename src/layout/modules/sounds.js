@@ -61,7 +61,6 @@ Sounds = (function () {
                     });
                 } else {
                     var nextSongIndex = (songs[0].data("url") === audioSrc) ? 1 : 0;
-                    console.log(nextSongIndex, songs[nextSongIndex]);
                     Sounds.play(songs[nextSongIndex]);
                 }
 
@@ -114,9 +113,11 @@ Sounds = (function () {
         }
 
         // обновляем rate counter
-        var currentCnt = Settings.get("headerRateCounter") + 1;
-        var payElem = $("header div.pay");
-        Settings.set("headerRateCounter", currentCnt);
+        if (!this.hasClass("ending-via-button")) {
+            var currentCnt = Settings.get("headerRateCounter") + 1;
+            var payElem = $("header div.pay");
+            Settings.set("headerRateCounter", currentCnt);
+        }
 
         // при достижении header_rate_limit показываем слой с кнопками
         if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
@@ -248,10 +249,17 @@ Sounds = (function () {
             var songsKeys = Object.keys(songsPlaying);
 
             if (songsKeys.length) {
-                // can be paused
-                // can be ending and new song can be started
+                songsKeys.forEach(function (audioSrc) {
+                    var audioElem = songsPlaying[audioSrc].dom;
+                    audioElem.play();
 
-                // var songContainer = $(".music p.song[data-url='" +  + "']")
+                    if (audioElem.hasClass("ending"))
+                        return;
+
+                    // @todo переписать
+                    audioElem.addClass("ending-via-button");
+                    audioElem.currentTime = audioElem.duration - 0.2;
+                });
             } else {
                 this.play();
             }
@@ -261,10 +269,37 @@ Sounds = (function () {
             var songsKeys = Object.keys(songsPlaying);
 
             if (songsKeys.length) {
-                // can be paused
-                // can be ending and new song can be started
+                if (["shuffle", "repeat"].indexOf(Settings.get("songsPlayingMode")) !== -1) {
+                    // @todo возвращаться на предыдущую песню в случае "shuffle"
+                    return this.playNext();
+                }
 
-                // var songContainer = $(".music p.song[data-url='" +  + "']")
+                // @todo
+                if (songsKeys.length > 1)
+                    return;
+
+                var songContainer = $(".music p.song[data-url='" + songsKeys[0] + "']");
+                if (songContainer) {
+                    var totalContainers = $$(".music p.song");
+                    var prevSongIndex;
+
+                    if (totalContainers.length === 1) {
+                        this.play(songContainer);
+                    } else {
+                        totalContainers.each(function (index) {
+                            if (this === songContainer) {
+                                prevSongIndex = index ? index - 1 : totalContainers.length - 1;
+                            }
+                        });
+
+                        this.play(totalContainers[prevSongIndex]);
+                    }
+                } else {
+                    var firstVisibleElem = $(".music p.song");
+                    if (firstVisibleElem) {
+                        this.play(firstVisibleElem);
+                    }
+                }
             } else {
                 this.play();
             }
