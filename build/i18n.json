@@ -98,5 +98,9 @@
     "modeRepeat": {
         "en": "Repeat playing track",
         "ru": "Повторять проигрываемый трек"
+    },
+    "similarArtists": {
+        "en": "Similar artists",
+        "ru": "Похожие исполнители"
     }
 }

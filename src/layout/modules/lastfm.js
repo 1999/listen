@@ -40,6 +40,23 @@ Lastfm = (function () {
                         callback(null);
                     });
                 },
+                similar: function (callback) {
+                    // @todo similar есть и в просто artist.getInfo
+                    makeAPIRequest("artist.getSimilar", {
+                        artist: searchQuery,
+                        limit: 10,
+                        autocorrect: 1
+                    }, function (xml) {
+                        var artists = [];
+                        [].forEach.call(xml.querySelectorAll("artist > name"), function (artistName) {
+                            artists.push(artistName.textContent);
+                        });
+
+                        callback(artists);
+                    }, function () {
+                        callback(null);
+                    });
+                },
                 tracks: function (callback) {
                     makeAPIRequest("artist.gettoptracks", {artist: searchQuery}, function (xml) {
                         var tracks = [];

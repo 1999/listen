@@ -435,11 +435,15 @@ parallel({
         }, function (res) {
             parallel({
                 info: function (callback) {
+                    // @todo res.lastfm.tracks
+
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: createValidHTML(res.lastfm.info),
                         artist: artist,
-                        albums: res.lastfm.albums
+                        albums: res.lastfm.albums,
+                        similarArtists: chrome.i18n.getMessage("similarArtists"),
+                        similarList: res.lastfm.similar
                     }, callback);
                 },
                 music: function (callback) {

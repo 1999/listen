@@ -239,6 +239,21 @@ div.pay .btn-link {
     margin: 0;
 }
 
+.info .similar ul {
+    font-size: inherit;
+    display: inline;
+    -webkit-padding-start: 8px;
+}
+
+.info .similar li {
+    font-size: inherit;
+    display: inline;
+}
+
+.info .similar li:not(:last-child)::after {
+    content: ", ";
+}
+
 /* Music */
 .music {
     padding: 16px 0 16px;
