@@ -113,8 +113,6 @@ SyncFS = (function () {
                                 console.error(err);
                                 calback();
                             });
-
-                            callback();
                         };
                     })(results[i]);
                 }
@@ -216,6 +214,8 @@ SyncFS = (function () {
                                         pendingDownloads.splice(index, 1);
 
                                         cachedCounter += 1;
+                                        downloadedFilesIds.push(audioId);
+
                                         notifyAppWindows();
                                     };
 
