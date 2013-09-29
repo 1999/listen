@@ -1,10 +1,11 @@
-SyncFS = (function() {
+SyncFS = (function () {
     "use strict";
 
     var ID3V1_START = "TAG";
     var NULLSTRING = String.fromCharCode(0);
 
     var pendingDownloads = []; // список URL скачиваемых файлов
+    var downloadedFilesIds = []; // список ID скачанных файлов
     var cachedCounter = -1;
 
     chrome.syncFileSystem.onFileStatusChanged.addListener(function (details) {
@@ -19,7 +20,7 @@ SyncFS = (function() {
         if (req.action === "currentSyncFSCounter") {
             sendResponse(SyncFS.getCurrentCounterValue());
         } else if (req.action === "saveGoogleDrive") {
-            SyncFS.save(req.artist, req.title, req.url);
+            SyncFS.save(req.artist, req.title, req.url, req.id);
         }
     });
 
@@ -83,22 +84,51 @@ SyncFS = (function() {
 
             dirReader.readEntries(function (results) {
                 cachedCounter = 0;
+                downloadedFilesIds.length = 0;
+
+                var tasks = [];
 
                 for (var i = 0; i < results.length; i++) {
-                    if (/\.mp3$/.test(results[i].name)) {
-                        cachedCounter += 1;
-                    }
+                    if (!/\.mp3$/.test(results[i].name))
+                        continue;
+
+                    (function (fileEntry) {
+                        tasks[tasks.length] = function (callback) {
+                            cachedCounter += 1;
+
+                            fileEntry.file(function (file) {
+                                var reader = new FileReader;
+                                reader.onloadend = function () {
+                                    var id3v1 = reader.result.substr(reader.result.length - 128);
+                                    var commentText = id3v1.substr(97, 30).replace(new RegExp(NULLSTRING, "g"), "");
+
+                                    if (commentText.length && /^[\d]+$/.test(commentText))
+                                        downloadedFilesIds.push(commentText);
+
+                                    callback();
+                                };
+
+                                reader.readAsBinaryString(file);
+                            }, function (err) {
+                                console.error(err);
+                                calback();
+                            });
+
+                            callback();
+                        };
+                    })(results[i]);
                 }
 
-                notifyAppWindows();
+                parallel(tasks, notifyAppWindows);
             });
         });
     }
 
     function notifyAppWindows() {
         chrome.runtime.sendMessage({
-            action: "syncFsCounterUpdted",
-            value: SyncFS.getCurrentCounterValue()
+            action: "syncFsCounterUpdated",
+            value: SyncFS.getCurrentCounterValue(),
+            files: downloadedFilesIds
         });
     }
 
@@ -134,7 +164,7 @@ SyncFS = (function() {
          * @param {String} title
          * @param {String} url
          */
-        save: function SyncFS_save(artist, title, url) {
+        save: function SyncFS_save(artist, title, url, audioId) {
             artist = artist.trim();
             title = title.trim();
 
@@ -161,20 +191,22 @@ SyncFS = (function() {
                             readBinary(blob.slice(tagStart + 3, tagStart + 33, "text/plain"), callback);
                         }
                     }, function (res) {
-                        if (res.tag !== "TAG") {
-                            var tagData = ID3V1_START;
-                            var totalBytesLength = 3;
+                        // http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm#MPEGTAG
+                        var tagData = ID3V1_START;
+                        var totalBytesLength = 3;
 
-                            tagData += makeSafeString(title, 30);
-                            tagData += makeSafeString(artist, 30);
+                        tagData += makeSafeString(title, 30);
+                        tagData += makeSafeString(artist, 30);
+                        tagData += makeSafeString("", 30); // album
+                        tagData += makeSafeString("", 4); // year
+                        tagData += makeSafeString(audioId, 30); // comment
+                        tagData += makeSafeString("", 1); // year
 
-                            for (var i = 63; i < 128; i++) {
-                                tagData += NULLSTRING;
-                            }
+                        console.log("Construct new blob from original data and tag data: %s", tagData);
 
-                            console.log("Construct new blob from original data and tag data: %s", tagData);
-                            blob = new Blob([blob, tagData], {type: "audio/mpeg"});
-                        }
+                        var resultBlob = (res.tag !== "TAG")
+                            ? new Blob([blob, tagData], {type: "audio/mpeg"})
+                            : new Blob([blob.slice(0, tagStart), tagData], {type: "audio/mpeg"});
 
                         chrome.syncFileSystem.requestFileSystem(function (fs) {
                             fs.root.getFile(artist + " - " + title + ".mp3", {create: true}, function (fileEntry) {
@@ -201,7 +233,7 @@ SyncFS = (function() {
                                         notifyAppWindows();
                                     };
 
-                                    fileWriter.write(blob);
+                                    fileWriter.write(resultBlob);
                                 });
                             });
                         });

@@ -34,9 +34,11 @@ VK = (function () {
 
         [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
             var duration = audio.querySelector("duration").textContent;
+            var audioId = audio.querySelector("id").textContent;
 
             output.push({
-                id: audio.querySelector("id").textContent,
+                id: audioId,
+                pending: (SyncFS.downloadedIds.indexOf(audioId) !== -1),
                 source: audio.querySelector("url").textContent,
                 artist: audio.querySelector("artist").textContent,
                 song: audio.querySelector("title").textContent,

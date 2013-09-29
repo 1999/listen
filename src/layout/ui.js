@@ -192,8 +192,9 @@ parallel({
 
                 var songElem = this.closestParent("p.song");
                 var songURL = songElem.data("url");
+                var audioId = songElem.data("vkid");
 
-                SyncFS.queueFile(this.data("artist"), this.data("title"), songURL);
+                SyncFS.queueFile(this.data("artist"), this.data("title"), songURL, audioId);
                 this.addClass("pending");
             },
             ".music div.more": function (evt) {

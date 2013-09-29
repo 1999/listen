@@ -1,8 +1,13 @@
 SyncFS = (function () {
     "use strict";
 
+    var downloadedFilesIds = [];
+
     chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
-        if (req.action === "syncFsCounterUpdted") {
+        if (req.action === "syncFsCounterUpdated") {
+            console.log(req.files);
+
+            downloadedFilesIds = req.files;
             $("header span.local span.counter").text(req.value);
         }
     });
@@ -33,6 +38,10 @@ SyncFS = (function () {
 
 
     return {
+        get downloadedIds() {
+            return downloadedFilesIds;
+        },
+
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
             chrome.syncFileSystem.requestFileSystem(function (fs) {
                 var dirReader = fs.root.createReader();
@@ -82,12 +91,13 @@ SyncFS = (function () {
             }, callback);
         },
 
-        queueFile: function SyncFS_queueFile(artist, title, url) {
+        queueFile: function SyncFS_queueFile(artist, title, url, id) {
             chrome.runtime.sendMessage({
                 action: "saveGoogleDrive",
                 url: url,
                 artist: artist,
-                title: title
+                title: title,
+                id: id
             });
         }
     };
