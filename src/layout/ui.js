@@ -392,7 +392,7 @@ parallel({
                 info: function (callback) {
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: res.lastfm.info,
+                        artistDescription: createValidHTML(res.lastfm.info),
                         artist: searchQuery,
                         albums: res.lastfm.albums
                     }, callback);

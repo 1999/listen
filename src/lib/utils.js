@@ -331,7 +331,13 @@
         }
 
         [].forEach.call(doc.querySelectorAll("a[href]"), function (anchor) {
-            anchor.setAttribute("target", "_blank");
+            var correctMatches = anchor.getAttribute("href").match(/^http:\/\/www\.last\.fm\/music\/(.+)/);
+
+            if (correctMatches && !/^Read\smore/.test(anchor.textContent)) {
+                anchor.setAttribute("href", "artist:" + correctMatches[1].replace(/\+/g, " "));
+            } else {
+                anchor.setAttribute("target", "_blank");
+            }
         });
 
         return doc.documentElement.innerHTML;
