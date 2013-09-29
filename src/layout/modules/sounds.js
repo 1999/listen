@@ -47,28 +47,39 @@ Sounds = (function () {
 
         // переключение на следующий трек должно срабатывать только 1 раз
         this.addClass("ending");
+        smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, true);
 
         switch (mode) {
             case "shuffle":
                 var songs = [].slice.call($$(".music p.song"), 0).sort(function () {
-                    return (Math.random() < 0.5);
+                    return (Math.random() < 0.5) ? -1 : 1;
                 });
 
-                Sounds.play(songs[0]);
+                if (songs.length === 1) {
+                    this.bind("ended", function () {
+                        Sounds.play(songContainer);
+                    });
+                } else {
+                    var nextSongIndex = (songs[0].data("url") === audioSrc) ? 1 : 0;
+                    console.log(nextSongIndex, songs[nextSongIndex]);
+                    Sounds.play(songs[nextSongIndex]);
+                }
+
                 break;
 
             case "repeat":
-                var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-                Sounds.play(songContainer);
+                this.bind("ended", function () {
+                    Sounds.play(songContainer);
+                });
+
                 break;
 
             default:
-                var endedSongContainer = $(".music p.song[data-url='" + audioSrc + "']");
                 var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
                 var node, nextSongContainer;
 
-                if (endedSongContainer) {
-                    node = endedSongContainer.nextSibling;
+                if (songContainer) {
+                    node = songContainer.nextSibling;
 
                     while (node) {
                         if (matchesSelectorFn.call(node, "p.song")) {
@@ -96,6 +107,7 @@ Sounds = (function () {
         songsPlaying[src].dom.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate).remove();
         delete songsPlaying[src];
 
+        // удаляем progress фон
         var progressElem = $(".music div.song-playing-bg[data-url='" + src + "']");
         if (progressElem) {
             progressElem.remove();

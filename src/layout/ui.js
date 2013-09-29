@@ -42,7 +42,9 @@ parallel({
                 localTitle: chrome.i18n.getMessage("localTitle"),
                 volume: Settings.get("volume"),
                 isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
-                isRepeated: (Settings.get("songsPlayingMode") === "repeat")
+                isRepeated: (Settings.get("songsPlayingMode") === "repeat"),
+                shuffleTitle: chrome.i18n.getMessage("modeShuffle"),
+                repeatTitle: chrome.i18n.getMessage("modeRepeat")
             }, function (html) {
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
