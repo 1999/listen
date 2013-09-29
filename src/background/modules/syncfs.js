@@ -85,7 +85,7 @@ SyncFS = (function() {
                 cachedCounter = 0;
 
                 for (var i = 0; i < results.length; i++) {
-                    if (/\.mp3$/.test(results.item(i).name)) {
+                    if (/\.mp3$/.test(results[i].name)) {
                         cachedCounter += 1;
                     }
                 }

@@ -125,7 +125,7 @@ parallel({
                 });
             },
             // список локальных треков в облаке Google Drive
-            "header .local": function (evt) {
+            "header span.local": function (evt) {
                 emptyContent();
 
                 SyncFS.requestCurrentFilesList(function (songs) {

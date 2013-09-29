@@ -95,6 +95,11 @@
         });
     };
 
+    exports.strpad = function (str) {
+        str = str + "";
+        return (str.length === 1) ? "0" + str : str;
+    };
+
     exports.md5 = function (str) {
         function md5cycle(x, k) {
             var a = x[0];

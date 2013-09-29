@@ -54,6 +54,7 @@ SyncFS = (function () {
                             artist: null,
                             song: null,
                             duration: "0:00",
+                            pending: true,
                             cloudTitle: cloudTitle,
                             downloadTitle: downloadTitle
                         });

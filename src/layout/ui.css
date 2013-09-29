@@ -125,7 +125,8 @@ header .player-volume {
 
 header .player-buttons .glyphicon,
 header .player-mode .glyphicon,
-header .player-volume .glyphicon {
+header .player-volume .glyphicon,
+header .manage-local .glyphicon {
     display: inline-block;
     cursor: pointer;
     padding: 10px 6px;
@@ -303,6 +304,7 @@ div.pay .btn-link {
 
 .song .cloud.pending {
     color: #ccc;
+    cursor: default;
 }
 
 .song a {

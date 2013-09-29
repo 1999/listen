@@ -26,11 +26,6 @@ VK = (function () {
         }, this);
     }
 
-    function strpad(str) {
-        str = str + "";
-        return (str.length === 1) ? "0" + str : str;
-    }
-
     function xmlToArray(xml) {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
