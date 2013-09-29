@@ -51,14 +51,16 @@ parallel({
                 callback && callback();
                 CPA.sendAppView("User");
 
-                drawCurrentAudio();
+                if (navigator.onLine) {
+                    drawCurrentAudio();
+                } else {
+                    $("header span.local").click();
+                }
 
                 SyncFS.requestCurrentFilesNum(function (num) {
                     $("header span.local span.counter").text(num);
                 });
             });
-
-            // todo syncfs
         } else {
             Templates.render("guest", {
                 welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
@@ -184,6 +186,10 @@ parallel({
                 if (this.hasClass("pending"))
                     return;
 
+                // @todo обрабатывать более умно
+                if (!navigator.onLine)
+                    return;
+
                 var songElem = this.closestParent("p.song");
                 var songURL = songElem.data("url");
 
@@ -229,6 +235,11 @@ parallel({
                 var searchElem = $("header input[type='search']");
                 var searchQuery = searchElem.val();
                 var matches;
+
+                if (!navigator.onLine) {
+                    $("header span.local").click();
+                    return;
+                }
 
                 if (!searchQuery.length)
                     return drawCurrentAudio();
@@ -320,9 +331,7 @@ parallel({
 
             routes[selectedRoute].call(elem, evt);
             evt.stopImmediatePropagation();
-        });
-
-        $(document.body).bind("submit", function (evt) {
+        }).bind("submit", function (evt) {
             evt.preventDefault();
 
             var lastButton = $(this, "button[type='button']:last-of-type");
@@ -331,6 +340,15 @@ parallel({
 
             lastButton.click();
         });
+
+        window.addEventListener("online", function (evt) {
+            $("header input[type='search']").removeAttr("disabled");
+        }, false);
+
+        window.addEventListener("offline", function () {
+            $("header input[type='search']").attr("disabled", "disabled");
+            $("header span.local").click();
+        }, false);
 
         var headerSearchInput = $("header input[type='search']");
         if (headerSearchInput) {
