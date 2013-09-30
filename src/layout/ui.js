@@ -15,6 +15,8 @@ parallel({
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
+            // @todo study
+
             $(".info").html(infoHTML);
             $(".music").html(musicHTML);
 

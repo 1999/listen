@@ -10,6 +10,7 @@
         "lastfmToken": "", /* токен LastFM */
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
+        "study": [], /* показанные обучалки */
         "vkToken": "", /* токен ВКонтакте */
         "volume": 0.8 /* громкость */
     },
