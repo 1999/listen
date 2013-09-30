@@ -49,12 +49,11 @@ parallel({
                 $(document.body).addClass("user").removeClass("guest").html(html);
 
                 callback && callback();
-                CPA.sendAppView("User");
 
                 if (navigator.onLine) {
                     drawCurrentAudio();
                 } else {
-                    $("header span.local").click();
+                    drawCloudSongs();
                 }
 
                 SyncFS.requestCurrentFilesNum(function (num) {
@@ -128,23 +127,7 @@ parallel({
             },
             // список локальных треков в облаке Google Drive
             "header span.local": function (evt) {
-                emptyContent();
-
-                SyncFS.requestCurrentFilesList(function (songs) {
-                    Templates.render("songs", {songs: songs}, function (music) {
-                        fillContent("", music, function () {
-                            $$(".music p.song").each(function () {
-                                var audioSrc = this.data("url");
-                                var durationElem = $(this, ".duration");
-
-                                var audio = new Audio(audioSrc);
-                                audio.bind("durationchange", function () {
-                                    durationElem.html(Math.floor(audio.duration / 60) + ":" + strpad(Math.ceil(audio.duration) % 60));
-                                });
-                            });
-                        });
-                    });
-                });
+                drawCloudSongs();
             },
             // проигрывание песни из шапки
             "header span.playpause": function (evt) {
@@ -244,10 +227,8 @@ parallel({
                 var searchQuery = searchElem.val();
                 var matches;
 
-                if (!navigator.onLine) {
-                    $("header span.local").click();
-                    return;
-                }
+                if (!navigator.onLine)
+                    return drawCloudSongs();
 
                 if (!searchQuery.length)
                     return drawCurrentAudio();
@@ -355,7 +336,7 @@ parallel({
 
         window.addEventListener("offline", function () {
             $("header input[type='search']").attr("disabled", "disabled");
-            $("header span.local").click();
+            drawCloudSongs();
         }, false);
 
         var headerSearchInput = $("header input[type='search']");
@@ -401,6 +382,30 @@ parallel({
                 fillContent("", music);
             });
         });
+
+        CPA.sendAppView("User.CurrentAudio");
+    }
+
+    function drawCloudSongs() {
+        emptyContent();
+
+        SyncFS.requestCurrentFilesList(function (songs) {
+            Templates.render("songs", {songs: songs}, function (music) {
+                fillContent("", music, function () {
+                    $$(".music p.song").each(function () {
+                        var audioSrc = this.data("url");
+                        var durationElem = $(this, ".duration");
+
+                        var audio = new Audio(audioSrc);
+                        audio.bind("durationchange", function () {
+                            durationElem.html(Math.floor(audio.duration / 60) + ":" + strpad(Math.ceil(audio.duration) % 60));
+                        });
+                    });
+                });
+            });
+        });
+
+        CPA.sendAppView("User.CloudSongs");
     }
 
     function drawSearchSongs(searchQuery) {
@@ -445,6 +450,8 @@ parallel({
                 });
             });
         });
+
+        CPA.sendAppView("User.Search");
     }
 
     // todo mbid support
@@ -494,6 +501,8 @@ parallel({
                 });
             });
         });
+
+        CPA.sendAppView("User.SearchArtist");
     }
 
     function drawAlbum(searchData) {
@@ -569,5 +578,7 @@ parallel({
                 })(0);
             });
         });
+
+        CPA.sendAppView("User.SearchAlbum");
     }
 });
