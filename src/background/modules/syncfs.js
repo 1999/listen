@@ -79,7 +79,12 @@ SyncFS = (function () {
     }
 
     function updateCurrentCounter() {
+        // @todo use http://developer.chrome.com/apps/syncFileSystem.html#method-getServiceStatus
+
         chrome.syncFileSystem.requestFileSystem(function (fs) {
+            if (!fs)
+                return;
+
             var dirReader = fs.root.createReader();
 
             dirReader.readEntries(function (results) {
