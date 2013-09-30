@@ -26,7 +26,7 @@ VK = (function () {
         }, this);
     }
 
-    function xmlToArray(xml) {
+    function xmlToArray(xml, isSyncfsRunning) {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
         var downloadTitle = chrome.i18n.getMessage("downloadTitle");
@@ -38,7 +38,7 @@ VK = (function () {
 
             output.push({
                 id: audioId,
-                pending: (SyncFS.downloadedIds.indexOf(audioId) !== -1),
+                pending: (SyncFS.downloadedIds.indexOf(audioId) !== -1 || !isSyncfsRunning),
                 source: audio.querySelector("url").textContent,
                 artist: audio.querySelector("artist").textContent,
                 song: audio.querySelector("title").textContent,
@@ -66,8 +66,15 @@ VK = (function () {
                 sort: 2
             });
 
-            makeAPIRequest("audio.search", params, function (xml) {
-                callback(xmlToArray(xml));
+            parallel({
+                syncfs: function (callback) {
+                    SyncFS.isWorking(callback);
+                },
+                vkdata: function (callback) {
+                    makeAPIRequest("audio.search", params, callback);
+                }
+            }, function (results) {
+                callback(xmlToArray(results.vkdata, results.syncfs));
             });
         },
 
@@ -80,14 +87,28 @@ VK = (function () {
                 sort: 2
             });
 
-            makeAPIRequest("audio.search", params, function (xml) {
-                callback(xmlToArray(xml));
+            parallel({
+                syncfs: function (callback) {
+                    SyncFS.isWorking(callback);
+                },
+                vkdata: function (callback) {
+                    makeAPIRequest("audio.search", params, callback);
+                }
+            }, function (results) {
+                callback(xmlToArray(results.vkdata, results.syncfs));
             });
         },
 
         getCurrent: function VK_getCurrent(offset, callback) {
-            makeAPIRequest("audio.get", {offset: offset}, function (xml) {
-                callback(xmlToArray(xml));
+            parallel({
+                syncfs: function (callback) {
+                    SyncFS.isWorking(callback);
+                },
+                vkdata: function (callback) {
+                    makeAPIRequest("audio.get", {offset: offset}, callback);
+                }
+            }, function (results) {
+                callback(xmlToArray(results.vkdata, results.syncfs));
             });
         }
     };

@@ -83,6 +83,12 @@ SyncFS = (function () {
             });
         },
 
+        isWorking: function SyncFS_isWorking(callback) {
+            chrome.syncFileSystem.getServiceStatus(function (status) {
+                callback(status === "running");
+            });
+        },
+
         requestCurrentFilesNum: function SyncFS_requestCurrentFilesNum(callback) {
             chrome.runtime.sendMessage({
                 action: "currentSyncFSCounter"
