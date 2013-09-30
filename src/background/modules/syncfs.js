@@ -218,6 +218,11 @@ SyncFS = (function () {
                                         var index = pendingDownloads.indexOf(url);
                                         pendingDownloads.splice(index, 1);
 
+                                        CPA.sendEvent("Actions", "saveGoogleDrive", {
+                                            artist: artist,
+                                            title: title
+                                        });
+
                                         cachedCounter += 1;
                                         downloadedFilesIds.push(audioId);
 

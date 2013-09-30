@@ -197,6 +197,13 @@ parallel({
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL, audioId);
                 this.addClass("pending");
             },
+            // скачивание песни
+            ".music a[download]": function (evt) {
+                CPA.sendEvent("Actions", "saveLocal", {
+                    artist: this.data("artist"),
+                    title: this.data("title")
+                });
+            },
             ".music div.more": function (evt) {
                 if (this.hasClass("loading"))
                     return;
