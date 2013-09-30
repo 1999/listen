@@ -15,12 +15,25 @@ parallel({
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
-            // @todo study
+            if (Settings.get("study").indexOf("cloud") !== -1) {
+                $(".info").html(infoHTML);
+                $(".music").html(musicHTML);
 
-            $(".info").html(infoHTML);
-            $(".music").html(musicHTML);
+                callback && callback();
+                return;
+            }
 
-            callback && callback();
+            Templates.render("info-callout-study", {
+                type: "cloud",
+                text: "Вот такая кнопочка делает то-то, а такая в верхнем правом углу то-=то"
+            }, function (studyHTML) {
+                infoHTML = studyHTML + infoHTML;
+
+                $(".info").html(infoHTML);
+                $(".music").html(musicHTML);
+
+                callback && callback();
+            });
         };
 
         $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
@@ -154,6 +167,17 @@ parallel({
                 } else {
                     Sounds.enableMode(this.data("mode"));
                 }
+            },
+            // закрытие обучалок
+            ".info .study button.close": function (evt) {
+                var container = this.closestParent(".study");
+                var currentStudy = Settings.get("study");
+
+                currentStudy.push(container.data("study"));
+                Settings.set("study", currentStudy);
+
+                container.remove();
+                evt.stopImmediatePropagation();
             },
             // проигрывание песни и постановка на паузу
             ".music span.play": function (evt) {
