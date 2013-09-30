@@ -20,7 +20,8 @@ CPA = (function () {
                 ver: chrome.runtime.getManifest().version,
                 played: Settings.get("songsPlayed"),
                 songsPlayingMode: Settings.get("songsPlayingMode"),
-                header: Settings.get("headerPay")
+                header: Settings.get("headerPay"),
+                cloudStudy: (Settings.get("study").indexOf("cloud") !== -1)
             });
         });
     });

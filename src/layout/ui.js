@@ -23,10 +23,12 @@ parallel({
                 return;
             }
 
-            Templates.render("info-callout-study", {
-                type: "cloud",
-                text: "Вот такая кнопочка делает то-то, а такая в верхнем правом углу то-=то"
+            Templates.render("info-callout-cloud", {
+                text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
+                downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
+                listText: chrome.i18n.getMessage("cloudStudyList")
             }, function (studyHTML) {
+                console.log(studyHTML);
                 infoHTML = studyHTML + infoHTML;
 
                 $(".info").html(infoHTML);
