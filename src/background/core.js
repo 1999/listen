@@ -36,7 +36,9 @@ window.onerror = function(msg, url, line) {
                 CPA.sendEvent("Lyfecycle", "Install", lyfecycleParams);
 
                 var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
-                chrome.runtime.setUninstallUrl(uninstallUrl);
+                if (typeof chrome.runtime.setUninstallUrl === "function") {
+                    chrome.runtime.setUninstallUrl(uninstallUrl);
+                }
 
                 setDayUseAlarm();
                 break;
@@ -61,7 +63,9 @@ window.onerror = function(msg, url, line) {
                     };
 
                     var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
-                    chrome.runtime.setUninstallUrl(uninstallUrl);
+                    if (typeof chrome.runtime.setUninstallUrl === "function") {
+                        chrome.runtime.setUninstallUrl(uninstallUrl);
+                    }
                 });
 
                 break;
