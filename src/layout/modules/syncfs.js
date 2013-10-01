@@ -84,6 +84,9 @@ SyncFS = (function () {
         },
 
         isWorking: function SyncFS_isWorking(callback) {
+            if (!chrome.syncFileSystem.getServiceStatus)
+                return callback(true);
+
             chrome.syncFileSystem.getServiceStatus(function (status) {
                 callback(status === "running");
             });
