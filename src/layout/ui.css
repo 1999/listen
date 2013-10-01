@@ -1,7 +1,7 @@
 /* scrollbar */
 ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track-piece {
@@ -10,7 +10,7 @@
 
 ::-webkit-scrollbar-thumb {
     background-color: #bfbfbf;
-    border-radius: 12px;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -19,6 +19,10 @@
 
 ::-webkit-scrollbar-thumb:active {
     background-color: #999;
+}
+
+html {
+    height: 100%;
 }
 
 html, body {
@@ -39,8 +43,9 @@ input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: searchfield-decoration !important;
 }
 
-body.guest {
-
+body.guest.windows {
+    box-shadow: inset 0 0 6px 2px #888;
+    height: 100%;
 }
 
 body.user {
@@ -93,15 +98,15 @@ body.user {
 }
 
 /* Guest page */
-.guest {
+.guest-welcome {
     margin: 0 20px;
 }
 
-.guest .lead:first-of-type {
+.guest-welcome .lead:first-of-type {
     margin-top: 24px;
 }
 
-.guest input[type='checkbox'] {
+.guest-welcome input[type='checkbox'] {
     float: none;
     margin: 0 4px 0 0;
 }

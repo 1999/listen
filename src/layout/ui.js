@@ -28,7 +28,6 @@ parallel({
                 downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
                 listText: chrome.i18n.getMessage("cloudStudyList")
             }, function (studyHTML) {
-                console.log(studyHTML);
                 infoHTML = studyHTML + infoHTML;
 
                 $(".info").html(infoHTML);
@@ -89,6 +88,9 @@ parallel({
                 authVK: chrome.i18n.getMessage("authorizeVK")
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
+
+                if (/^win/i.test(navigator.platform))
+                    $(document.body).addClass("windows");
 
                 CPA.sendAppView("Guest");
 
