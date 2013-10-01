@@ -1,3 +1,26 @@
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: #f8f8f8;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #bfbfbf;
+    border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: #999;
+}
+
 html, body {
     overflow-y: visible;
 }
@@ -293,6 +316,10 @@ div.pay .btn-link {
 
 .song-playing-bg {
     position: absolute;
+    width: 100%;
+}
+
+.song-playing-bg .song-playing-progress {
     padding: 5px 0;
     background: #e8e8e8;
 }
@@ -311,6 +338,7 @@ div.pay .btn-link {
     cursor: default;
 }
 
-.song a {
+.song a,
+.song span.link {
     color: #333;
 }
