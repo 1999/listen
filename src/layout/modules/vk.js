@@ -12,7 +12,7 @@ VK = (function () {
 
         options.access_token = Settings.get("vkToken");
         options.v = "5.0";
-        options.count = 300;
+        options.count = options.count || 300;
         options.offset = options.offset || 0;
 
         loadResource(BASE_URL + method + ".xml", {
@@ -33,8 +33,12 @@ VK = (function () {
         var count = parseInt(xml.querySelector("count").textContent, 10);
 
         [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
+            var audioIdNode = audio.querySelector("id");
+            if (!audioIdNode)
+                return;
+
+            var audioId = audioIdNode.textContent;
             var duration = audio.querySelector("duration").textContent;
-            var audioId = audio.querySelector("id").textContent;
 
             output.push({
                 id: audioId,
