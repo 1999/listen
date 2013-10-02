@@ -455,7 +455,9 @@ parallel({
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: createValidHTML(res.lastfm.info),
                         artist: searchQuery,
-                        albums: res.lastfm.albums
+                        albums: res.lastfm.albums,
+                        similarArtists: chrome.i18n.getMessage("similarArtists"),
+                        similarList: res.lastfm.similar
                     }, callback);
                 },
                 music: function (callback) {

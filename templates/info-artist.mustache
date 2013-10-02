@@ -16,11 +16,13 @@
     </figure>
 {{/albums}}
 
-<div class="lead similar">
-    <span>{{similarArtists}}:</span>
-    <ul>
-        {{#similarList}}
-            <li><a href="artist:{{.}}">{{.}}</a></li>
-        {{/similarList}}
-    </ul>
-</div>
+{{#similarList.length}}
+    <div class="lead similar">
+        <span>{{similarArtists}}:</span>
+        <ul>
+            {{#similarList}}
+                <li><a href="artist:{{.}}">{{.}}</a></li>
+            {{/similarList}}
+        </ul>
+    </div>
+{{/similarList.length}}
