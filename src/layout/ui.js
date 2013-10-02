@@ -172,8 +172,62 @@ parallel({
                     Sounds.enableMode(this.data("mode"));
                 }
             },
+            // поиск песен, исполнителей итд.
+            "header .search": function (evt) {
+                var searchElem = $("header input[type='search']");
+                var searchQuery = searchElem.val();
+                var matches;
+
+                if (!navigator.onLine)
+                    return drawCloudSongs();
+
+                if (!searchQuery.length)
+                    return drawCurrentAudio();
+
+                matches = searchQuery.match(/^artist:(.+)/);
+                if (matches)
+                    return drawArtist(matches[1]);
+
+                var mbid = searchElem.data("mbid");
+                var artist = searchElem.data("artist");
+                var album = searchElem.data("album");
+
+                if (mbid.length)
+                    return drawAlbum({mbid: mbid});
+
+                if (artist.length && album.length)
+                    return drawAlbum({artist: artist, album: album});
+
+                drawSearchSongs(searchQuery);
+            },
+            "header .closePay": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.close += 1;
+                Settings.set("headerPay", headerPay);
+
+                Settings.set("headerRateCounter", 0);
+                $("header div.pay").remove();
+
+                evt.stopImmediatePropagation();
+            },
+            "header .cwsrate": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.ratecws += 1;
+                Settings.set("headerPay", headerPay);
+
+                window.open(Config.constants.cws_app_link + "/reviews");
+                $("header .closePay").click();
+            },
+            "header .yamoney": function (evt) {
+                var headerPay = Settings.get("headerPay");
+                headerPay.yamoney += 1;
+                Settings.set("headerPay", headerPay);
+
+                window.open(Config.constants.yamoney_link);
+                $("header .closePay").click();
+            },
             // закрытие обучалок
-            ".info .study button.close": function (evt) {
+            ".study button.close": function (evt) {
                 var container = this.closestParent(".study");
                 var currentStudy = Settings.get("study");
 
@@ -186,16 +240,19 @@ parallel({
             // проигрывание песни и постановка на паузу
             ".music span.play": function (evt) {
                 var play = this.hasClass("glyphicon-play");
-
                 if (play) {
                     var songContainer = this.closestParent("p.song");
                     Sounds.play(songContainer);
                 } else {
                     Sounds.pause();
                 }
+
+                evt.stopImmediatePropagation();
             },
             // скачивание песни в sync file system
             ".music span.cloud": function (evt) {
+                evt.stopImmediatePropagation();
+
                 if (this.hasClass("pending"))
                     return;
 
@@ -212,6 +269,8 @@ parallel({
             },
             // скачивание песни
             ".music a[download]": function (evt) {
+                evt.stopImmediatePropagation();
+
                 CPA.sendEvent("Actions", "saveLocal", {
                     artist: this.data("artist"),
                     title: this.data("title")
@@ -251,36 +310,9 @@ parallel({
                         break;
                 }
             },
-            // поиск песен, исполнителей итд.
-            "header .search": function (evt) {
-                var searchElem = $("header input[type='search']");
-                var searchQuery = searchElem.val();
-                var matches;
-
-                if (!navigator.onLine)
-                    return drawCloudSongs();
-
-                if (!searchQuery.length)
-                    return drawCurrentAudio();
-
-                matches = searchQuery.match(/^artist:(.+)/);
-                if (matches)
-                    return drawArtist(matches[1]);
-
-                var mbid = searchElem.data("mbid");
-                var artist = searchElem.data("artist");
-                var album = searchElem.data("album");
-
-                if (mbid.length)
-                    return drawAlbum({mbid: mbid});
-
-                if (artist.length && album.length)
-                    return drawAlbum({artist: artist, album: album});
-
-                drawSearchSongs(searchQuery);
-            },
             "a[href^='artist:'], a[href^='album:']": function (evt) {
                 evt.preventDefault();
+                evt.stopImmediatePropagation();
 
                 var headerElem = $("header input[type='search']").removeData();
                 var headerBtn = $("header .search");
@@ -300,31 +332,10 @@ parallel({
 
                 headerBtn.click();
             },
-            "header .closePay": function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.close += 1;
-                Settings.set("headerPay", headerPay);
-
-                Settings.set("headerRateCounter", 0);
-                $("header div.pay").remove();
-
-                evt.stopImmediatePropagation();
-            },
-            "header .cwsrate": function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.ratecws += 1;
-                Settings.set("headerPay", headerPay);
-
-                window.open(Config.constants.cws_app_link + "/reviews");
-                $("header .closePay").click();
-            },
-            "header .yamoney": function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.yamoney += 1;
-                Settings.set("headerPay", headerPay);
-
-                window.open(Config.constants.yamoney_link);
-                $("header .closePay").click();
+            ".music p.song": function (evt) {
+                if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
+                    Sounds.updateCurrentTime(this, evt.layerX);
+                }
             }
         };
 
@@ -349,7 +360,6 @@ parallel({
                 return;
 
             routes[selectedRoute].call(elem, evt);
-            evt.stopImmediatePropagation();
         }).bind("submit", function (evt) {
             evt.preventDefault();
 

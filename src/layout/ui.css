@@ -321,19 +321,13 @@ div.pay .btn-link {
 
 .song-playing-bg {
     position: absolute;
-    padding: 5px 0;
-    background: #e8e8e8;
-}
-
-/* .song-playing-bg {
-    position: absolute;
     width: 100%;
 }
 
 .song-playing-bg .song-playing-progress {
     padding: 5px 0;
     background: #e8e8e8;
-} */
+}
 
 .song .glyphicon-play,
 .song .glyphicon-pause,

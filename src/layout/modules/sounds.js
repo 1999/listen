@@ -26,7 +26,8 @@ Sounds = (function () {
         var isEnding = (this.duration - this.currentTime < FADING_TIMEOUT_MS / 1000);
 
         if (!progressElem) {
-            progressElem = $("<div>&nbsp;</div>").addClass("song-playing-bg").data("url", audioSrc).css("width", "0");
+            var innerProgressElem = $("<div>&nbsp;</div>").addClass("song-playing-progress").css("width", "0");
+            progressElem = $("<div/>").addClass("song-playing-bg").append(innerProgressElem).data("url", audioSrc);
 
             if (songContainer) {
                 songContainer.before(progressElem);
@@ -34,7 +35,7 @@ Sounds = (function () {
         }
 
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
-        progressElem.css("width", width);
+        $(progressElem, ".song-playing-progress").css("width", width);
 
         if (!isEnding)
             return;
@@ -342,6 +343,21 @@ Sounds = (function () {
                     audioElem.volume = newLevel;
                 }
             });
+        },
+
+        /**
+         * Обновление текущего времени в проигрываемой песне
+         * @param {HTMLElement} elem
+         * @param {Number} offsetX
+         */
+        updateCurrentTime: function Sounds_updateCurrentTime(elem, offsetX) {
+            var audioSrc = elem.data("url");
+            var currentSong = songsPlaying[audioSrc];
+
+            if (!currentSong)
+                return;
+
+            currentSong.dom.currentTime = currentSong.dom.duration * offsetX / elem.clientWidth;
         },
 
         /**
