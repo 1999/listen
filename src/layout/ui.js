@@ -89,9 +89,6 @@ parallel({
             }, function (html) {
                 $(document.body).addClass("guest").removeClass("user").html(html);
 
-                if (/^win/i.test(navigator.platform))
-                    $(document.body).addClass("windows");
-
                 CPA.sendAppView("Guest");
 
                 callback && callback();
