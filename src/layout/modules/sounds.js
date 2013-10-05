@@ -25,9 +25,11 @@ Sounds = (function () {
         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
         var isEnding = (this.duration - this.currentTime < FADING_TIMEOUT_MS / 1000);
 
+        // @todo template
         if (!progressElem) {
             var innerProgressElem = $("<div>&nbsp;</div>").addClass("song-playing-progress").css("width", "0");
-            progressElem = $("<div/>").addClass("song-playing-bg").append(innerProgressElem).data("url", audioSrc);
+            var innerSettimeElem = $("<div>&nbsp;</div>").addClass("song-playing-settime").css("width", "0");
+            progressElem = $("<div/>").addClass("song-playing-bg").data("url", audioSrc).append(innerSettimeElem).append(innerProgressElem);
 
             if (songContainer) {
                 songContainer.before(progressElem);
@@ -358,6 +360,20 @@ Sounds = (function () {
                 return;
 
             currentSong.dom.currentTime = currentSong.dom.duration * offsetX / elem.clientWidth;
+        },
+
+        updateSettimeCaret: function Sounds_updateSettimeCaret(elem, offsetX) {
+            var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+            var progressElem = elem.previousSibling;
+
+            if (!progressElem || !matchesSelectorFn.call(progressElem, ".music div.song-playing-bg"))
+                return;
+
+            if (offsetX) {
+                $(progressElem, ".song-playing-settime").css("width", offsetX + "px");
+            } else {
+                $(progressElem, ".song-playing-settime").css("width", "0");
+            }
         },
 
         /**

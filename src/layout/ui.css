@@ -40,7 +40,7 @@ input[type="search"]::-webkit-search-decoration {
 }
 
 body.guest {
-    
+
 }
 
 body.user {
@@ -320,8 +320,17 @@ div.pay .btn-link {
 }
 
 .song-playing-bg .song-playing-progress {
+    position: absolute;
     padding: 5px 0;
     background: #e8e8e8;
+    z-index: 1;
+}
+
+.song-playing-bg .song-playing-settime {
+    position: absolute;
+    padding: 5px 0;
+    background: rgba(160, 160, 160, .15);;
+    z-index: 2;
 }
 
 .song .glyphicon-play,

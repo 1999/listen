@@ -365,6 +365,20 @@ parallel({
                 throw new Error("No button found for making fake submit");
 
             lastButton.click();
+        }).bind("mouseover", function (evt) {
+            // @todo check parents
+            // @todo web components
+            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
+                Sounds.updateSettimeCaret(evt.target, evt.layerX);
+            }
+        }).bind("mousemove", function (evt) {
+            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
+                Sounds.updateSettimeCaret(evt.target, evt.layerX);
+            }
+        }).bind("mouseout", function (evt) {
+            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
+                Sounds.updateSettimeCaret(evt.target, 0);
+            }
         });
 
         window.addEventListener("online", function (evt) {
