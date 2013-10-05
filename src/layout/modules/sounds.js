@@ -178,7 +178,7 @@ Sounds = (function () {
          */
         play: function Sounds_play(elem) {
             if (elem) {
-                if (elem.hasClass("played")) {
+                if (!elem.hasClass("played")) {
                     var songsPlayed = Settings.get("songsPlayed");
                     Settings.set("songsPlayed", songsPlayed + 1);
                 }
