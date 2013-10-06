@@ -83,39 +83,33 @@ Sounds = (function () {
         });
     }
 
-    /**
-     * @param {HTMLAudioElement} domElem
-     * @param {Float} newVolume
-     * @param {Boolean} smoothStart (true - резкий старт, плавный финиш)
-     * @param {Function} callback
-     */
-    function smoothInterval(domElem, newVolume, msForInterval, smoothStart, callback) {
-        var oldVolume = domElem.volume;
+    function smooth(options, callback) {
+        clearInterval(options.dom.track.smoothIntervalId);
+
+        var oldVolume = options.dom.volume;
+        var newVolume = options.volume;
         var volumeDiff = newVolume - oldVolume;
 
         var defaultIterationsNum = 100;
-        var iterationsNum = Math.ceil(msForInterval * defaultIterationsNum / FADING_TIMEOUT_MS);
+        var iterationsNum = Math.ceil(options.timeInterval * defaultIterationsNum / FADING_TIMEOUT_MS);
         var increase = Math.PI / iterationsNum;
         var counter = 0;
 
-        clearInterval(songData.interval);
-        songData.iteration = 0;
-
-        songData.interval = setInterval(function () {
-            var yPos = smoothStart ? 1 - Math.cos(counter) : Math.sin(counter);
+        return setInterval(function () {
+            var yPos = options.smoothStart ? 1 - Math.cos(counter) : Math.sin(counter);
             counter += increase;
 
             if (yPos >= 1) {
-                songData.dom.volume = newVolume;
+                options.dom.volume = newVolume;
 
-                clearInterval(songData.interval);
-                callback && callback.call(songData.dom);
+                clearInterval(options.dom.track.smoothIntervalId);
+                callback && callback.call(options.dom);
 
                 return;
             }
 
             var diff = volumeDiff * yPos;
-            songData.dom.volume = oldVolume + diff;
+            options.dom.volume = oldVolume + diff;
         }, FADING_TIMEOUT_MS / iterationsNum);
     }
 
@@ -127,12 +121,14 @@ Sounds = (function () {
         this.dom.track = this;
         this.dom.volume = smoothSwitch ? 0 : volume;
 
+        this.smoothIntervalId = null;
+
         this.dom.bind("timeupdate", updateProgressElem);
         this.dom.bind("play", onPlayContinue);
 
         if (smoothSwitch) {
-            smoothIncreaseVolume();
             this.dom.bind("timeupdate", onTimeUpdateSwitchTrack);
+            this.smoothIncreaseVolume();
         } else {
             this.dom.bind("ended", onEndedSwitchTrack);
         }
@@ -148,13 +144,31 @@ Sounds = (function () {
 
         get isStarting() {
             return (this.dom.currentTime * 1000 < FADING_TIMEOUT_MS);
+        },
+
+        smoothDecreaseVolume: function Track_smoothDecreaseVolume(callback) {
+            this.smoothIntervalId = smooth({
+                dom: this.dom,
+                volume: 0,
+                timeInterval: Math.min(FADING_TIMEOUT_MS, this.dom.duration - this.dom.currentTime),
+                smoothStart: true
+            }, callback);
+        },
+
+        smoothIncreaseVolume: function Track_smoothIncreaseVolume(callback) {
+            this.smoothIntervalId = smooth({
+                dom: this.dom,
+                volume: Settings.get("volume"),
+                timeInterval: FADING_TIMEOUT_MS,
+                smoothStart: false
+            }, callback);
         }
     };
 
 
     return {
         /**
-         * @param {HTMLElement|Number|Undefined} elem
+         * @param {String|Number|Undefined} elem
          * @param {Boolean} canBeContinued
          */
         play: function Sounds_play(elem, canBeContinued) {
@@ -190,8 +204,8 @@ Sounds = (function () {
             var playlistIndex;
             var isTrackContinuedPlaying = false;
 
-            if (elem instanceof HTMLElement) {
-                audioSrc = elem.data("url");
+            if (typeof elem === "string") {
+                audioSrc = elem;
                 playlistIndex = playlist.indexOf(audioSrc);
 
                 if (playlistIndex === -1) {
@@ -219,6 +233,8 @@ Sounds = (function () {
                     if (smoothSwitch) {
                         // @todo time available can be less than FADING_TIMEOUT_MS
                         smoothIncreaseVolume();
+
+                        // @todo on end -> set as current volume (it can be changed during smooth)
                     }
                 } else {
                     track.dom
@@ -228,9 +244,7 @@ Sounds = (function () {
 
                     if (smoothSwitch) {
                         track.dom.play();
-
-                        // @todo time available can be less than FADING_TIMEOUT_MS
-                        smoothDecreaseVolume(dropTrackFromCurrentlyPlaying)
+                        track.smoothDecreaseVolume(dropTrackFromCurrentlyPlaying);
                     } else {
                         dropTrackFromCurrentlyPlaying.call(track.dom);
                     }
@@ -246,41 +260,100 @@ Sounds = (function () {
         playNext: function Sounds_playNext() {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
+            var currentTrackIndex;
+            var nextTrackIndex;
+            var isCurrentTrackInPlaylist;
 
             if (!playlist.length)
                 throw new Error("Playlist is empty");
 
-            switch (playingTracks.length) {
-                case 0:
-                    if (playingMode === MODE_SHUFFLE) {
-                        var trackIndex = getRandomTrackIndex();
-                        this.play(trackIndex);
-                    } else {
-                        this.play();
-                    }
-
-                    break;
-
-                case 1:
-                    // ends playing - enabled smooth
-                    break;
-
-                default:
-                    xxx
+            if (!playingTracks.length) {
+                this.play();
+                return;
             }
 
-            // ни один трек не играет
-            // треков несколько
-            // трек заканчивает играть (мод?)
-            // включен режим рипита
+            // If "smoothTracksSwitch" is enabled then there can be 2+ currently playing tracks (playingTracks).
+            // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
+            // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
+            currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
+            isCurrentTrackInPlaylist = (playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src")) !== -1);
+
+            if (isCurrentTrackInPlaylist) {
+                if (playlist.length === 1) {
+                    nextTrackIndex = 0;
+                } else if (playingMode === MODE_SHUFFLE) {
+                    nextTrackIndex = getRandomTrackIndex();
+                } else if (playingMode === MODE_REPEAT) {
+                    nextTrackIndex = currentTrackIndex;
+                } else {
+                    nextTrackIndex = (currentTrackIndex + 1 < playlist.length) ? currentTrackIndex + 1 : 0;
+                }
+            } else {
+                nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
+            }
+
+            this.play(nextTrackIndex, false);
         },
 
         playPrev: function Sounds_playPrev() {
+            // @todo playlist can be changed
 
+            var playingMode = Settings.get("songsPlayingMode");
+            var smoothSwitch = Settings.get("smoothTracksSwitch");
+            var currentTrackIndex;
+            var nextTrackIndex;
+            var isCurrentTrackInPlaylist;
+
+            if (!playlist.length)
+                throw new Error("Playlist is empty");
+
+            if (!playingTracks.length) {
+                this.play();
+                return;
+            }
+
+            // If "smoothTracksSwitch" is enabled then there can be 2+ currently playing tracks (playingTracks).
+            // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
+            // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
+            currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
+            isCurrentTrackInPlaylist = (playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src")) !== -1);
+
+            if (isCurrentTrackInPlaylist) {
+                if (playlist.length === 1) {
+                    nextTrackIndex = 0;
+                } else if (playingMode === MODE_SHUFFLE) {
+                    nextTrackIndex = getRandomTrackIndex();
+                } else if (playingMode === MODE_REPEAT) {
+                    nextTrackIndex = currentTrackIndex;
+                } else {
+                    nextTrackIndex = (currentTrackIndex === 0) ? playlist.length - 1 : currentTrackIndex - 1;
+                }
+            } else {
+                nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
+            }
+
+            this.play(nextTrackIndex, false);
         },
 
         pause: function Sounds_pause() {
+            var smoothSwitch = Settings.get("smoothTracksSwitch");
 
+            if (!playingTracks.length)
+                throw new Error("Tracks are not playing");
+
+            if (!smoothSwitch) {
+                playingTracks[0].dom.pause();
+                return;
+            }
+
+            playingTracks.forEach(function (track) {
+                if (track.isEnding)
+                    return;
+
+                track.smoothDecreaseVolume(function () {
+                    track.dom.pause();
+                });
+            });
         },
 
         /**
@@ -289,7 +362,20 @@ Sounds = (function () {
         changeVolumeLevel: function Sounds_changeVolumeLevel(newLevel) {
             Settings.set("volume", newLevel);
 
-            // ???
+            if (!playingTracks.length)
+                return;
+
+            var smoothSwitch = Settings.get("smoothTracksSwitch");
+            if (smoothSwitch) {
+                playingTracks.forEach(function (track) {
+                    if (track.isEnding || track.isStarting)
+                        return;
+
+                    track.dom.volume = newLevel;
+                });
+            } else {
+                playingTracks[0].dom.volume = newLevel;
+            }
         },
 
         updatePlaylist: function Sounds_updatePlaylist() {
@@ -301,12 +387,14 @@ Sounds = (function () {
         },
 
         /**
-         * Обновление текущего времени в проигрываемой песне
-         * @param {HTMLElement} elem
-         * @param {Number} offsetX
+         * @param {Float} percent
          */
-        updateCurrentTime: function Sounds_updateCurrentTime(elem, offsetX) {
+        updateCurrentTime: function Sounds_updateCurrentTime(percent) {
+            if (!playingTracks.length)
+                throw new Error("Tracks are not currently playing");
 
+            var currentTrack = playingTracks[playingTracks.length - 1];
+            currentTrack.dom.currentTime = currentTrack.dom.duration * percent;
         },
 
         updateSettimeCaret: function Sounds_updateSettimeCaret(elem, offsetX) {
