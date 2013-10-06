@@ -287,6 +287,8 @@ parallel({
                         var newTotalSongsListed = totalSongsListed + data.songs.length;
                         self.removeClass("loading").before(music);
 
+                        Sounds.updatePlaylist();
+
                         if (newTotalSongsListed >= data.count) {
                             self.remove();
                         }
@@ -430,7 +432,9 @@ parallel({
                 more: more,
                 type: "current"
             }, function (music) {
-                fillContent("", music);
+                fillContent("", music, function () {
+                    Sounds.updatePlaylist();
+                });
             });
         });
 
@@ -443,6 +447,9 @@ parallel({
         SyncFS.requestCurrentFilesList(function (songs) {
             Templates.render("songs", {songs: songs}, function (music) {
                 fillContent("", music, function () {
+                    Sounds.updatePlaylist();
+
+                    // update songs data from Google Drive syncable filesystem
                     $$(".music p.song").each(function () {
                         var audioSrc = this.data("url");
                         var durationElem = $(this, ".duration");
@@ -493,6 +500,8 @@ parallel({
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
+                    Sounds.updatePlaylist();
+
                     res.lastfm.albums.forEach(function (album) {
                         if (!album.cover)
                             return;
@@ -544,6 +553,8 @@ parallel({
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
+                    Sounds.updatePlaylist();
+
                     res.lastfm.albums.forEach(function (album) {
                         if (!album.cover)
                             return;
@@ -585,6 +596,7 @@ parallel({
                 }
             }, function (res) {
                 fillContent(res.info, res.music, function () {
+                    Sounds.updatePlaylist();
                     Covers.load(album.cover);
                 });
 

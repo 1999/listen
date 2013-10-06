@@ -2,149 +2,95 @@ Sounds = (function () {
     "use strict";
 
     var FADING_TIMEOUT_MS = 2000; // время затухания текущей композиции
+    var MODE_SHUFFLE = "shuffle";
+    var MODE_REPEAT = "repeat";
+    var MODE_DEFAULT = "";
 
-    // список играющих песен, где ключ - URL песни, а значение - объект вида:
-    // {HTMLAudioElement} "dom", {Number} "interval" (interval id), {Number} "iteration"
-    var songsPlaying = {};
+    var playlist = [];
+    var playingTracks = [];
 
-    function createAudioElem(src) {
-        var audioElem = new Audio(src);
-        audioElem.volume = 0;
-        audioElem.bind("ended", onEnded).bind("timeupdate", onTimeUpdate);
+    function getRandomTrackIndex() {
+        var rand = Math.random();
+        var interval = 1 / playlist.length;
 
-        document.body.append(audioElem);
-        songsPlaying[src] = {
-            dom: audioElem,
-            interval: 0
-        };
+        return (rand === 1) ? playlist.length - 1 : Math.floor(rand / interval);
     }
 
-    function onTimeUpdate() {
-        var audioSrc = this.attr("src");
-        var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-        var isEnding = (this.duration - this.currentTime < FADING_TIMEOUT_MS / 1000);
+    function dropTrackFromCurrentlyPlaying() {
+        var index = playingTracks.indexOf(this.track);
+        var progressElem = $(".music div.song-playing-bg[data-url='" + this.attr("src") + "']");
 
-        // @todo template
-        if (!progressElem) {
-            var innerProgressElem = $("<div>&nbsp;</div>").addClass("song-playing-progress").css("width", "0");
-            var innerSettimeElem = $("<div>&nbsp;</div>").addClass("song-playing-settime").css("width", "0");
-            progressElem = $("<div/>").addClass("song-playing-bg").data("url", audioSrc).append(innerSettimeElem).append(innerProgressElem);
-
-            if (songContainer) {
-                songContainer.before(progressElem);
-            }
+        if (index !== -1) {
+            playingTracks.splice(index);
         }
 
-        var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
-        $(progressElem, ".song-playing-progress").css("width", width);
-
-        if (!isEnding)
-            return;
-
-        var isPlayerPaused = $("header span.playpause").hasClass("glyphicon-play");
-        var mode = Settings.get("songsPlayingMode");
-
-        if (isPlayerPaused || this.hasClass("ending"))
-            return;
-
-        // переключение на следующий трек должно срабатывать только 1 раз
-        this.addClass("ending");
-        smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, true);
-
-        switch (mode) {
-            case "shuffle":
-                var songs = [].slice.call($$(".music p.song"), 0).sort(function () {
-                    return (Math.random() < 0.5) ? -1 : 1;
-                });
-
-                if (songs.length === 1) {
-                    this.bind("ended", function () {
-                        Sounds.play(songContainer);
-                    });
-                } else {
-                    var nextSongIndex = (songs[0].data("url") === audioSrc) ? 1 : 0;
-                    Sounds.play(songs[nextSongIndex]);
-                }
-
-                break;
-
-            case "repeat":
-                this.bind("ended", function () {
-                    Sounds.play(songContainer);
-                });
-
-                break;
-
-            default:
-                var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-                var node, nextSongContainer;
-
-                if (songContainer) {
-                    node = songContainer.nextSibling;
-
-                    while (node) {
-                        if (matchesSelectorFn.call(node, "p.song")) {
-                            nextSongContainer = node;
-                            break;
-                        }
-
-                        node = node.nextSibling;
-                    }
-                } else {
-                    nextSongContainer = $(".music p.song");
-                }
-
-                if (nextSongContainer) {
-                    Sounds.play(nextSongContainer);
-                }
-
-                break;
-        }
-    }
-
-    function onEnded() {
-        var src = this.attr("src");
-
-        songsPlaying[src].dom.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate).remove();
-        delete songsPlaying[src];
-
-        // удаляем progress фон
-        var progressElem = $(".music div.song-playing-bg[data-url='" + src + "']");
         if (progressElem) {
             progressElem.remove();
         }
+    }
 
-        // обновляем rate counter
-        if (!this.hasClass("ending-via-button")) {
-            var currentCnt = Settings.get("headerRateCounter") + 1;
-            var payElem = $("header div.pay");
-            Settings.set("headerRateCounter", currentCnt);
+    function onTimeUpdateSwitchTrack() {
+        var trackIndex = playingTracks.indexOf(this.track);
+
+        if (!this.track.isEnding)
+            return;
+
+        if (trackIndex !== -1) {
+            Sounds.playNext();
+        } else {
+            Sounds.play(0);
         }
 
-        // при достижении header_rate_limit показываем слой с кнопками
-        if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
-            Templates.render("header-pay", {
-                payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                cwsRate: chrome.i18n.getMessage("rateCWS"),
-                close: chrome.i18n.getMessage("close")
-            }, function (html) {
-                $("header").append(html);
-            });
+        this.unbind("timeupdate", onTimeUpdateSwitchTrack);
+    }
+
+    function onEndedSwitchTrack() {
+        var trackIndex = playingTracks.indexOf(this.track);
+
+        if (trackIndex !== -1) {
+            Sounds.playNext();
+        } else {
+            Sounds.play(0);
         }
+
+        this.unbind("ended", onEndedSwitchTrack);
+    }
+
+    function updateProgressElem() {
+        var audioSrc = this.attr("src");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+
+        if (!trackContainer || !progressElem)
+            return;
+
+        var width = Math.ceil(trackContainer.clientWidth * this.currentTime / this.duration) + "px";
+        $(progressElem, ".song-playing-progress").css("width", width);
+    }
+
+    function onPlayContinue() {
+        var audioSrc = this.attr("src");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+
+        if (!trackContainer || progressElem)
+            return;
+
+        Templates.render("song-progress", {
+            src: audioSrc
+        }, function (html) {
+            trackContainer.before(html);
+        });
     }
 
     /**
-     * @param {String} src
+     * @param {HTMLAudioElement} domElem
      * @param {Float} newVolume
-     * @param {Number} msForInterval
      * @param {Boolean} smoothStart (true - резкий старт, плавный финиш)
      * @param {Function} callback
      */
-    function smoothInterval(src, newVolume, msForInterval, smoothStart, callback) {
-        var songData = songsPlaying[src];
-        var oldVolume = songData.dom.volume;
+    function smoothInterval(domElem, newVolume, msForInterval, smoothStart, callback) {
+        var oldVolume = domElem.volume;
         var volumeDiff = newVolume - oldVolume;
 
         var defaultIterationsNum = 100;
@@ -173,156 +119,168 @@ Sounds = (function () {
         }, FADING_TIMEOUT_MS / iterationsNum);
     }
 
+    function Track(audioSrc) {
+        var smoothSwitch = Settings.get("smoothTracksSwitch");
+        var volume = Settings.get("volume");
+
+        this.dom = new Audio(audioSrc);
+        this.dom.track = this;
+        this.dom.volume = smoothSwitch ? 0 : volume;
+
+        this.dom.bind("timeupdate", updateProgressElem);
+        this.dom.bind("play", onPlayContinue);
+
+        if (smoothSwitch) {
+            smoothIncreaseVolume();
+            this.dom.bind("timeupdate", onTimeUpdateSwitchTrack);
+        } else {
+            this.dom.bind("ended", onEndedSwitchTrack);
+        }
+
+        this.dom.bind("ended", dropTrackFromCurrentlyPlaying);
+        this.dom.play();
+    }
+
+    Track.prototype = {
+        get isEnding() {
+            return (this.dom.duration - this.dom.currentTime < FADING_TIMEOUT_MS / 1000);
+        },
+
+        get isStarting() {
+            return (this.dom.currentTime * 1000 < FADING_TIMEOUT_MS);
+        }
+    };
+
 
     return {
         /**
-         * @param {HTMLElement|Undefined} elem
+         * @param {HTMLElement|Number|Undefined} elem
+         * @param {Boolean} canBeContinued
          */
-        play: function Sounds_play(elem) {
-            if (elem) {
-                if (!elem.hasClass("played")) {
-                    var songsPlayed = Settings.get("songsPlayed");
-                    Settings.set("songsPlayed", songsPlayed + 1);
-                }
+        play: function Sounds_play(elem, canBeContinued) {
+            var playingMode = Settings.get("songsPlayingMode");
+            var smoothSwitch = Settings.get("smoothTracksSwitch");
 
-                elem.addClass("played");
-
-                var originalAudioSrc = elem.data("url");
-                if (!songsPlaying[originalAudioSrc]) {
-                    createAudioElem(originalAudioSrc);
-                }
-
-                $(elem, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
-
-                Object.keys(songsPlaying).forEach(function (audioSrc) {
-                    var audioElem = songsPlaying[audioSrc].dom;
-
-                    if (audioSrc === originalAudioSrc) {
-                        smoothInterval(audioSrc, Settings.get("volume"), FADING_TIMEOUT_MS, true);
-                    } else {
-                        var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-                        if (songContainer) {
-                            $(songContainer, "span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
-                        }
-
-                        audioElem.unbind("ended", onEnded).unbind("timeupdate", onTimeUpdate);
-                        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-                        if (progressElem) {
-                            progressElem.remove();
-                        }
-
-                        smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
-                            audioElem.remove();
-                            delete songsPlaying[audioSrc];
-                        });
-                    }
-
-                    audioElem.play();
-                });
-            } else {
-                var songsSources = Object.keys(songsPlaying);
-
-                if (songsSources.length) {
-                    songsSources.forEach(function (audioSrc) {
-                        var audioElem = songsPlaying[audioSrc].dom;
-                        var isStarting = (audioElem.currentTime * 1000 < FADING_TIMEOUT_MS);
-                        var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
-
-                        if (isEnding) {
-                            smoothInterval(audioSrc, 0, (audioElem.duration - audioElem.currentTime) * 1000, false);
-                        } else {
-                            var msForInterval = isStarting ? FADING_TIMEOUT_MS - audioElem.currentTime * 1000 : FADING_TIMEOUT_MS;
-                            smoothInterval(audioSrc, Settings.get("volume"), msForInterval, true);
-
-                            var songContainer = $(".music p.song[data-url='" + audioSrc + "']");
-                            $(songContainer, "span.play").addClass("glyphicon-pause").removeClass("glyphicon-play");
-                        }
-
-                        audioElem.play();
-                    });
-                } else {
-                    this.play($(".music p.song"));
-                }
+            if (canBeContinued === undefined) {
+                canBeContinued = true;
             }
 
-            $("header span.playpause").addClass("glyphicon-pause").removeClass("glyphicon-play");
+            if (elem === undefined) {
+                if (playingTracks.length) {
+                    // tracks can be paused
+                    var allTracksArePaused = playingTracks.every(function (track) {
+                        return track.dom.paused;
+                    });
+
+                    if (!allTracksArePaused)
+                        throw new Error("Playlst is already playing");
+
+                    allTracksArePaused.forEach(function (track) {
+                        track.dom.play();
+                    });
+                } else {
+                    var trackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
+                    this.play(trackIndex, true);
+                }
+
+                return;
+            }
+
+            var audioSrc;
+            var playlistIndex;
+            var isTrackContinuedPlaying = false;
+
+            if (elem instanceof HTMLElement) {
+                audioSrc = elem.data("url");
+                playlistIndex = playlist.indexOf(audioSrc);
+
+                if (playlistIndex === -1) {
+                    throw new Error("No such track in playlist");
+                }
+            } else {
+                audioSrc = playlist[elem];
+                playlistIndex = elem;
+            }
+
+            // track can be already started playing and now is in paused mode
+            // "canBeContinued" set to "true" allows to continue playing this track
+            // otherwise the track will be started playing from the beginning (repeat mode)
+            var isTrackPlaying = playingTracks.some(function (track) {
+                return (track.dom.attr("src") === playlist[playlistIndex]);
+            });
+
+            playingTracks.forEach(function (track) {
+                var trackSrc = track.dom.data("src");
+
+                if (isTrackPlaying && canBeContinued && audioSrc === trackSrc) {
+                    isTrackContinuedPlaying = true;
+                    track.dom.play();
+
+                    if (smoothSwitch) {
+                        // @todo time available can be less than FADING_TIMEOUT_MS
+                        smoothIncreaseVolume();
+                    }
+                } else {
+                    track.dom
+                        .unbind("timeupdate", onTimeUpdateSwitchTrack)
+                        .unbind("ended", onEndedSwitchTrack)
+                        .unbind("ended", dropTrackFromCurrentlyPlaying);
+
+                    if (smoothSwitch) {
+                        track.dom.play();
+
+                        // @todo time available can be less than FADING_TIMEOUT_MS
+                        smoothDecreaseVolume(dropTrackFromCurrentlyPlaying)
+                    } else {
+                        dropTrackFromCurrentlyPlaying.call(track.dom);
+                    }
+                }
+            });
+
+            if (!isTrackContinuedPlaying) {
+                var track = new Track(audioSrc);
+                playingTracks.push(track);
+            }
         },
 
         playNext: function Sounds_playNext() {
-            var songsKeys = Object.keys(songsPlaying);
+            var playingMode = Settings.get("songsPlayingMode");
+            var smoothSwitch = Settings.get("smoothTracksSwitch");
 
-            if (songsKeys.length) {
-                songsKeys.forEach(function (audioSrc) {
-                    var audioElem = songsPlaying[audioSrc].dom;
-                    audioElem.play();
+            if (!playlist.length)
+                throw new Error("Playlist is empty");
 
-                    if (audioElem.hasClass("ending"))
-                        return;
+            switch (playingTracks.length) {
+                case 0:
+                    if (playingMode === MODE_SHUFFLE) {
+                        var trackIndex = getRandomTrackIndex();
+                        this.play(trackIndex);
+                    } else {
+                        this.play();
+                    }
 
-                    // @todo переписать
-                    audioElem.addClass("ending-via-button");
-                    audioElem.currentTime = audioElem.duration - 0.2;
-                });
-            } else {
-                this.play();
+                    break;
+
+                case 1:
+                    // ends playing - enabled smooth
+                    break;
+
+                default:
+                    xxx
             }
+
+            // ни один трек не играет
+            // треков несколько
+            // трек заканчивает играть (мод?)
+            // включен режим рипита
         },
 
         playPrev: function Sounds_playPrev() {
-            var songsKeys = Object.keys(songsPlaying);
 
-            if (songsKeys.length) {
-                if (["shuffle", "repeat"].indexOf(Settings.get("songsPlayingMode")) !== -1) {
-                    // @todo возвращаться на предыдущую песню в случае "shuffle"
-                    return this.playNext();
-                }
-
-                // @todo
-                if (songsKeys.length > 1)
-                    return;
-
-                var songContainer = $(".music p.song[data-url='" + songsKeys[0] + "']");
-                if (songContainer) {
-                    var totalContainers = $$(".music p.song");
-                    var prevSongIndex;
-
-                    if (totalContainers.length === 1) {
-                        this.play(songContainer);
-                    } else {
-                        totalContainers.each(function (index) {
-                            if (this === songContainer) {
-                                prevSongIndex = index ? index - 1 : totalContainers.length - 1;
-                            }
-                        });
-
-                        this.play(totalContainers[prevSongIndex]);
-                    }
-                } else {
-                    var firstVisibleElem = $(".music p.song");
-                    if (firstVisibleElem) {
-                        this.play(firstVisibleElem);
-                    }
-                }
-            } else {
-                this.play();
-            }
         },
 
         pause: function Sounds_pause() {
-            Object.keys(songsPlaying).forEach(function (audioSrc) {
-                var audioElem = songsPlaying[audioSrc].dom;
-                var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
 
-                if (isEnding)
-                    return;
-
-                smoothInterval(audioSrc, 0, FADING_TIMEOUT_MS, false, function () {
-                    this.pause();
-                });
-            });
-
-            $$(".music span.play").addClass("glyphicon-play").removeClass("glyphicon-pause");
-            $("header span.playpause").removeClass("glyphicon-pause").addClass("glyphicon-play");
         },
 
         /**
@@ -331,19 +289,14 @@ Sounds = (function () {
         changeVolumeLevel: function Sounds_changeVolumeLevel(newLevel) {
             Settings.set("volume", newLevel);
 
-            Object.keys(songsPlaying).forEach(function (audioSrc) {
-                var audioElem = songsPlaying[audioSrc].dom;
-                var isStarting = (audioElem.currentTime * 1000 < FADING_TIMEOUT_MS);
-                var isEnding = (audioElem.duration - audioElem.currentTime < FADING_TIMEOUT_MS / 1000);
+            // ???
+        },
 
-                if (audioElem.paused || isEnding)
-                    return;
+        updatePlaylist: function Sounds_updatePlaylist() {
+            playlist.length = 0;
 
-                if (isStarting) {
-                    smoothInterval(audioSrc, newLevel, FADING_TIMEOUT_MS - audioElem.currentTime * 1000, true);
-                } else {
-                    audioElem.volume = newLevel;
-                }
+            $$(".music p.song").each(function () {
+                playlist.push(this.data("url"));
             });
         },
 
@@ -353,27 +306,11 @@ Sounds = (function () {
          * @param {Number} offsetX
          */
         updateCurrentTime: function Sounds_updateCurrentTime(elem, offsetX) {
-            var audioSrc = elem.data("url");
-            var currentSong = songsPlaying[audioSrc];
 
-            if (!currentSong)
-                return;
-
-            currentSong.dom.currentTime = currentSong.dom.duration * offsetX / elem.clientWidth;
         },
 
         updateSettimeCaret: function Sounds_updateSettimeCaret(elem, offsetX) {
-            var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-            var progressElem = elem.previousSibling;
 
-            if (!progressElem || !matchesSelectorFn.call(progressElem, ".music div.song-playing-bg"))
-                return;
-
-            if (offsetX) {
-                $(progressElem, ".song-playing-settime").css("width", offsetX + "px");
-            } else {
-                $(progressElem, ".song-playing-settime").css("width", "0");
-            }
         },
 
         /**
