@@ -8,6 +8,7 @@
         "headerRateCounter": 0, /* количество треков, проигранных до конца, после 100 показываем header rate */
         "isDebug": true, /* локальная разработка или нет */
         "lastfmToken": "", /* токен LastFM */
+        "smoothTracksSwitch": true,
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
         "study": [], /* показанные обучалки */
