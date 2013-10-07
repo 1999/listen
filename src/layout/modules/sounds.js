@@ -178,87 +178,103 @@ Sounds = (function () {
         play: function Sounds_play(elem, canBeContinued) {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
+            var audioSrc;
 
             if (canBeContinued === undefined) {
                 canBeContinued = true;
             }
 
             if (elem === undefined) {
-                if (playingTracks.length) {
-                    // tracks can be paused
-                    var allTracksArePaused = playingTracks.every(function (track) {
-                        return track.dom.paused;
-                    });
+                // hack to build playlist during the first click
+                if (!playlist.length) {
+                    this.updatePlaylist();
+                }
 
-                    if (!allTracksArePaused)
-                        throw new Error("Playlst is already playing");
-
-                    allTracksArePaused.forEach(function (track) {
-                        track.dom.play();
-                    });
-                } else {
+                if (!playingTracks.length) {
                     var trackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
                     this.play(trackIndex, true);
+
+                    return;
                 }
 
-                return;
-            }
+                // tracks can be paused
+                var allTracksArePaused = playingTracks.every(function (track) {
+                    return track.dom.paused;
+                });
 
-            var audioSrc;
-            var playlistIndex;
-            var isTrackContinuedPlaying = false;
+                if (!allTracksArePaused)
+                    throw new Error("Playlst is already playing");
 
-            if (typeof elem === "string") {
-                audioSrc = elem;
-                playlistIndex = playlist.indexOf(audioSrc);
-
-                if (playlistIndex === -1) {
-                    throw new Error("No such track in playlist");
-                }
-            } else {
-                audioSrc = playlist[elem];
-                playlistIndex = elem;
-            }
-
-            // track can be already started playing and now is in paused mode
-            // "canBeContinued" set to "true" allows to continue playing this track
-            // otherwise the track will be started playing from the beginning (repeat mode)
-            var isTrackPlaying = playingTracks.some(function (track) {
-                return (track.dom.attr("src") === playlist[playlistIndex]);
-            });
-
-            playingTracks.forEach(function (track) {
-                var trackSrc = track.dom.data("src");
-
-                if (isTrackPlaying && canBeContinued && audioSrc === trackSrc) {
-                    isTrackContinuedPlaying = true;
+                playingTracks.forEach(function (track) {
                     track.dom.play();
 
-                    if (smoothSwitch) {
-                        track.smoothIncreaseVolume(function () {
-                            // colume level can be changed during these 2 seconds, so set it in callback
-                            this.volume = Settings.get("volume");
-                        });
+                    if (smoothSwitch && (track.isStarting || !track.isEnding)) {
+                        // If track is ending, it will be automatically switched to the next track by "onTimeUpdateSwitchTrack"
+                        // This will call "play" method, which will smoothly decrease volume level, so there's nothing to do here
+                        track.smoothIncreaseVolume();
+                    }
+                });
+
+                audioSrc = playingTracks[playingTracks.length - 1].dom.attr("src");
+            } else {
+                var playlistIndex;
+                var isTrackContinuedPlaying = false;
+
+                if (typeof elem === "string") {
+                    audioSrc = elem;
+                    playlistIndex = playlist.indexOf(audioSrc);
+
+                    if (playlistIndex === -1) {
+                        throw new Error("No such track in playlist");
                     }
                 } else {
-                    track.dom
-                        .unbind("timeupdate", onTimeUpdateSwitchTrack)
-                        .unbind("ended", onEndedSwitchTrack)
-                        .unbind("ended", dropTrackFromCurrentlyPlaying);
-
-                    if (smoothSwitch) {
-                        track.dom.play();
-                        track.smoothDecreaseVolume(dropTrackFromCurrentlyPlaying);
-                    } else {
-                        dropTrackFromCurrentlyPlaying.call(track.dom);
-                    }
+                    audioSrc = playlist[elem];
+                    playlistIndex = elem;
                 }
-            });
 
-            if (!isTrackContinuedPlaying) {
-                var track = new Track(audioSrc);
-                playingTracks.push(track);
+                // track can be already started playing and now is in paused mode
+                // "canBeContinued" set to "true" allows to continue playing this track
+                // otherwise the track will be started playing from the beginning (repeat mode)
+                var isTrackPlaying = playingTracks.some(function (track) {
+                    return (track.dom.attr("src") === playlist[playlistIndex]);
+                });
+
+                playingTracks.forEach(function (track) {
+                    var trackSrc = track.dom.data("src");
+
+                    if (isTrackPlaying && canBeContinued && audioSrc === trackSrc) {
+                        isTrackContinuedPlaying = true;
+                        track.dom.play();
+
+                        if (smoothSwitch) {
+                            track.smoothIncreaseVolume(function () {
+                                // colume level can be changed during these 2 seconds, so set it in callback
+                                this.volume = Settings.get("volume");
+                            });
+                        }
+                    } else {
+                        track.dom
+                            .unbind("timeupdate", onTimeUpdateSwitchTrack)
+                            .unbind("ended", onEndedSwitchTrack)
+                            .unbind("ended", dropTrackFromCurrentlyPlaying);
+
+                        if (smoothSwitch) {
+                            track.dom.play();
+                            track.smoothDecreaseVolume(dropTrackFromCurrentlyPlaying);
+                        } else {
+                            dropTrackFromCurrentlyPlaying.call(track.dom);
+                        }
+                    }
+                });
+
+                if (!isTrackContinuedPlaying) {
+                    var track = new Track(audioSrc);
+                    playingTracks.push(track);
+                }
             }
+
+            // delete current playing progress
+            $$(".song-playing-bg").remove();
 
             // update song containers
             $$(".music p.song").each(function () {
@@ -386,6 +402,9 @@ Sounds = (function () {
             // update player state
             $("header .play").removeClass("hidden");
             $("header .pause").addClass("hidden");
+
+            // delete current playing progress
+            $$(".song-playing-bg").remove();
         },
 
         /**
