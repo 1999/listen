@@ -88,6 +88,10 @@ Sounds = (function () {
         if (!trackContainer || progressElem)
             return;
 
+        // update song container buttons
+        $(trackContainer, ".play").addClass("hidden");
+        $(trackContainer, ".pause").removeClass("hidden");
+
         Templates.render("song-progress", {
             src: audioSrc
         }, function (html) {
