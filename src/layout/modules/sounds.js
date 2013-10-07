@@ -21,7 +21,7 @@ Sounds = (function () {
         var progressElem = $(".music div.song-playing-bg[data-url='" + this.attr("src") + "']");
 
         if (index !== -1) {
-            playingTracks.splice(index);
+            playingTracks.splice(index, 1);
         }
 
         if (progressElem) {
@@ -146,21 +146,21 @@ Sounds = (function () {
             return (this.dom.currentTime * 1000 < FADING_TIMEOUT_MS);
         },
 
-        smoothDecreaseVolume: function Track_smoothDecreaseVolume(callback) {
-            this.smoothIntervalId = smooth({
-                dom: this.dom,
-                volume: 0,
-                timeInterval: Math.min(FADING_TIMEOUT_MS, this.dom.duration - this.dom.currentTime),
-                smoothStart: true
-            }, callback);
-        },
-
         smoothIncreaseVolume: function Track_smoothIncreaseVolume(callback) {
             this.smoothIntervalId = smooth({
                 dom: this.dom,
                 volume: Settings.get("volume"),
                 timeInterval: FADING_TIMEOUT_MS,
                 smoothStart: false
+            }, callback);
+        },
+
+        smoothDecreaseVolume: function Track_smoothDecreaseVolume(callback) {
+            this.smoothIntervalId = smooth({
+                dom: this.dom,
+                volume: 0,
+                timeInterval: Math.min(FADING_TIMEOUT_MS, this.dom.duration - this.dom.currentTime),
+                smoothStart: true
             }, callback);
         }
     };
@@ -231,10 +231,10 @@ Sounds = (function () {
                     track.dom.play();
 
                     if (smoothSwitch) {
-                        // @todo time available can be less than FADING_TIMEOUT_MS
-                        smoothIncreaseVolume();
-
-                        // @todo on end -> set as current volume (it can be changed during smooth)
+                        track.smoothIncreaseVolume(function () {
+                            // colume level can be changed during these 2 seconds, so set it in callback
+                            this.volume = Settings.get("volume");
+                        });
                     }
                 } else {
                     track.dom
@@ -255,12 +255,28 @@ Sounds = (function () {
                 var track = new Track(audioSrc);
                 playingTracks.push(track);
             }
+
+            // update song containers
+            $$(".music p.song").each(function () {
+                if (this.data("url") === audioSrc) {
+                    $(this, ".play").addClass("hidden");
+                    $(this, ".pause").removeClass("hidden");
+                } else {
+                    $(this, ".play").removeClass("hidden");
+                    $(this, ".pause").addClass("hidden");
+                }
+            });
+
+            // update player state
+            $("header .play").addClass("hidden");
+            $("header .pause").removeClass("hidden");
         },
 
         playNext: function Sounds_playNext() {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
             var currentTrackIndex;
+            var currentTrackPlaylistIndex;
             var nextTrackIndex;
             var isCurrentTrackInPlaylist;
 
@@ -276,7 +292,8 @@ Sounds = (function () {
             // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
             // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
             currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
-            isCurrentTrackInPlaylist = (playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src")) !== -1);
+            currentTrackPlaylistIndex = playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src"));
+            isCurrentTrackInPlaylist = (currentTrackPlaylistIndex !== -1);
 
             if (isCurrentTrackInPlaylist) {
                 if (playlist.length === 1) {
@@ -284,9 +301,9 @@ Sounds = (function () {
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
                 } else if (playingMode === MODE_REPEAT) {
-                    nextTrackIndex = currentTrackIndex;
+                    nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
-                    nextTrackIndex = (currentTrackIndex + 1 < playlist.length) ? currentTrackIndex + 1 : 0;
+                    nextTrackIndex = (currentTrackPlaylistIndex + 1 < playlist.length) ? currentTrackPlaylistIndex + 1 : 0;
                 }
             } else {
                 nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
@@ -343,17 +360,26 @@ Sounds = (function () {
 
             if (!smoothSwitch) {
                 playingTracks[0].dom.pause();
-                return;
+            } else {
+                playingTracks.forEach(function (track) {
+                    if (track.isEnding)
+                        return;
+
+                    track.smoothDecreaseVolume(function () {
+                        track.dom.pause();
+                    });
+                });
             }
 
-            playingTracks.forEach(function (track) {
-                if (track.isEnding)
-                    return;
-
-                track.smoothDecreaseVolume(function () {
-                    track.dom.pause();
-                });
+            // update song containers
+            $$(".music p.song").each(function () {
+                $(this, ".play").removeClass("hidden");
+                $(this, ".pause").addClass("hidden");
             });
+
+            // update player state
+            $("header .play").removeClass("hidden");
+            $("header .pause").addClass("hidden");
         },
 
         /**
