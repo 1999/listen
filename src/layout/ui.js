@@ -441,7 +441,9 @@ parallel({
                 more: more,
                 type: "current"
             }, function (music) {
-                fillContent("", music);
+                fillContent("", music, function () {
+                    Sounds.onVisibleTracksUpdated();
+                });
             });
         });
 
@@ -454,6 +456,8 @@ parallel({
         SyncFS.requestCurrentFilesList(function (songs) {
             Templates.render("songs", {songs: songs}, function (music) {
                 fillContent("", music, function () {
+                    Sounds.onVisibleTracksUpdated();
+
                     // update songs data from Google Drive syncable filesystem
                     $$(".music p.song").each(function () {
                         var audioSrc = this.data("url");
@@ -505,6 +509,8 @@ parallel({
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
+                    Sounds.onVisibleTracksUpdated();
+
                     res.lastfm.albums.forEach(function (album) {
                         if (!album.cover)
                             return;
@@ -556,6 +562,8 @@ parallel({
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
+                    Sounds.onVisibleTracksUpdated();
+
                     res.lastfm.albums.forEach(function (album) {
                         if (!album.cover)
                             return;
@@ -632,6 +640,7 @@ parallel({
 
                                 Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
                                     $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
+                                    Sounds.onVisibleTracksUpdated();
                                 });
                             }
 

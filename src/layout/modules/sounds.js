@@ -483,8 +483,12 @@ Sounds = (function () {
             currentTrack.dom.currentTime = currentTrack.dom.duration * percent;
         },
 
-        updateSettimeCaret: function Sounds_updateSettimeCaret(elem, offsetX) {
+        onVisibleTracksUpdated: function Sounds_onVisibleTracksUpdated() {
+            if (!playingTracks.length)
+                return;
 
+            var currentTrack = playingTracks[playingTracks.length - 1];
+            onPlayContinue.call(currentTrack.dom);
         },
 
         /**
