@@ -1,7 +1,7 @@
 Sounds = (function () {
     "use strict";
 
-    var FADING_TIMEOUT_MS = 2000; // время затухания текущей композиции
+    var FADING_TIMEOUT_MS = 1500; // время затухания текущей композиции
     var MODE_SHUFFLE = "shuffle";
     var MODE_REPEAT = "repeat";
     var MODE_DEFAULT = "";
@@ -18,13 +18,19 @@ Sounds = (function () {
 
     function dropTrackFromCurrentlyPlaying() {
         var index = playingTracks.indexOf(this.track);
-        var progressElem = $(".music div.song-playing-bg[data-url='" + this.attr("src") + "']");
+        var audioSrc = this.attr("src");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
 
         if (index !== -1) {
             playingTracks.splice(index, 1);
         }
 
-        if (progressElem) {
+        // when "repeat this track" is enabled, there's no need to delete progress element
+        var hasSameTrackPlaying = playingTracks.some(function (track) {
+            return (track.dom.attr("src") === audioSrc);
+        });
+
+        if (progressElem && !hasSameTrackPlaying) {
             progressElem.remove();
         }
 
@@ -61,7 +67,7 @@ Sounds = (function () {
     function updateProgressElem() {
         var audioSrc = this.attr("src");
         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-        var headerProgressElem = $("header .playing-progress");
+        var headerProgressElem = $("header .song-playing-progress");
         var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
@@ -257,6 +263,7 @@ Sounds = (function () {
                     } else {
                         track.dom
                             .unbind("timeupdate", onTimeUpdateSwitchTrack)
+                            .unbind("timeupdate", updateProgressElem)
                             .unbind("ended", onEndedSwitchTrack)
                             .unbind("ended", dropTrackFromCurrentlyPlaying);
 
@@ -276,8 +283,8 @@ Sounds = (function () {
             }
 
             // delete current playing progress
-            $$(".song-playing-bg").remove();
-            $("header .playing-progress").css("width", "0");
+            $$(".music .song-playing-bg").remove();
+            $("header .song-playing-progress").css("width", "0");
 
             // update song containers
             $$(".music p.song").each(function () {
@@ -407,8 +414,8 @@ Sounds = (function () {
             $("header .pause").addClass("hidden");
 
             // delete current playing progress
-            $$(".song-playing-bg").remove();
-            $("header .playing-progress").css("width", "0");
+            $$(".music .song-playing-bg").remove();
+            $("header .song-playing-progress").css("width", "0");
         },
 
         /**

@@ -236,6 +236,16 @@ parallel({
                 window.open(Config.constants.yamoney_link);
                 $("header .closePay").click();
             },
+            // set playing track current time
+            "header .song-playing-bg": function (evt) {
+                var isPlaying = $("header span.play").hasClass("hidden");
+                var percent = evt.layerX / document.body.clientWidth;
+
+                if (!isPlaying)
+                    return;
+
+                Sounds.updateCurrentTime(percent);
+            },
             // закрытие обучалок
             ".study button.close": function (evt) {
                 var container = this.closestParent(".study");

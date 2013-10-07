@@ -183,12 +183,21 @@ header input[type='range'] {
     width: 80px;
 }
 
-header .playing-progress {
-    height: 3px;
+header .song-playing-bg {
+    height: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
+    width: 100%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+header .song-playing-bg .song-playing-progress {
     background: #5BC0DE;
+    height: 4px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 div.pay {
@@ -326,23 +335,16 @@ div.pay .btn-link {
     margin-left: 8px;
 }
 
-.song-playing-bg {
+.music .song-playing-bg {
     position: absolute;
     width: 100%;
 }
 
-.song-playing-bg .song-playing-progress {
+.music .song-playing-bg .song-playing-progress {
     position: absolute;
     padding: 5px 0;
     background: #e8e8e8;
     z-index: 1;
-}
-
-.song-playing-bg .song-playing-settime {
-    position: absolute;
-    padding: 5px 0;
-    background: rgba(160, 160, 160, .15);;
-    z-index: 2;
 }
 
 .song .play,
