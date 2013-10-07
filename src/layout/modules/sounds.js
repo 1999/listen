@@ -27,6 +27,8 @@ Sounds = (function () {
         if (progressElem) {
             progressElem.remove();
         }
+
+        this.remove();
     }
 
     function onTimeUpdateSwitchTrack() {
@@ -134,6 +136,8 @@ Sounds = (function () {
         }
 
         this.dom.bind("ended", dropTrackFromCurrentlyPlaying);
+
+        document.body.append(this.dom);
         this.dom.play();
     }
 
@@ -318,6 +322,7 @@ Sounds = (function () {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
             var currentTrackIndex;
+            var currentTrackPlaylistIndex;
             var nextTrackIndex;
             var isCurrentTrackInPlaylist;
 
@@ -333,7 +338,8 @@ Sounds = (function () {
             // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
             // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
             currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
-            isCurrentTrackInPlaylist = (playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src")) !== -1);
+            currentTrackPlaylistIndex = playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src"));
+            isCurrentTrackInPlaylist = (currentTrackPlaylistIndex !== -1);
 
             if (isCurrentTrackInPlaylist) {
                 if (playlist.length === 1) {
@@ -341,9 +347,9 @@ Sounds = (function () {
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
                 } else if (playingMode === MODE_REPEAT) {
-                    nextTrackIndex = currentTrackIndex;
+                    nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
-                    nextTrackIndex = (currentTrackIndex === 0) ? playlist.length - 1 : currentTrackIndex - 1;
+                    nextTrackIndex = (currentTrackPlaylistIndex === 0) ? playlist.length - 1 : currentTrackPlaylistIndex - 1;
                 }
             } else {
                 nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
