@@ -50,6 +50,7 @@ Sounds = (function () {
         }
 
         this.unbind("timeupdate", onTimeUpdateSwitchTrack);
+        updateRateCounter();
     }
 
     function onEndedSwitchTrack() {
@@ -62,6 +63,7 @@ Sounds = (function () {
         }
 
         this.unbind("ended", onEndedSwitchTrack);
+        updateRateCounter();
     }
 
     function updateProgressElem() {
@@ -91,6 +93,24 @@ Sounds = (function () {
         }, function (html) {
             trackContainer.before(html);
         });
+    }
+
+    function updateRateCounter() {
+        var payElem = $("header div.pay");
+
+        var currentCnt = Settings.get("headerRateCounter") + 1;
+        Settings.set("headerRateCounter", currentCnt);
+
+        if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
+            Templates.render("header-pay", {
+                payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                cwsRate: chrome.i18n.getMessage("rateCWS"),
+                close: chrome.i18n.getMessage("close")
+            }, function (html) {
+                $("header").append(html);
+            });
+        }
     }
 
     function smooth(options, callback) {
@@ -279,6 +299,10 @@ Sounds = (function () {
                 if (!isTrackContinuedPlaying) {
                     var track = new Track(audioSrc);
                     playingTracks.push(track);
+
+                    // update statistics
+                    var songsPlayed = Settings.get("songsPlayed");
+                    Settings.set("songsPlayed", songsPlayed + 1);
                 }
             }
 
