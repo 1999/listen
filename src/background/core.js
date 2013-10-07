@@ -1,8 +1,6 @@
 window.onerror = function(msg, url, line) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
     console.error(msgError);
-
-    // @todo y.mail way?
 };
 
 (function () {

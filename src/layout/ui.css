@@ -165,6 +165,11 @@ header .player-buttons span {
     color: white;
 }
 
+header .player-buttons > span:active,
+header .manage-local > span:active {
+    text-shadow: 0 0 3px white;
+}
+
 header .player-mode span {
     color: #666;
 }
@@ -176,6 +181,14 @@ header .player-mode span.active {
 
 header input[type='range'] {
     width: 80px;
+}
+
+header .playing-progress {
+    height: 3px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #5BC0DE;
 }
 
 div.pay {

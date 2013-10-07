@@ -61,13 +61,15 @@ Sounds = (function () {
     function updateProgressElem() {
         var audioSrc = this.attr("src");
         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var headerProgressElem = $("header .playing-progress");
         var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+        var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
-        if (!trackContainer || !progressElem)
-            return;
+        headerProgressElem.css("width", width);
 
-        var width = Math.ceil(trackContainer.clientWidth * this.currentTime / this.duration) + "px";
-        $(progressElem, ".song-playing-progress").css("width", width);
+        if (trackContainer && progressElem) {
+            $(progressElem, ".song-playing-progress").css("width", width);
+        }
     }
 
     function onPlayContinue() {
@@ -275,6 +277,7 @@ Sounds = (function () {
 
             // delete current playing progress
             $$(".song-playing-bg").remove();
+            $("header .playing-progress").css("width", "0");
 
             // update song containers
             $$(".music p.song").each(function () {
@@ -405,6 +408,7 @@ Sounds = (function () {
 
             // delete current playing progress
             $$(".song-playing-bg").remove();
+            $("header .playing-progress").css("width", "0");
         },
 
         /**
