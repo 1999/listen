@@ -240,7 +240,7 @@ Sounds = (function () {
                 });
 
                 playingTracks.forEach(function (track) {
-                    var trackSrc = track.dom.data("src");
+                    var trackSrc = track.dom.attr("src");
 
                     if (isTrackPlaying && canBeContinued && audioSrc === trackSrc) {
                         isTrackContinuedPlaying = true;
