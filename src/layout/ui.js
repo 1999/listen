@@ -145,20 +145,20 @@ parallel({
             "header span.local": function (evt) {
                 drawCloudSongs();
             },
-            // проигрывание песни из шапки
-            "header span.playpause": function (evt) {
-                if (this.hasClass("glyphicon-play")) {
-                    Sounds.play();
-                } else {
-                    Sounds.pause();
-                }
+            // start playing songs from header
+            "header span.play": function () {
+                Sounds.play();
             },
-            // переход к предыдущей песне
-            "header span.prev": function (evt) {
+            // pause playing songs from header
+            "header span.pause": function () {
+                Sounds.pause();
+            },
+            // play previous song from header
+            "header span.prev": function () {
                 Sounds.playPrev();
             },
-            // переход к следующей песне
-            "header span.next": function (evt) {
+            // play next song from header
+            "header span.next": function () {
                 Sounds.playNext();
             },
             // включение режимов "shuffle" и "repeat"
@@ -234,16 +234,16 @@ parallel({
                 container.remove();
                 evt.stopImmediatePropagation();
             },
-            // проигрывание песни и постановка на паузу
+            // play music file
             ".music span.play": function (evt) {
-                var play = this.hasClass("glyphicon-play");
-                if (play) {
-                    var songContainer = this.closestParent("p.song");
-                    Sounds.play(songContainer);
-                } else {
-                    Sounds.pause();
-                }
+                var songContainer = this.closestParent("p.song");
+                Sounds.play(songContainer.data("url"));
 
+                evt.stopImmediatePropagation();
+            },
+            // pause music file
+            ".music span.pause": function (evt) {
+                Sounds.pause();
                 evt.stopImmediatePropagation();
             },
             // скачивание песни в sync file system
@@ -333,7 +333,7 @@ parallel({
             },
             ".music p.song": function (evt) {
                 if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
-                    Sounds.updateCurrentTime(this, evt.layerX);
+                    Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
                 }
             }
         };
@@ -367,20 +367,6 @@ parallel({
                 throw new Error("No button found for making fake submit");
 
             lastButton.click();
-        }).bind("mouseover", function (evt) {
-            // @todo check parents
-            // @todo web components
-            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
-                Sounds.updateSettimeCaret(evt.target, evt.layerX);
-            }
-        }).bind("mousemove", function (evt) {
-            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
-                Sounds.updateSettimeCaret(evt.target, evt.layerX);
-            }
-        }).bind("mouseout", function (evt) {
-            if (matchesSelectorFn.call(evt.target, ".music p.song")) {
-                Sounds.updateSettimeCaret(evt.target, 0);
-            }
         });
 
         window.addEventListener("online", function (evt) {
