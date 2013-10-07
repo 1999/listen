@@ -150,10 +150,9 @@ header .player-volume {
     margin-left: 16px;
 }
 
-header .player-buttons .glyphicon,
-header .player-mode .glyphicon,
-header .player-volume .glyphicon,
-header .manage-local .glyphicon {
+header .player-buttons > span,
+header .player-mode > span,
+header .manage-local > span {
     display: inline-block;
     cursor: pointer;
     padding: 10px 6px;
@@ -162,15 +161,15 @@ header .manage-local .glyphicon {
     text-align: center;
 }
 
-header .player-buttons .glyphicon {
+header .player-buttons span {
     color: white;
 }
 
-header .player-mode .mode {
+header .player-mode span {
     color: #666;
 }
 
-header .player-mode .mode.active {
+header .player-mode span.active {
     color: white;
     text-shadow: 0 0 3px white;
 }
@@ -333,8 +332,8 @@ div.pay .btn-link {
     z-index: 2;
 }
 
-.song .glyphicon-play,
-.song .glyphicon-pause,
+.song .play,
+.song .pause,
 .song .cloud,
 .song .download
  {
