@@ -6,6 +6,8 @@ Sounds = (function () {
     var MODE_REPEAT = "repeat";
     var MODE_DEFAULT = "";
 
+    var notifId = 0; // стартовое значение для нумерации оповещений
+    
     var playlist = [];
     var playingTracks = [];
 
@@ -146,6 +148,29 @@ Sounds = (function () {
             options.dom.volume = oldVolume + diff;
         }, FADING_TIMEOUT_MS / iterationsNum);
     }
+    
+    function notificationButtonCliked(notifyId, buttonIndex) {
+        if (buttonIndex == 0)
+            Sounds.playPrev();
+        else
+            Sounds.playNext();
+    }
+    
+    function getOption(item, url) {
+        return {
+			type: "basic",
+			title: "Now playing",
+			eventTime: Date.now() + 5000,
+			message: [
+				item.childNodes[5].textContent,
+				'—',
+				item.childNodes[6].textContent.substr(2),
+				'[', item.childNodes[0].textContent, ']'
+			].join(' '),
+			iconUrl: url || "pics/icons/48.png", // TODO: url на альбом
+			buttons: [{title: '« Prev'}, {title:'Next »'}]
+		}
+    }
 
     function Track(audioSrc) {
         var smoothSwitch = Settings.get("smoothTracksSwitch");
@@ -201,7 +226,6 @@ Sounds = (function () {
         }
     };
 
-
     return {
         /**
          * @param {String|Number|Undefined} elem
@@ -210,6 +234,7 @@ Sounds = (function () {
         play: function Sounds_play(elem, canBeContinued) {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
+            var notify = Settings.get('showNotifications') && chrome.notifications;
             var audioSrc;
 
             if (canBeContinued === undefined) {
@@ -309,6 +334,11 @@ Sounds = (function () {
                     Settings.set("songsPlayed", songsPlayed + 1);
                 }
             }
+            
+            if (notify) {
+                if (!chrome.notifications.onButtonClicked.getListenerCount())
+                    chrome.notifications.onButtonClicked.addListener(notificationButtonCliked);
+            }
 
             // delete current playing progress
             $$(".music .song-playing-bg").remove();
@@ -319,6 +349,23 @@ Sounds = (function () {
                 if (this.data("url") === audioSrc) {
                     $(this, ".play").addClass("hidden");
                     $(this, ".pause").removeClass("hidden");
+                    
+                    if (notify) {
+                        if (notifId)
+						    chrome.notifications.clear(notifId, function(d) { 
+						        //console.log(d); 
+						    });
+					    
+					    chrome.notifications.create(
+    					    (+notifId || 0) + 1 + '', 
+    					    getOption(this), 
+    					    function(d) { 
+    						    //console.log(d);
+    						    notifId = d;
+    				        }
+    				    );
+                    }
+                    
                 } else {
                     $(this, ".play").removeClass("hidden");
                     $(this, ".pause").addClass("hidden");
@@ -414,6 +461,7 @@ Sounds = (function () {
 
         pause: function Sounds_pause() {
             var smoothSwitch = Settings.get("smoothTracksSwitch");
+            var notify = Settings.get('showNotifications') && chrome.notifications;
 
             if (!playingTracks.length)
                 throw new Error("Tracks are not playing");
@@ -430,7 +478,7 @@ Sounds = (function () {
                     });
                 });
             }
-
+            
             // update song containers
             $$(".music p.song").each(function () {
                 $(this, ".play").removeClass("hidden");
