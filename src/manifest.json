@@ -43,6 +43,7 @@
         "storage",
         "syncFileSystem",
         "unlimitedStorage",
+        "notifications",
         "*://*/*"
     ]
 }

@@ -13,7 +13,8 @@
         "songsPlayingMode": "", /* shuffle или repeat */
         "study": [], /* показанные обучалки */
         "vkToken": "", /* токен ВКонтакте */
-        "volume": 0.8 /* громкость */
+        "volume": 0.8, /* громкость */
+        "showNotifications": true /* показывать оповещение о треке*/
     },
     "sync": {
         "sendUsageStat": true /* посылать статистику использования */
