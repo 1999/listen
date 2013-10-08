@@ -158,18 +158,18 @@ Sounds = (function () {
     
     function getOption(item, url) {
         return {
-			type: "basic",
-			title: "Now playing",
-			eventTime: Date.now() + 5000,
-			message: [
-				item.childNodes[5].textContent,
-				'—',
-				item.childNodes[6].textContent.substr(2),
-				'[', item.childNodes[0].textContent, ']'
-			].join(' '),
-			iconUrl: url || "pics/icons/48.png", // TODO: url на альбом
-			buttons: [{title: '« Prev'}, {title:'Next »'}]
-		}
+            type: "basic",
+            title: "Now playing",
+            eventTime: Date.now() + 5000,
+            message: [
+                item.childNodes[5].textContent,
+                '—',
+                item.childNodes[6].textContent.substr(2),
+                '[', item.childNodes[0].textContent, ']'
+            ].join(' '),
+            iconUrl: url || "pics/icons/48.png", // TODO: url на альбом
+            buttons: [{title: '« Prev'}, {title:'Next »'}]
+        }
     }
 
     function Track(audioSrc) {
@@ -351,21 +351,20 @@ Sounds = (function () {
                     $(this, ".pause").removeClass("hidden");
                     
                     if (notify) {
-                        if (notifId)
-						    chrome.notifications.clear(notifId, function(d) { 
-						        //console.log(d); 
-						    });
-					    
-					    chrome.notifications.create(
-    					    (+notifId || 0) + 1 + '', 
-    					    getOption(this), 
-    					    function(d) { 
-    						    //console.log(d);
-    						    notifId = d;
-    				        }
-    				    );
+                    if (notifId)
+                        chrome.notifications.clear(notifId, function(d) {
+                            //console.log(d);
+                        });
+
+                        chrome.notifications.create(
+                            (+notifId || 0) + 1 + '',
+                            getOption(this), 
+                            function(d) {
+                                //console.log(d);
+                                notifId = d;
+                            }
+                        );
                     }
-                    
                 } else {
                     $(this, ".play").removeClass("hidden");
                     $(this, ".pause").addClass("hidden");

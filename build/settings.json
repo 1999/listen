@@ -1,0 +1,22 @@
+{
+    "local": {
+        "headerPay": {
+            "yamoney": 0,
+            "ratecws": 0,
+            "close": 0
+        },
+        "headerRateCounter": 0, /* количество треков, проигранных до конца, после 100 показываем header rate */
+        "isDebug": true, /* локальная разработка или нет */
+        "lastfmToken": "", /* токен LastFM */
+        "smoothTracksSwitch": true,
+        "songsPlayed": 0,
+        "songsPlayingMode": "", /* shuffle или repeat */
+        "study": [], /* показанные обучалки */
+        "vkToken": "", /* токен ВКонтакте */
+        "volume": 0.8, /* громкость */
+        "showNotifications": true /* показывать оповещение о треке*/
+    },
+    "sync": {
+        "sendUsageStat": true /* посылать статистику использования */
+    }
+}
