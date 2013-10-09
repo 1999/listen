@@ -3,7 +3,7 @@ window.onerror = function(msg, url, line) {
     console.error(msgError);
 
     if (!Settings.get("isDebug")) {
-        CPA.sendEvent("Errors", {
+        CPA.sendEvent("Errors", chrome.runtime.getManifest().version, {
             msg: msg,
             url: url,
             line: line

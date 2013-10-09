@@ -30,7 +30,8 @@ VK = (function () {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
         var downloadTitle = chrome.i18n.getMessage("downloadTitle");
-        var count = parseInt(xml.querySelector("count").textContent, 10);
+        var countNode = xml.querySelector("count");
+        var count = countNode ? parseInt(countNode.textContent, 10) : 0;
 
         [].forEach.call(xml.querySelectorAll("audio"), function (audio) {
             var audioIdNode = audio.querySelector("id");

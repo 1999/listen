@@ -490,8 +490,15 @@
                     return arguments[0];
 
                 if (typeof arguments[0] === "string") {
-                    if (!/^<(.|[\r\n\t])+>$/.test(arguments[0]))
-                        return document.querySelector(arguments[0]);
+                    if (!/^<(.|[\r\n\t])+>$/.test(arguments[0])) {
+                        try {
+                            var tmpElem = document.querySelector(arguments[0]);
+                            return tmpElem;
+                        } catch (ex) {
+                            ex.message += " (" + arguments[0] + ")";
+                            throw ex;
+                        }
+                    }
 
                     var tmpElem = document.createElement("div");
                     tmpElem.innerHTML = arguments[0];
