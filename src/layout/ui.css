@@ -44,7 +44,7 @@ body.guest {
 }
 
 body.user {
-    padding-top: 60px;
+    padding: 60px 0;
 }
 
 #sandbox {
@@ -364,4 +364,14 @@ div.pay .btn-link {
 .song a,
 .song span.link {
     color: #333;
+}
+
+footer {
+    background: rgb(64, 64, 64) url("darknoise.png");
+    padding: 8px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    z-index: 100;
+    color: white;
 }
