@@ -69,7 +69,7 @@ Sounds = (function () {
     function updateProgressElem() {
         var audioSrc = this.attr("src");
         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-        var headerProgressElem = $("header .song-playing-progress");
+        var headerProgressElem = $("footer .song-playing-progress");
         var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
@@ -312,7 +312,7 @@ Sounds = (function () {
 
             // delete current playing progress
             $$(".music .song-playing-bg").remove();
-            $("header .song-playing-progress").css("width", "0");
+            $("footer .song-playing-progress").css("width", "0");
 
             // update song containers
             $$(".music p.song").each(function () {
@@ -326,8 +326,8 @@ Sounds = (function () {
             });
 
             // update player state
-            $("header .play").addClass("hidden");
-            $("header .pause").removeClass("hidden");
+            $("footer .play").addClass("hidden");
+            $("footer .pause").removeClass("hidden");
         },
 
         playNext: function Sounds_playNext() {
@@ -438,12 +438,12 @@ Sounds = (function () {
             });
 
             // update player state
-            $("header .play").removeClass("hidden");
-            $("header .pause").addClass("hidden");
+            $("footer .play").removeClass("hidden");
+            $("footer .pause").addClass("hidden");
 
             // delete current playing progress
             $$(".music .song-playing-bg").remove();
-            $("header .song-playing-progress").css("width", "0");
+            $("footer .song-playing-progress").css("width", "0");
         },
 
         /**
@@ -501,7 +501,7 @@ Sounds = (function () {
         enableMode: function Sounds_enableMode(mode) {
             Settings.set("songsPlayingMode", mode);
 
-            $$("header span.mode").each(function () {
+            $$("footer span.mode").each(function () {
                 if (this.data("mode") === mode) {
                     this.addClass("active");
                 } else {
@@ -512,7 +512,7 @@ Sounds = (function () {
 
         disableMode: function Sounds_disableMode() {
             Settings.set("songsPlayingMode", "");
-            $$("header span.mode").removeClass("active");
+            $$("footer span.mode").removeClass("active");
         }
     };
 })();

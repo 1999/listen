@@ -158,30 +158,6 @@ parallel({
             "header span.local": function (evt) {
                 drawCloudSongs();
             },
-            // start playing songs from header
-            "header span.play": function () {
-                Sounds.play();
-            },
-            // pause playing songs from header
-            "header span.pause": function () {
-                Sounds.pause();
-            },
-            // play previous song from header
-            "header span.prev": function () {
-                Sounds.playPrev();
-            },
-            // play next song from header
-            "header span.next": function () {
-                Sounds.playNext();
-            },
-            // включение режимов "shuffle" и "repeat"
-            "header span.mode": function (evt) {
-                if (this.hasClass("active")) {
-                    Sounds.disableMode();
-                } else {
-                    Sounds.enableMode(this.data("mode"));
-                }
-            },
             // поиск песен, исполнителей итд.
             "header .search": function (evt) {
                 var searchElem = $("header input[type='search']");
@@ -235,16 +211,6 @@ parallel({
 
                 window.open(Config.constants.yamoney_link);
                 $("header .closePay").click();
-            },
-            // set playing track current time
-            "header .song-playing-bg": function (evt) {
-                var isPlaying = $("header span.play").hasClass("hidden");
-                var percent = evt.layerX / document.body.clientWidth;
-
-                if (!isPlaying)
-                    return;
-
-                Sounds.updateCurrentTime(percent);
             },
             // закрытие обучалок
             ".study button.close": function (evt) {
@@ -358,7 +324,41 @@ parallel({
                 if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
                     Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
                 }
-            }
+            },
+            // start playing songs from header
+            "footer span.play": function () {
+                Sounds.play();
+            },
+            // pause playing songs from header
+            "footer span.pause": function () {
+                Sounds.pause();
+            },
+            // play previous song from header
+            "footer span.prev": function () {
+                Sounds.playPrev();
+            },
+            // play next song from header
+            "footer span.next": function () {
+                Sounds.playNext();
+            },
+            // включение режимов "shuffle" и "repeat"
+            "footer span.mode": function (evt) {
+                if (this.hasClass("active")) {
+                    Sounds.disableMode();
+                } else {
+                    Sounds.enableMode(this.data("mode"));
+                }
+            },
+            // set playing track current time
+            "footer .song-playing-bg": function (evt) {
+                var isPlaying = $("footer span.play").hasClass("hidden");
+                var percent = evt.layerX / document.body.clientWidth;
+
+                if (!isPlaying)
+                    return;
+
+                Sounds.updateCurrentTime(percent);
+            },
         };
 
         $(document.body).bind("click", function (evt) {
@@ -420,9 +420,9 @@ parallel({
             });
         }
 
-        var headerRangeInput = $("header input[type='range']");
-        if (headerRangeInput) {
-            headerRangeInput.bind("change", function () {
+        var volumeRangeInput = $("footer input[type='range']");
+        if (volumeRangeInput) {
+            volumeRangeInput.bind("change", function () {
                 Sounds.changeVolumeLevel(this.value);
             });
         }

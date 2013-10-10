@@ -331,13 +331,12 @@ div.pay .btn-link {
 }
 
 footer {
-    background: rgb(64, 64, 64) url("darknoise.png");
+    background: white;
     padding: 12px 8px 8px;
     position: fixed;
     width: 100%;
     bottom: 0;
     z-index: 100;
-    color: white;
 }
 
 footer .player-buttons,
@@ -354,7 +353,7 @@ footer .mode-volume > span {
     font-size: 18px;
     line-height: 1;
     text-align: center;
-    color: white;
+    color: #666;
 }
 
 footer .song-title {
@@ -367,13 +366,13 @@ footer .mode-volume > span:active {
 }
 
 footer .mode-volume > span {
-    color: #666;
     padding: 0 4px;
+    color: #bcbcbc;
 }
 
 footer .mode-volume span.active {
-    color: white;
-    text-shadow: 0 0 3px white;
+    color: #333;
+    text-shadow: 0 0 1px black;
 }
 
 footer input[type='range'] {
@@ -388,7 +387,7 @@ footer .song-playing-bg {
     left: 0;
     width: 100%;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.15);
+    background: #dadada;
 }
 
 footer .song-playing-bg .song-playing-progress {
