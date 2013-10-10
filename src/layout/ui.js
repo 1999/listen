@@ -393,12 +393,20 @@ parallel({
         });
 
         window.addEventListener("online", function (evt) {
-            $("header input[type='search']").removeAttr("disabled");
+            var headerSearchInput = $("header input[type='search']");
+
+            if (headerSearchInput) {
+                headerSearchInput.removeAttr("disabled");
+            }
         }, false);
 
         window.addEventListener("offline", function () {
-            $("header input[type='search']").attr("disabled", "disabled");
-            drawCloudSongs();
+            var headerSearchInput = $("header input[type='search']");
+
+            if (headerSearchInput) {
+                headerSearchInput.attr("disabled", "disabled");
+                drawCloudSongs();
+            }
         }, false);
 
         var headerSearchInput = $("header input[type='search']");
