@@ -1,5 +1,9 @@
 <header>
     <form class="form-inline" role="form">
+        <div class="form-group history">
+            <span class="glyphicon glyphicon-arrow-left back" role="button"></span>
+            <span class="glyphicon glyphicon-arrow-right forward" role="button"></span>
+        </div>
         <div class="form-group">
             <input size="35" class="form-control input-lg" type="search" placeholder="{{placeholder}}">
         </div>
@@ -8,28 +12,14 @@
                 <span class="glyphicon glyphicon-search"></span>
             </button>
         </div>
-        <div class="form-group player-buttons">
-            <span class="glyphicon glyphicon-play play" role="button"></span>
-            <span class="glyphicon glyphicon-pause pause hidden" role="button"></span>
-            <span class="glyphicon glyphicon-step-backward prev" role="button"></span>
-            <span class="glyphicon glyphicon-step-forward next" role="button"></span>
-        </div>
-        <div class="form-group player-mode">
-            <span title="{{shuffleTitle}}" class="glyphicon glyphicon-random mode{{#isShuffled}} active{{/isShuffled}}" data-mode="shuffle" role="button"></span>
-            <span title="{{repeatTitle}}" class="glyphicon glyphicon-repeat mode{{#isRepeated}} active{{/isRepeated}}" data-mode="repeat" role="button"></span>
-        </div>
-        <div class="form-group player-volume">
-            <input type="range" min="0" max="1" step="0.01" value="{{volume}}">
-        </div>
         <div class="form-group pull-right manage-local">
+            <span class="glyphicon glyphicon-align-justify settings" role="button"></span>
+
             <span class="glyphicon glyphicon-cloud-download local">
                 <span class="counter"></span>
             </span>
         </div>
     </form>
-    <div class="song-playing-bg">
-        <div class="song-playing-progress" style="width: 0"></div>
-    </div>
 </header>
 <section class="loading-content"></section>
 
@@ -37,6 +27,22 @@
 <section class="music"></section>
 
 <footer>
-    currently playing song title, player, mode
-    header -> settings, form, BF, cloud
+    <form class="form-inline" role="form">
+        <div class="form-group player-buttons">
+            <span class="glyphicon glyphicon-play play" role="button"></span>
+            <span class="glyphicon glyphicon-pause pause hidden" role="button"></span>
+            <span class="glyphicon glyphicon-step-backward prev" role="button"></span>
+            <span class="glyphicon glyphicon-step-forward next" role="button"></span>
+        </div>
+        <div class="form-group song-title">currently playing song title</div>
+        <div class="form-group pull-right mode-volume">
+            <span title="{{shuffleTitle}}" class="glyphicon glyphicon-random mode{{#isShuffled}} active{{/isShuffled}}" data-mode="shuffle" role="button"></span>
+            <span title="{{repeatTitle}}" class="glyphicon glyphicon-repeat mode{{#isRepeated}} active{{/isRepeated}}" data-mode="repeat" role="button"></span>
+
+            <input type="range" min="0" max="1" step="0.01" value="{{volume}}">
+        </div>
+    </form>
+    <div class="song-playing-bg">
+        <div class="song-playing-progress" style="width: 0"></div>
+    </div>
 </footer>

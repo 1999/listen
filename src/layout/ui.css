@@ -44,7 +44,7 @@ body.guest {
 }
 
 body.user {
-    padding: 60px 0;
+    padding: 60px 0 40px;
 }
 
 #sandbox {
@@ -142,16 +142,13 @@ header .search {
     margin-left: 8px;
 }
 
-header .player-buttons,
-header .player-mode,
-header .player-volume {
+header .history {
     position: relative;
     top: 2px;
-    margin-left: 16px;
+    margin-right: 8px;
 }
 
-header .player-buttons > span,
-header .player-mode > span,
+header .history > span,
 header .manage-local > span {
     display: inline-block;
     cursor: pointer;
@@ -159,45 +156,12 @@ header .manage-local > span {
     font-size: 20px;
     line-height: 24px;
     text-align: center;
-}
-
-header .player-buttons span {
     color: white;
 }
 
-header .player-buttons > span:active,
+header .history > span:active,
 header .manage-local > span:active {
     text-shadow: 0 0 3px white;
-}
-
-header .player-mode span {
-    color: #666;
-}
-
-header .player-mode span.active {
-    color: white;
-    text-shadow: 0 0 3px white;
-}
-
-header input[type='range'] {
-    width: 80px;
-}
-
-header .song-playing-bg {
-    height: 4px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-header .song-playing-bg .song-playing-progress {
-    background: #5BC0DE;
-    height: 4px;
-    display: inline-block;
-    vertical-align: top;
 }
 
 div.pay {
@@ -368,10 +332,68 @@ div.pay .btn-link {
 
 footer {
     background: rgb(64, 64, 64) url("darknoise.png");
-    padding: 8px;
+    padding: 12px 8px 8px;
     position: fixed;
     width: 100%;
     bottom: 0;
     z-index: 100;
     color: white;
+}
+
+footer .player-buttons,
+footer .mode-volume {
+    position: relative;
+    top: 2px;
+}
+
+footer .player-buttons > span,
+footer .mode-volume > span {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: 18px;
+    line-height: 1;
+    text-align: center;
+    color: white;
+}
+
+footer .song-title {
+    margin-left: 12px;
+}
+
+footer .player-buttons > span:active,
+footer .mode-volume > span:active {
+    text-shadow: 0 0 3px white;
+}
+
+footer .mode-volume > span {
+    color: #666;
+    padding: 0 4px;
+}
+
+footer .mode-volume span.active {
+    color: white;
+    text-shadow: 0 0 3px white;
+}
+
+footer input[type='range'] {
+    width: 80px;
+    margin-left: 8px;
+}
+
+footer .song-playing-bg {
+    height: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+footer .song-playing-bg .song-playing-progress {
+    background: #5BC0DE;
+    height: 4px;
+    display: inline-block;
+    vertical-align: top;
 }
