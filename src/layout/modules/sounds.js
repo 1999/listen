@@ -16,6 +16,18 @@ Sounds = (function () {
         return (rand === 1) ? playlist.length - 1 : Math.floor(rand / interval);
     }
 
+    function getPlaylistIndexOfURL(url) {
+        var index = -1;
+
+        playlist.forEach(function (elem, i) {
+            if (elem.url === url) {
+                index = i;
+            }
+        });
+
+        return index;
+    }
+
     function dropTrackFromCurrentlyPlaying() {
         var index = playingTracks.indexOf(this.track);
         var audioSrc = this.attr("src");
@@ -211,6 +223,7 @@ Sounds = (function () {
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
             var audioSrc;
+            var playlistIndex;;
 
             if (canBeContinued === undefined) {
                 canBeContinued = true;
@@ -248,19 +261,23 @@ Sounds = (function () {
                 });
 
                 audioSrc = playingTracks[playingTracks.length - 1].dom.attr("src");
+                playlistIndex = getPlaylistIndexOfURL(audioSrc);
+
+                if (playlistIndex === -1) {
+                    throw new Error("No such track in playlist");
+                }
             } else {
-                var playlistIndex;
                 var isTrackContinuedPlaying = false;
 
                 if (typeof elem === "string") {
                     audioSrc = elem;
-                    playlistIndex = playlist.indexOf(audioSrc);
+                    playlistIndex = getPlaylistIndexOfURL(audioSrc);
 
                     if (playlistIndex === -1) {
                         throw new Error("No such track in playlist");
                     }
                 } else {
-                    audioSrc = playlist[elem];
+                    audioSrc = playlist[elem].url;
                     playlistIndex = elem;
                 }
 
@@ -268,7 +285,7 @@ Sounds = (function () {
                 // "canBeContinued" set to "true" allows to continue playing this track
                 // otherwise the track will be started playing from the beginning (repeat mode)
                 var isTrackPlaying = playingTracks.some(function (track) {
-                    return (track.dom.attr("src") === playlist[playlistIndex]);
+                    return (track.dom.attr("src") === playlist[playlistIndex].url);
                 });
 
                 playingTracks.forEach(function (track) {
@@ -328,6 +345,9 @@ Sounds = (function () {
             // update player state
             $("footer .play").addClass("hidden");
             $("footer .pause").removeClass("hidden");
+
+            // update player current song
+            $("footer .song-title").text(playlist[playlistIndex].artist + " - " + playlist[playlistIndex].title);
         },
 
         playNext: function Sounds_playNext() {
@@ -350,7 +370,7 @@ Sounds = (function () {
             // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
             // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
             currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
-            currentTrackPlaylistIndex = playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src"));
+            currentTrackPlaylistIndex = getPlaylistIndexOfURL(playingTracks[currentTrackIndex].dom.attr("src"));
             isCurrentTrackInPlaylist = (currentTrackPlaylistIndex !== -1);
 
             if (isCurrentTrackInPlaylist) {
@@ -392,7 +412,7 @@ Sounds = (function () {
             // Some of them can be ending, some can be starting. This means that the most recent track is the last one.
             // This is the "currently playing track". And if "smoothTracksSwitch" is switched off, there can be only one currently playing track.
             currentTrackIndex = smoothSwitch ? playingTracks.length - 1 : 0;
-            currentTrackPlaylistIndex = playlist.indexOf(playingTracks[currentTrackIndex].dom.attr("src"));
+            currentTrackPlaylistIndex = getPlaylistIndexOfURL(playingTracks[currentTrackIndex].dom.attr("src"));
             isCurrentTrackInPlaylist = (currentTrackPlaylistIndex !== -1);
 
             if (isCurrentTrackInPlaylist) {
@@ -472,7 +492,11 @@ Sounds = (function () {
             playlist.length = 0;
 
             $$(".music p.song").each(function () {
-                playlist.push(this.data("url"));
+                playlist.push({
+                    url: this.data("url"),
+                    artist: this.data("artist"),
+                    title: this.data("title")
+                });
             });
         },
 

@@ -259,9 +259,11 @@ parallel({
             ".music a[download]": function (evt) {
                 evt.stopImmediatePropagation();
 
+                var songContainer = this.closest("p.song");
+
                 CPA.sendEvent("Actions", "saveLocal", {
-                    artist: this.data("artist"),
-                    title: this.data("title")
+                    artist: songContainer.data("artist"),
+                    title: songContainer.data("title")
                 });
             },
             ".music div.more": function (evt) {
