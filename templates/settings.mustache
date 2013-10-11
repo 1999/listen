@@ -1,0 +1,47 @@
+<form role="form">
+    <div class="form-group">
+        <label>{{vkAuthTitle}}</label>
+        <button type="button" class="btn btn-default drop-vk-auth">{{dropVkAuth}}</button>
+    </div>
+    <div class="form-group">
+        <label>{{lastFmAuthTitle}}</label>
+        {{#lastFmAuthorized}}
+            <button type="button" class="btn btn-default drop-lastfm-token">{{dropLastFmAuth}}</button>
+        {{/lastFmAuthorized}}
+
+        {{^lastFmAuthorized}}
+            <button type="button" class="btn btn-default get-lastfm-token">{{getLastFmAuth}}</button>
+        {{/lastFmAuthorized}}
+    </div>
+    <div class="form-group">
+        <label for="smoothSwitch">{{smoothSwitchTitle}}</label>
+        <div class="radio">
+            <label>
+                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="1" checked>
+                {{yes}}
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="0">
+                {{no}}
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="sendStat">{{sendStatisticsTitle}}</label>
+
+        <div class="radio">
+            <label>
+                <input type="radio" name="sendStat" id="sendStat" value="1" checked>
+                {{yes}}
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="sendStat" id="sendStat" value="0">
+                {{no}}
+            </label>
+        </div>
+    </div>
+</form>

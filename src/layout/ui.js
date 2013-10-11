@@ -154,6 +154,10 @@ parallel({
                     drawBaseUI();
                 });
             },
+            // открытие настроек
+            "header .settings": function (evt) {
+                drawSettings();
+            },
             // список локальных треков в облаке Google Drive
             "header span.local": function (evt) {
                 drawCloudSongs();
@@ -664,5 +668,24 @@ parallel({
         });
 
         CPA.sendAppView("User.SearchAlbum");
+    }
+
+    function drawSettings() {
+        emptyContent();
+
+        Templates.render("settings", {
+            vkAuthTitle: "",
+            dropVkAuth: "",
+            lastFmAuthTitle: "",
+            lastFmAuthorized: "",
+            dropLastFmAuth: "",
+            getLastFmAuth: "",
+            smoothSwitchTitle: "",
+            sendStatisticsTitle: "",
+            yes: "",
+            no: ""
+        }, function (html) {
+            fillContent(html, "");
+        });
     }
 });
