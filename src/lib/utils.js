@@ -423,15 +423,24 @@
     exports.loadResource = function (url, options, ctx) {
         var xhr = new XMLHttpRequest;
         var method = options.method || "GET";
-        var params = options.data ? createRequestParams(options.data) : null;
-        var sendData = (method.toUpperCase() === "POST") ? params : null;
         var isXML = false;
+        var sendData = null;
 
-        if (method.toUpperCase() === "GET" && params)
-            url += "?" + params;
+        if (method.toUpperCase() === "GET") {
+            var getParams = createRequestParams(options.data);
+            if (getParams.length) {
+                url += "?" + getParams;
+            }
+        }
 
         xhr.open(method, url, true);
         xhr.timeout = (options.timeout !== undefined) ? options.timeout : 25000;
+
+        if (options.headers) {
+            for (var headerName in options.headers) {
+                xhr.setRequestHeader(headerName, options.headers[headerName]);
+            }
+        }
 
         switch (options.responseType) {
             case "blob":
@@ -448,24 +457,31 @@
         if (options.onload) {
             xhr.onload = function () {
                 var arg = isXML ? xhr.responseXML : xhr.response;
-                options.onload.call(ctx, arg);
+                options.onload.call(ctx || xhr, arg);
             };
         }
 
         if (options.onprogress) {
             xhr.onprogress = function (evt) {
                 var percents = Math.floor((evt.position / evt.totalSize) * 100);
-                options.onprogress.call(ctx, percents);
+                options.onprogress.call(ctx || xhr, percents);
             };
         }
 
         if (options.onerror) {
             xhr.onerror = function (evt) {
-                options.onerror.call(ctx, evt.type);
+                options.onerror.call(ctx || xhr, evt);
             };
 
             xhr.onabort = function (evt) {
-                options.onerror.call(ctx, evt.type);
+                options.onerror.call(ctx || xhr, evt);
+            }
+        }
+
+        if (method.toUpperCase() === "POST") {
+            for (var key in options.data) {
+                sendData = sendData || new FormData;
+                sendData.append(key, options.data[key]);
             }
         }
 

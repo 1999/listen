@@ -33,6 +33,12 @@ Sounds = (function () {
         var audioSrc = this.attr("src");
         var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
 
+        var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
+        if (Lastfm.isAuthorized && playlistIndex !== -1) {
+            var trackPlaylistData = playlist[playlistIndex];
+            Lastfm.scrobble(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
+        }
+
         if (index !== -1) {
             playingTracks.splice(index, 1);
         }
@@ -111,6 +117,20 @@ Sounds = (function () {
         });
     }
 
+    function onDurationChange() {
+        var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
+        if (!Lastfm.isAuthorized || playlistIndex === -1) {
+            return;
+        }
+
+        var trackPlaylistData = playlist[playlistIndex];
+        Lastfm.updateNowPlaying(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
+
+        // getID3v1Data(audioSrc, function (data) {
+        //     console.log(JSON.stringify(data));
+        // });
+    }
+
     function updateRateCounter() {
         // @todo может быть открыта страница настроек с уже показанным преложением
         var payElem = $("header div.pay");
@@ -160,6 +180,65 @@ Sounds = (function () {
         }, FADING_TIMEOUT_MS / iterationsNum);
     }
 
+    // Get content-length of the MP3 file, then get its last 128 bytes with Range header
+    function getID3v1Data(audioSrc, callback) {
+        // @todo cache - uploaded track cant change its ID3v1
+        loadResource(audioSrc, {
+            method: "HEAD",
+            onload: function () {
+                var contentLength = this.getResponseHeader("Content-Length");
+                var bytesRangeHeader = "bytes=" + (contentLength - 128) + "-" + contentLength;
+
+                loadResource(audioSrc, {
+                    headers: {
+                        Range: bytesRangeHeader
+                    },
+                    responseType: "blob",
+                    onload: function () {
+                        var blob = this.response;
+
+                        parallel({
+                            tag: function (callback) {
+                                readBinary(blob.slice(0, 3, "text/plain"), callback);
+                            },
+                            artist: function (callback) {
+                                readBinary(blob.slice(33, 63, "text/plain"), callback);
+                            },
+                            title: function (callback) {
+                                readBinary(blob.slice(3, 33, "text/plain"), callback);
+                            }
+                        }, function (res) {
+                            if (res.tag !== "TAG")
+                                return callback();
+
+                            callback({
+                                artist: res.artist.trim(),
+                                title: res.title.trim()
+                            });
+                        });
+                    },
+                    onerror: function (evt) {
+                        console.error(evt);
+                        callback();
+                    }
+                });
+            },
+            onerror: function (evt) {
+                console.error(evt);
+                callback();
+            }
+        });
+    }
+
+    function readBinary(blob, callback) {
+        var reader = new FileReader;
+        reader.onloadend = function () {
+            callback(reader.result);
+        };
+
+        reader.readAsBinaryString(blob);
+    }
+
     function Track(audioSrc) {
         var smoothSwitch = Settings.get("smoothTracksSwitch");
         var volume = Settings.get("volume");
@@ -172,6 +251,8 @@ Sounds = (function () {
 
         this.dom.bind("timeupdate", updateProgressElem);
         this.dom.bind("play", onPlayContinue);
+
+        this.dom.bind("durationchange", onDurationChange);
 
         if (smoothSwitch) {
             this.dom.bind("timeupdate", onTimeUpdateSwitchTrack);

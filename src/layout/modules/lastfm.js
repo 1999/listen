@@ -158,6 +158,69 @@ Lastfm = (function () {
             }, function () {
                 callback(null);
             });
+        },
+
+        get isAuthorized() {
+            return (Settings.get("lastfmToken").length > 0);
+        },
+
+        updateNowPlaying: function Lastfm_updateNowPlaying(artist, trackTitle, album, trackNumber, durationSec) {
+            var options = {
+                method: "track.updateNowPlaying",
+                artist: artist,
+                track: trackTitle,
+                sk: Settings.get("lastfmToken")
+            };
+
+            if (album)
+                options.album = album;
+
+            if (typeof trackNumber === "number")
+                options.trackNumber = trackNumber;
+
+            if (durationSec)
+                options.duration = durationSec;
+
+            makeAPIRequest("POST", true, options, function (xml) {
+                chrome.storage.local.get("installId", function (records) {
+                    CPA.sendEvent("Actions", "LFM_updateNowPlaying", {
+                        artist: artist,
+                        title: trackTitle,
+                        id: records.installId
+                    });
+                });
+            });
+        },
+
+        scrobble: function Lastfm_scrobble(artist, trackTitle, album, trackNumber, durationSec) {
+            var options = {
+                method: "track.scrobble",
+                artist: artist,
+                track: trackTitle,
+                timestamp: Math.round(Date.now() / 1000) - durationSec,
+                sk: Settings.get("lastfmToken")
+            };
+
+            // chosenByUser[i] (Optional) : Set to 1 if the user chose this song, or 0 if the song was chosen by someone else (such as a radio station or recommendation service). Assumes 1 if not specified
+
+            if (album)
+                options.album = album;
+
+            if (typeof trackNumber === "number")
+                options.trackNumber = trackNumber;
+
+            if (durationSec)
+                options.duration = durationSec;
+
+            makeAPIRequest("POST", true, options, function (xml) {
+                chrome.storage.local.get("installId", function (records) {
+                    CPA.sendEvent("Actions", "LFM_scrobble", {
+                        artist: artist,
+                        title: trackTitle,
+                        id: records.installId
+                    });
+                });
+            });
         }
     };
 })();

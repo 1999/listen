@@ -307,20 +307,16 @@ parallel({
 
                 drawBaseUI();
             },
-            // set boolean values (sendStat, smoothTracks, showNotifications)
-            ".settings input[type='radio']": function (evt) {
+            // save sendStat setting
+            ".settings input.sendStat[type='radio']": function (evt) {
+                console.log(this.value);
+            },
+            // save smoothSwitch setting
+            ".settings input.smoothSwitch[type='radio']": function (evt) {
 
             },
-            //
-            ".settings .xx": function (evt) {
-
-            },
-            //
-            ".settings .x": function (evt) {
-
-            },
-            //
-            ".settings .xxx": function (evt) {
+            // save showNotifications setting
+            ".settings input.showNotifications[type='radio']": function (evt) {
 
             },
             // play music file
