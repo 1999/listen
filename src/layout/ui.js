@@ -135,11 +135,14 @@ parallel({
                     }),
                     interactive: true
                 }, function (responseURL) {
-                    var response = parseQuery(responseURL.replace(baseURL + "#", ""));
-                    if (!response.access_token) {
-                        btn.removeAttr("disabled");
+                    btn.removeAttr("disabled");
+
+                    if (!responseURL)
                         return;
-                    }
+
+                    var response = parseQuery(responseURL.replace(baseURL + "#", ""));
+                    if (!response.access_token)
+                        return;
 
                     Settings.set("vkToken", response.access_token);
 
@@ -234,6 +237,86 @@ parallel({
 
                 container.remove();
                 evt.stopImmediatePropagation();
+            },
+            // get LastFM token
+            ".settings .get-lastfm-token": function (evt) {
+                var btn = this.attr("disabled", "disabled");
+                var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
+
+                chrome.identity.launchWebAuthFlow({
+                    url: "http://www.last.fm/api/auth/?api_key=" + Config.constants.lastfm_api_key,
+                    interactive: true
+                }, function (responseURL) {
+                    if (!responseURL) {
+                        btn.removeAttr("disabled");
+                        return;
+                    }
+
+                    var response = parseQuery(responseURL.replace(baseURL + "?", ""));
+                    if (!response.token) {
+                        btn.removeAttr("disabled");
+                        return;
+                    }
+
+                    Lastfm.getSession(response.token, function (sessionData) {
+                        btn.removeAttr("disabled");
+
+                        if (!sessionData) {
+                            return;
+                        }
+
+                        Settings.set("lastfmToken", sessionData.key);
+
+                        chrome.storage.local.get("installId", function (records) {
+                            CPA.sendEvent("Lyfecycle", "LFM_Authorized", {
+                                id: records.installId,
+                                name: sessionData.name
+                            });
+                        });
+
+                        drawSettings();
+                    });
+                });
+            },
+            // drop LastFM token
+            ".settings .drop-lastfm-token": function (evt) {
+                Settings.set("lastfmToken", "");
+
+                chrome.storage.local.get("installId", function (records) {
+                    CPA.sendEvent("Lyfecycle", "LFM_Reset", {
+                        id: records.installId
+                    });
+                });
+
+                drawSettings();
+            },
+            // drop VK token
+            ".settings .drop-vk-auth": function (evt) {
+                Settings.set("vkToken", "");
+
+                chrome.storage.local.get("installId", function (records) {
+                    CPA.sendEvent("Lyfecycle", "VK_Reset", {
+                        id: records.installId
+                    });
+                });
+
+                drawBaseUI();
+            },
+            // set boolean values (sendStat, smoothTracks, showNotifications)
+            ".settings input[type='radio']": function (evt) {
+
+            },
+            //
+            ".settings .xx": function (evt) {
+
+            },
+            //
+            ".settings .x": function (evt) {
+
+            },
+            //
+            ".settings .xxx": function (evt) {
+
             },
             // play music file
             ".music span.play": function (evt) {

@@ -1,7 +1,8 @@
 {
     "vk_app_id": 3874619,
     "vk_app_scope": ["audio", "offline"],
-    "lastfm_api_key": "33d53f603c3f548e9bc4a3b4a1430a67",
+    "lastfm_api_key": "a2418dbea58f9f466e8ab3ee28d40040",
+    "lastfm_api_sig": "2f43848209564c5b7f317a57696547e6",
     "ga_app_id": "listen_app",
     "ga_app_counter": "UA-20919085-8",
     "header_rate_limit": 3,

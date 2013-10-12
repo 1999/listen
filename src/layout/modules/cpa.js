@@ -22,7 +22,7 @@ CPA = (function() {
         changePermittedState: function CPA_changePermittedState(permitted) {
             chrome.runtime.sendMessage({
                 action: "stat",
-                method: "changePermittedState"
+                method: "changePermittedState",
                 args: [permitted]
             });
         },
@@ -30,7 +30,7 @@ CPA = (function() {
         sendAppView: function CPA_sendAppView(viewName) {
             chrome.runtime.sendMessage({
                 action: "stat",
-                method: "sendAppView"
+                method: "sendAppView",
                 args: [viewName]
             });
         }

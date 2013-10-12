@@ -3,7 +3,16 @@ Lastfm = (function () {
 
     var BASE_URL = "http://ws.audioscrobbler.com/2.0/";
 
-    function makeAPIRequest(method, options, onload, onerror) {
+    function makeSignedKey(args) {
+        var output = "";
+        Object.keys(args).sort().forEach(function (key) {
+            output += key + args[key];
+        });
+
+        return md5(output + Config.constants.lastfm_api_sig);
+    }
+
+    function makeAPIRequest(requestMethod, isSigned, options, onload, onerror) {
         if (typeof options === "function") {
             onerror = onload;
             onload = options;
@@ -11,11 +20,13 @@ Lastfm = (function () {
         }
 
         options.api_key = Config.constants.lastfm_api_key;
-        options.lang = getCurrentLocale();
-        options.method = method;
+
+        if (isSigned)
+            options.api_sig = makeSignedKey(options);
 
         loadResource(BASE_URL, {
             responseType: "xml",
+            method: requestMethod,
             data: options,
             onload: function (xml) {
                 if (!xml || xml.documentElement.getAttribute("status") === "failed")
@@ -35,7 +46,10 @@ Lastfm = (function () {
 
             parallel({
                 info: function (callback) {
-                    makeAPIRequest("artist.getinfo", {artist: searchQuery}, function (xml) {
+                    makeAPIRequest("GET", false, {
+                        method: "artist.getinfo",
+                        artist: searchQuery
+                    }, function (xml) {
                         callback(xml.querySelector("bio > summary").textContent);
                     }, function () {
                         callback(null);
@@ -43,7 +57,8 @@ Lastfm = (function () {
                 },
                 similar: function (callback) {
                     // @todo similar есть и в просто artist.getInfo
-                    makeAPIRequest("artist.getSimilar", {
+                    makeAPIRequest("GET", false, {
+                        method: "artist.getSimilar",
                         artist: searchQuery,
                         limit: 10,
                         autocorrect: 1
@@ -59,7 +74,10 @@ Lastfm = (function () {
                     });
                 },
                 tracks: function (callback) {
-                    makeAPIRequest("artist.gettoptracks", {artist: searchQuery}, function (xml) {
+                    makeAPIRequest("GET", false, {
+                        method: "artist.gettoptracks",
+                        artist: searchQuery
+                    }, function (xml) {
                         var tracks = [];
 
                         [].forEach.call(xml.querySelectorAll("toptracks > track"), function (track) {
@@ -72,7 +90,10 @@ Lastfm = (function () {
                     });
                 },
                 albums: function (callback) {
-                    makeAPIRequest("artist.gettopalbums", {artist: searchQuery}, function (xml) {
+                    makeAPIRequest("GET", false, {
+                        method: "artist.gettopalbums",
+                        artist: searchQuery
+                    }, function (xml) {
                         var albums = [];
 
                         [].forEach.call(xml.querySelectorAll("topalbums > album"), function (album) {
@@ -94,7 +115,9 @@ Lastfm = (function () {
         },
 
         getAlbumInfo: function Lastfm_getAlbumInfo(searchData, callback) {
-            makeAPIRequest("album.getinfo", searchData, function (xml) {
+            searchData.method = "album.getinfo";
+
+            makeAPIRequest("GET", false, searchData, function (xml) {
                 var cover = (xml.querySelector("album > image[size='large']") || xml.querySelector("album > image[size='medium']") || xml.querySelector("album > image[size='small']"));
                 var shortDescriptionNode = xml.querySelector("album > wiki > summary");
                 var fullDescriptionNode = xml.querySelector("album > wiki > content");
@@ -117,6 +140,21 @@ Lastfm = (function () {
                 });
 
                 callback(output);
+            }, function () {
+                callback(null);
+            });
+        },
+
+        getSession: function Lastfm_getSession(token, callback) {
+            makeAPIRequest("GET", true, {
+                method: "auth.getSession",
+                token: token,
+                api_key: Config.constants.lastfm_api_key
+            }, function (xml) {
+                callback({
+                    name: xml.querySelector("session > name").textContent,
+                    key: xml.querySelector("session > key").textContent
+                });
             }, function () {
                 callback(null);
             });

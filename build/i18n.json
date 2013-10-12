@@ -125,7 +125,7 @@
     },
     "vkAuthTitle": {
         "en": "VK authorization",
-        "ru": "Авторизации ВКонтакте"
+        "ru": "Авторизация ВКонтакте"
     },
     "dropVkAuth": {
         "en": "Reset token",
@@ -136,8 +136,8 @@
         "ru": "Авторизация и скробблинг в LastFM"
     },
     "dropLastFmAuth": {
-        "en": "Reset token",
-        "ru": "Сбросить токен"
+        "en": "Scrobbling is enabled. Reset token",
+        "ru": "Скробблинг включен. Сбросить токен"
     },
     "getLastFmAuth": {
         "en": "Get token and start scrobbling",
