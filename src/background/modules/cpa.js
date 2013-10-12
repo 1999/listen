@@ -5,9 +5,19 @@ CPA = (function () {
     var tracker = service.getTracker(Config.constants.ga_app_counter);
 
     chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
-        if (req.action === "stat") {
-            CPA[req.method] && CPA[req.method].apply(CPA, req.args);
+        if (req.action !== "stat")
+            return;
+
+        var returnValue = false;
+        var args = req.args || [];
+
+        if (req.method === "isTrackingPermitted") {
+            args.push(sendResponse);
+            returnValue = true;
         }
+
+        CPA[req.method] && CPA[req.method].apply(CPA, args);
+        return returnValue;
     });
 
     chrome.alarms.onAlarm.addListener(function (alarmInfo) {
@@ -31,6 +41,12 @@ CPA = (function () {
         changePermittedState: function CPA_changePermittedState(permitted) {
             service.getConfig().addCallback(function (config) {
                 config.setTrackingPermitted(permitted);
+            });
+        },
+
+        isTrackingPermitted: function CPA_isTrackingPermitted(callback) {
+            service.getConfig().addCallback(function (config) {
+                callback(config.isTrackingPermitted());
             });
         },
 

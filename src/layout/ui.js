@@ -190,31 +190,39 @@ parallel({
 
                 drawSearchSongs(searchQuery);
             },
-            "header .closePay": function (evt) {
+            ".pay .closePay": function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.close += 1;
                 Settings.set("headerPay", headerPay);
 
                 Settings.set("headerRateCounter", 0);
-                $("header div.pay").remove();
+                this.closestParent("div.pay").remove();
 
                 evt.stopImmediatePropagation();
             },
-            "header .cwsrate": function (evt) {
+            ".pay .cwsrate": function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.ratecws += 1;
                 Settings.set("headerPay", headerPay);
 
                 window.open(Config.constants.cws_app_link + "/reviews");
-                $("header .closePay").click();
+
+                Settings.set("headerRateCounter", 0);
+                this.closestParent("div.pay").remove();
+
+                evt.stopImmediatePropagation();
             },
-            "header .yamoney": function (evt) {
+            ".pay .yamoney": function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.yamoney += 1;
                 Settings.set("headerPay", headerPay);
 
                 window.open(Config.constants.yamoney_link);
-                $("header .closePay").click();
+
+                Settings.set("headerRateCounter", 0);
+                this.closestParent("div.pay").remove();
+
+                evt.stopImmediatePropagation();
             },
             // закрытие обучалок
             ".study button.close": function (evt) {
@@ -674,18 +682,32 @@ parallel({
         emptyContent();
 
         Templates.render("settings", {
-            vkAuthTitle: "",
-            dropVkAuth: "",
-            lastFmAuthTitle: "",
-            lastFmAuthorized: "",
-            dropLastFmAuth: "",
-            getLastFmAuth: "",
-            smoothSwitchTitle: "",
-            sendStatisticsTitle: "",
-            yes: "",
-            no: ""
+            vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
+            dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
+            lastFmAuthTitle: chrome.i18n.getMessage("lastFmAuthTitle"),
+            lastFmAuthorized: (Settings.get("lastfmToken").length > 0),
+            dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
+            getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
+            smoothSwitchTitle: chrome.i18n.getMessage("smoothSwitchTitle"),
+            sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
+            showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
+            yes: chrome.i18n.getMessage("yes"),
+            no: chrome.i18n.getMessage("no")
         }, function (html) {
-            fillContent(html, "");
+            fillContent(html, "", function () {
+                var isHeaderPayShown = ($("header div.pay") !== null);
+                if (isHeaderPayShown)
+                    return;
+
+                Templates.render("info-pay", {
+                    payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                    payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                    cwsRate: chrome.i18n.getMessage("rateCWS"),
+                    close: chrome.i18n.getMessage("close")
+                }, function (html) {
+                    $(".info").prepend(html);
+                });
+            });
         });
     }
 });

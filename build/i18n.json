@@ -114,5 +114,45 @@
     "cloudStudyList": {
         "en": "This button is located in the upper right corner of the app window. You will see the <strong>list of music files in your Google Drive cloud</strong> if you click on this button. Also there can be a little counter nearby - this is a number of files in your cloud",
         "ru": "А эта иконка расположена в верхнем правом углу окна приложения. При нажатии на нее откроется <strong>список песен в твоем облаке</strong> Google Drive. Еще около нее может показываться количество песен в облаке"
+    },
+    "yes": {
+        "en": "Yes, please",
+        "ru": "Да, пожалуйста"
+    },
+    "no": {
+        "en": "No, thanks",
+        "ru": "Нет, спасибо"
+    },
+    "vkAuthTitle": {
+        "en": "VK authorization",
+        "ru": "Авторизации ВКонтакте"
+    },
+    "dropVkAuth": {
+        "en": "Reset token",
+        "ru": "Сбросить токен"
+    },
+    "lastFmAuthTitle": {
+        "en": "LastFM authorization and scrobbling",
+        "ru": "Авторизация и скробблинг в LastFM"
+    },
+    "dropLastFmAuth": {
+        "en": "Reset token",
+        "ru": "Сбросить токен"
+    },
+    "getLastFmAuth": {
+        "en": "Get token and start scrobbling",
+        "ru": "Получить токен и начать скробблинг"
+    },
+    "smoothSwitchTitle": {
+        "en": "Switch tracks smoothly",
+        "ru": "Плавно переключать треки"
+    },
+    "sendStatisticsTitle": {
+        "en": "Send statistics (you help us very much when you send it)",
+        "ru": "Отправлять статистику (отправляя статистику, вы спасаете котиков)"
+    },
+    "showNotificationsTitle": {
+        "en": "Show notification when track switches",
+        "ru": "Показывать уведомления при переключении треков"
     }
 }

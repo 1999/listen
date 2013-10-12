@@ -9,6 +9,7 @@
         "isDebug": true, /* локальная разработка или нет */
         "lastfmToken": "", /* токен LastFM */
         "smoothTracksSwitch": true,
+        "showNotifications": false,
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
         "study": [], /* показанные обучалки */

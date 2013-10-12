@@ -112,6 +112,7 @@ Sounds = (function () {
     }
 
     function updateRateCounter() {
+        // @todo может быть открыта страница настроек с уже показанным преложением
         var payElem = $("header div.pay");
 
         var currentCnt = Settings.get("headerRateCounter") + 1;

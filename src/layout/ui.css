@@ -177,6 +177,11 @@ div.pay .btn-link {
     color: #999;
 }
 
+.info div.pay {
+    color: #333;
+    margin-left: 0;
+}
+
 /* Info */
 .loading-content {
     position: absolute;
@@ -265,6 +270,11 @@ div.pay .btn-link {
 
 .info .similar li:not(:last-child)::after {
     content: ", ";
+}
+
+.info div.radio {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /* Music */
