@@ -293,9 +293,14 @@ parallel({
             // drop VK token
             ".settings .drop-vk-auth": function (evt) {
                 Settings.set("vkToken", "");
+                Settings.set("lastfmToken", "");
 
                 chrome.storage.local.get("installId", function (records) {
                     CPA.sendEvent("Lyfecycle", "VK_Reset", {
+                        id: records.installId
+                    });
+
+                    CPA.sendEvent("Lyfecycle", "LFM_Reset", {
                         id: records.installId
                     });
                 });
