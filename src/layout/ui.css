@@ -277,6 +277,16 @@ div.pay .btn-link {
     margin-bottom: 5px;
 }
 
+.settings .saved {
+    margin-left: 12px;
+    transition: all .8s ease-in;
+}
+
+.settings .saved-hiding {
+    margin-left: 24px;
+    opacity: 0;
+}
+
 /* Music */
 .music {
     padding: 16px 0 16px;

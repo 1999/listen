@@ -311,16 +311,40 @@ parallel({
             ".settings input[name='sendStatChkbx'][type='radio']": function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 CPA.changePermittedState(optionValue);
+
+                var savedElem = $(this.closestParent("div.radio"), ".saved").removeClass("hidden");
+
+                // browsers optimize classList manipulations, so .removeClass(display=none).addClass(transition) doesn't work
+                // make transition on the next tick to prevent this
+                window.setTimeout(function () {
+                    savedElem.addClass("saved-hiding")
+                }, 0);
             },
             // save smoothSwitch setting
             ".settings input[name='smoothSwitch'][type='radio']": function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 Settings.set("smoothTracksSwitch", optionValue);
+
+                var savedElem = $(this.closestParent("div.radio"), ".saved").removeClass("hidden");
+
+                // browsers optimize classList manipulations, so .removeClass(display=none).addClass(transition) doesn't work
+                // make transition on the next tick to prevent this
+                window.setTimeout(function () {
+                    savedElem.addClass("saved-hiding")
+                }, 0);
             },
             // save showNotifications setting
             ".settings input[name='showNotifications'][type='radio']": function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 Settings.set("showNotifications", optionValue);
+
+                var savedElem = $(this.closestParent("div.radio"), ".saved").removeClass("hidden");
+
+                // browsers optimize classList manipulations, so .removeClass(display=none).addClass(transition) doesn't work
+                // make transition on the next tick to prevent this
+                window.setTimeout(function () {
+                    savedElem.addClass("saved-hiding")
+                }, 0);
             },
             // play music file
             ".music span.play": function (evt) {
@@ -782,6 +806,7 @@ parallel({
                 sendStat: isTrackingPermitted,
                 showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
                 showNotifications: Settings.get("showNotifications"),
+                saved: chrome.i18n.getMessage("saved"),
                 yes: chrome.i18n.getMessage("yes"),
                 no: chrome.i18n.getMessage("no")
             }, function (html) {
@@ -797,6 +822,11 @@ parallel({
                         close: chrome.i18n.getMessage("close")
                     }, function (html) {
                         $(".info").prepend(html);
+                    });
+
+                    // set transitionend listeners
+                    $$(".settings .saved").bind("transitionend", function () {
+                        this.addClass("hidden").removeClass("saved-hiding");
                     });
                 });
             });

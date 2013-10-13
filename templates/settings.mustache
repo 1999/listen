@@ -26,12 +26,14 @@
                 <input type="radio" name="smoothSwitch" id="smoothSwitch" value="1"{{#smoothSwitch}} checked{{/smoothSwitch}}>
                 {{yes}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
         <div class="radio">
             <label>
                 <input type="radio" name="smoothSwitch" id="smoothSwitch" value="0"{{^smoothSwitch}} checked{{/smoothSwitch}}>
                 {{no}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
     </div>
     <div class="form-group">
@@ -41,12 +43,14 @@
                 <input type="radio" name="showNotifications" id="showNotifications" value="1"{{#showNotifications}} checked{{/showNotifications}}>
                 {{yes}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
         <div class="radio">
             <label>
                 <input type="radio" name="showNotifications" id="showNotifications" value="0"{{^showNotifications}} checked{{/showNotifications}}>
                 {{no}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
     </div>
     <div class="form-group">
@@ -56,12 +60,14 @@
                 <input type="radio" name="sendStatChkbx" id="sendStatChkbx" value="1"{{#sendStat}} checked{{/sendStat}}>
                 {{yes}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
         <div class="radio">
             <label>
                 <input type="radio" name="sendStatChkbx" id="sendStatChkbx" value="0"{{^sendStat}} checked{{/sendStat}}>
                 {{no}}
             </label>
+            <span class="text-muted hidden saved">{{saved}}!</span>
         </div>
     </div>
 </form>

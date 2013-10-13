@@ -154,5 +154,9 @@
     "showNotificationsTitle": {
         "en": "Show notification when track switches",
         "ru": "Показывать уведомления при переключении треков"
+    },
+    "saved": {
+        "en": "Saved",
+        "ru": "Сохранено"
     }
 }
