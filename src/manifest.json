@@ -11,6 +11,7 @@
             "scripts": [
                 "config.js",
                 "lib/utils.js",
+                "lib/md5.js",
                 "lib/cpa.js",
                 "background/modules/templates.js",
                 "background/modules/syncfs.js",

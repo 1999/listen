@@ -34,7 +34,9 @@
             <span class="glyphicon glyphicon-step-backward prev" role="button"></span>
             <span class="glyphicon glyphicon-step-forward next" role="button"></span>
         </div>
-        <div class="form-group song-title">currently playing song title</div>
+        <div class="form-group song-title hidden">
+            <a class="track-artist" href=""></a> - <span class="track-title"></span>
+        </div>
         <div class="form-group pull-right mode-volume">
             <span title="{{shuffleTitle}}" class="glyphicon glyphicon-random mode{{#isShuffled}} active{{/isShuffled}}" data-mode="shuffle" role="button"></span>
             <span title="{{repeatTitle}}" class="glyphicon glyphicon-repeat mode{{#isRepeated}} active{{/isRepeated}}" data-mode="repeat" role="button"></span>

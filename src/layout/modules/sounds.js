@@ -387,6 +387,7 @@ Sounds = (function () {
                         track.dom
                             .unbind("timeupdate", onTimeUpdateSwitchTrack)
                             .unbind("timeupdate", updateProgressElem)
+                            .unbind("play", onPlayContinue)
                             .unbind("ended", onEndedSwitchTrack)
                             .unbind("ended", dropTrackFromCurrentlyPlaying);
 
@@ -429,7 +430,9 @@ Sounds = (function () {
             $("footer .pause").removeClass("hidden");
 
             // update player current song
-            $("footer .song-title").text(playlist[playlistIndex].artist + " - " + playlist[playlistIndex].title);
+            var songTitleElem = $("footer .song-title").removeClass("hidden");
+            $(songTitleElem, ".track-artist").attr("href", "artist:" + playlist[playlistIndex].artist).html(playlist[playlistIndex].artist);
+            $(songTitleElem, ".track-title").text(playlist[playlistIndex].title);
         },
 
         playNext: function Sounds_playNext() {
@@ -542,10 +545,6 @@ Sounds = (function () {
             // update player state
             $("footer .play").removeClass("hidden");
             $("footer .pause").addClass("hidden");
-
-            // delete current playing progress
-            $$(".music .song-playing-bg").remove();
-            $("footer .song-playing-progress").css("width", "0");
         },
 
         /**

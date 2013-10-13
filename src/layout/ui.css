@@ -380,6 +380,11 @@ footer .song-title {
     margin-left: 8px;
 }
 
+footer .song-title .track-artist {
+    color: #333;
+    font-weight: bold;
+}
+
 footer .player-buttons > span:active,
 footer .mode-volume > span:active {
     text-shadow: 0 0 3px white;
