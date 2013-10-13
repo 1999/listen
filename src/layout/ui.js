@@ -308,16 +308,19 @@ parallel({
                 drawBaseUI();
             },
             // save sendStat setting
-            ".settings input.sendStat[type='radio']": function (evt) {
-                console.log(this.value);
+            ".settings input[name='sendStatChkbx'][type='radio']": function (evt) {
+                var optionValue = this.value === "1" ? true : false;
+                CPA.changePermittedState(optionValue);
             },
             // save smoothSwitch setting
-            ".settings input.smoothSwitch[type='radio']": function (evt) {
-
+            ".settings input[name='smoothSwitch'][type='radio']": function (evt) {
+                var optionValue = this.value === "1" ? true : false;
+                Settings.set("smoothTracksSwitch", optionValue);
             },
             // save showNotifications setting
-            ".settings input.showNotifications[type='radio']": function (evt) {
-
+            ".settings input[name='showNotifications'][type='radio']": function (evt) {
+                var optionValue = this.value === "1" ? true : false;
+                Settings.set("showNotifications", optionValue);
             },
             // play music file
             ".music span.play": function (evt) {
@@ -765,31 +768,36 @@ parallel({
     function drawSettings() {
         emptyContent();
 
-        Templates.render("settings", {
-            vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
-            dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
-            lastFmAuthTitle: chrome.i18n.getMessage("lastFmAuthTitle"),
-            lastFmAuthorized: (Settings.get("lastfmToken").length > 0),
-            dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
-            getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
-            smoothSwitchTitle: chrome.i18n.getMessage("smoothSwitchTitle"),
-            sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
-            showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
-            yes: chrome.i18n.getMessage("yes"),
-            no: chrome.i18n.getMessage("no")
-        }, function (html) {
-            fillContent(html, "", function () {
-                var isHeaderPayShown = ($("header div.pay") !== null);
-                if (isHeaderPayShown)
-                    return;
+        CPA.isTrackingPermitted(function (isTrackingPermitted) {
+            Templates.render("settings", {
+                vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
+                dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
+                lastFmAuthTitle: chrome.i18n.getMessage("lastFmAuthTitle"),
+                lastFmAuthorized: (Settings.get("lastfmToken").length > 0),
+                dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
+                getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
+                smoothSwitchTitle: chrome.i18n.getMessage("smoothSwitchTitle"),
+                smoothSwitch: Settings.get("smoothTracksSwitch"),
+                sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
+                sendStat: isTrackingPermitted,
+                showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
+                showNotifications: Settings.get("showNotifications"),
+                yes: chrome.i18n.getMessage("yes"),
+                no: chrome.i18n.getMessage("no")
+            }, function (html) {
+                fillContent(html, "", function () {
+                    var isHeaderPayShown = ($("header div.pay") !== null);
+                    if (isHeaderPayShown)
+                        return;
 
-                Templates.render("info-pay", {
-                    payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                    payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                    cwsRate: chrome.i18n.getMessage("rateCWS"),
-                    close: chrome.i18n.getMessage("close")
-                }, function (html) {
-                    $(".info").prepend(html);
+                    Templates.render("info-pay", {
+                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                        payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                        cwsRate: chrome.i18n.getMessage("rateCWS"),
+                        close: chrome.i18n.getMessage("close")
+                    }, function (html) {
+                        $(".info").prepend(html);
+                    });
                 });
             });
         });

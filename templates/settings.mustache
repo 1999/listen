@@ -23,13 +23,13 @@
         <label for="smoothSwitch">{{smoothSwitchTitle}}</label>
         <div class="radio">
             <label>
-                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="1" checked>
+                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="1"{{#smoothSwitch}} checked{{/smoothSwitch}}>
                 {{yes}}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="0">
+                <input type="radio" name="smoothSwitch" id="smoothSwitch" value="0"{{^smoothSwitch}} checked{{/smoothSwitch}}>
                 {{no}}
             </label>
         </div>
@@ -38,29 +38,28 @@
         <label for="showNotifications">{{showNotificationsTitle}}</label>
         <div class="radio">
             <label>
-                <input type="radio" name="showNotifications" id="showNotifications" value="1" checked>
+                <input type="radio" name="showNotifications" id="showNotifications" value="1"{{#showNotifications}} checked{{/showNotifications}}>
                 {{yes}}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="showNotifications" id="showNotifications" value="0">
+                <input type="radio" name="showNotifications" id="showNotifications" value="0"{{^showNotifications}} checked{{/showNotifications}}>
                 {{no}}
             </label>
         </div>
     </div>
     <div class="form-group">
-        <label for="sendStat">{{sendStatisticsTitle}}</label>
-
+        <label for="sendStatChkbx">{{sendStatisticsTitle}}</label>
         <div class="radio">
             <label>
-                <input type="radio" name="sendStat" id="sendStat" value="1" checked>
+                <input type="radio" name="sendStatChkbx" id="sendStatChkbx" value="1"{{#sendStat}} checked{{/sendStat}}>
                 {{yes}}
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="sendStat" id="sendStat" value="0">
+                <input type="radio" name="sendStatChkbx" id="sendStatChkbx" value="0"{{^sendStat}} checked{{/sendStat}}>
                 {{no}}
             </label>
         </div>
