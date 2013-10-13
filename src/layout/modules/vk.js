@@ -86,7 +86,7 @@ VK = (function () {
         searchMusicByArtist: function VK_searchMusic(query, params, callback) {
             params = copyOwnProperties(params, {
                 q: query,
-                auto_complete: 1,
+                auto_complete: 0,
                 lyrics: 0,
                 performer_only: 1,
                 sort: 2
