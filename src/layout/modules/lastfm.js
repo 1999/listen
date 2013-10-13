@@ -201,7 +201,8 @@ Lastfm = (function () {
                 sk: Settings.get("lastfmToken")
             };
 
-            // chosenByUser[i] (Optional) : Set to 1 if the user chose this song, or 0 if the song was chosen by someone else (such as a radio station or recommendation service). Assumes 1 if not specified
+            // @todo chosenByUser[i] (Optional) : Set to 1 if the user chose this song, or 0 if the song was chosen by someone else (such as a radio station or recommendation service). Assumes 1 if not specified
+            // id3v1
 
             if (album)
                 options.album = album;

@@ -21,104 +21,20 @@ parallel({
 }, function (res) {
     "use strict";
 
-    drawBaseUI(bindHandlers);
-
-
-    function fillContent(infoHTML, musicHTML, callback) {
-        var onTransitionEnd = function () {
-            this.unbind("transitionend", onTransitionEnd);
-
-            if (Settings.get("study").indexOf("cloud") !== -1) {
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
-                return;
-            }
-
-            Templates.render("info-callout-cloud", {
-                text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
-                downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
-                listText: chrome.i18n.getMessage("cloudStudyList")
-            }, function (studyHTML) {
-                infoHTML = studyHTML + infoHTML;
-
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
-            });
-        };
-
-        $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
-    }
-
-    function emptyContent() {
-        $(".music").empty();
-        $(".info").empty();
-
-        $(".loading-content").removeClass("transparent");
-    }
-
-    // отрисовка базового UI (user или guest) и навешивание обработчиков
-    function drawBaseUI(callback) {
-        var vkToken = Settings.get("vkToken");
-        $(document.body).empty();
-
-        if (vkToken) {
-            Templates.render("user", {
-                placeholder: chrome.i18n.getMessage("searchPlaceholder"),
-                localTitle: chrome.i18n.getMessage("localTitle"),
-                volume: Settings.get("volume"),
-                isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
-                isRepeated: (Settings.get("songsPlayingMode") === "repeat"),
-                shuffleTitle: chrome.i18n.getMessage("modeShuffle"),
-                repeatTitle: chrome.i18n.getMessage("modeRepeat")
-            }, function (html) {
-                $(document.body).addClass("user").removeClass("guest").html(html);
-
-                callback && callback();
-
-                if (navigator.onLine) {
-                    drawCurrentAudio();
-                } else {
-                    drawCloudSongs();
-                }
-
-                SyncFS.requestCurrentFilesNum(function (num) {
-                    $("header span.local span.counter").text(num);
-                });
-            });
-        } else {
-            Templates.render("guest", {
-                welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
-                welcomeText: chrome.i18n.getMessage("welcomeText"),
-                faqHeader: chrome.i18n.getMessage("faqHeader"),
-                faqItems: chrome.i18n.getMessage("faqText", chrome.runtime.getManifest().name).split("|").map(function (text) {
-                    return {text: text};
-                }),
-                sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
-                authVK: chrome.i18n.getMessage("authorizeVK")
-            }, function (html) {
-                $(document.body).addClass("guest").removeClass("user").html(html);
-
-                CPA.sendAppView("Guest");
-
-                callback && callback();
-            });
-        }
-    }
-
-    // биндинги
-    function bindHandlers() {
-        var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
-
-        var routes = {
-            "input[name='sendStat']": function (evt) {
+    var evtHandlers = [
+        // sendStat checkbox on guest page
+        {
+            selector: "input[name='sendStat']",
+            evtType: "click",
+            callback: function () {
                 CPA.changePermittedState(this.checked);
-            },
-            // ВК-авторизация
-            ".auth": function (evt) {
+            }
+        },
+        // authorization button on guest page
+        {
+            selector: ".auth",
+            evtType: "click",
+            callback: function (evt) {
                 var btn = this;
 
                 this.disabled = "disabled";
@@ -154,19 +70,47 @@ parallel({
                     });
 
                     // @todo redraw every page
-                    drawBaseUI();
+                    drawBaseUI(bindHandlers);
                 });
-            },
-            // открытие настроек
-            "header .settings": function (evt) {
-                drawSettings();
-            },
-            // список локальных треков в облаке Google Drive
-            "header span.local": function (evt) {
-                drawCloudSongs();
-            },
-            // поиск песен, исполнителей итд.
-            "header .search": function (evt) {
+            }
+        },
+        // opening settings UI
+        {
+            selector: "header .header-settings",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.pushState("settings");
+            }
+        },
+        // Google Drive synchronized tracks
+        {
+            selector: "header .header-local",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.pushState("cloud");
+            }
+        },
+        // go back to the previous app view
+        {
+            selector: "header .header-navback",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.back();
+            }
+        },
+        // go to the next app view
+        {
+            selector: "header .header-forward",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.forward();
+            }
+        },
+        // search for bands, albums, songs etc
+        {
+            selector: "header .header-search",
+            evtType: "click",
+            callback: function (evt) {
                 var searchElem = $("header input[type='search']");
                 var searchQuery = searchElem.val();
                 var matches;
@@ -192,8 +136,13 @@ parallel({
                     return drawAlbum({artist: artist, album: album});
 
                 drawSearchSongs(searchQuery);
-            },
-            ".pay .closePay": function (evt) {
+            }
+        },
+        // close pay layer with "close" link
+        {
+            selector: ".pay .pay-close",
+            evtType: "click",
+            callback: function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.close += 1;
                 Settings.set("headerPay", headerPay);
@@ -202,8 +151,13 @@ parallel({
                 this.closestParent("div.pay").remove();
 
                 evt.stopImmediatePropagation();
-            },
-            ".pay .cwsrate": function (evt) {
+            }
+        },
+        // close pay layer with "Rate CWS" button
+        {
+            selector: ".pay .pay-cwsrate",
+            evtType: "click",
+            callback: function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.ratecws += 1;
                 Settings.set("headerPay", headerPay);
@@ -214,8 +168,13 @@ parallel({
                 this.closestParent("div.pay").remove();
 
                 evt.stopImmediatePropagation();
-            },
-            ".pay .yamoney": function (evt) {
+            }
+        },
+        // close pay layer with "Yamoney" button
+        {
+            selector: ".pay .pay-yamoney",
+            evtType: "click",
+            callback: function (evt) {
                 var headerPay = Settings.get("headerPay");
                 headerPay.yamoney += 1;
                 Settings.set("headerPay", headerPay);
@@ -226,9 +185,13 @@ parallel({
                 this.closestParent("div.pay").remove();
 
                 evt.stopImmediatePropagation();
-            },
-            // закрытие обучалок
-            ".study button.close": function (evt) {
+            }
+        },
+        // close study layer(s)
+        {
+            selector: ".study button.close",
+            evtType: "click",
+            callback: function (evt) {
                 var container = this.closestParent(".study");
                 var currentStudy = Settings.get("study");
 
@@ -237,9 +200,13 @@ parallel({
 
                 container.remove();
                 evt.stopImmediatePropagation();
-            },
-            // get LastFM token
-            ".settings .get-lastfm-token": function (evt) {
+            }
+        },
+        // get LFM token
+        {
+            selector: ".settings .get-lastfm-token",
+            evtType: "click",
+            callback: function (evt) {
                 var btn = this.attr("disabled", "disabled");
                 var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
 
@@ -274,12 +241,16 @@ parallel({
                             });
                         });
 
-                        drawSettings();
+                        Navigation.replaceState("settings");
                     });
                 });
-            },
-            // drop LastFM token
-            ".settings .drop-lastfm-token": function (evt) {
+            }
+        },
+        // drop LFM token
+        {
+            selector: ".settings .drop-lastfm-token",
+            evtType: "click",
+            callback: function (evt) {
                 Settings.set("lastfmToken", "");
 
                 chrome.storage.local.get("installId", function (records) {
@@ -288,10 +259,14 @@ parallel({
                     });
                 });
 
-                drawSettings();
-            },
-            // drop VK token
-            ".settings .drop-vk-auth": function (evt) {
+                Navigation.replaceState("settings");
+            }
+        },
+        // drop VK token
+        {
+            selector: ".settings .drop-vk-auth",
+            evtType: "click",
+            callback: function (evt) {
                 Settings.set("vkToken", "");
                 Settings.set("lastfmToken", "");
 
@@ -305,10 +280,15 @@ parallel({
                     });
                 });
 
-                drawBaseUI();
-            },
-            // save sendStat setting
-            ".settings input[name='sendStatChkbx'][type='radio']": function (evt) {
+                Navigation.pushState("base");
+                Navigation.clearStatesHistory();
+            }
+        },
+        // save sendStat option value
+        {
+            selector: ".settings input[name='sendStatChkbx'][type='radio']",
+            evtType: "click",
+            callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 CPA.changePermittedState(optionValue);
 
@@ -319,9 +299,13 @@ parallel({
                 window.setTimeout(function () {
                     savedElem.addClass("saved-hiding")
                 }, 0);
-            },
-            // save smoothSwitch setting
-            ".settings input[name='smoothSwitch'][type='radio']": function (evt) {
+            }
+        },
+        // save smoothTracksSwitch option value
+        {
+            selector: ".settings input[name='smoothSwitch'][type='radio']",
+            evtType: "click",
+            callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 Settings.set("smoothTracksSwitch", optionValue);
 
@@ -332,9 +316,13 @@ parallel({
                 window.setTimeout(function () {
                     savedElem.addClass("saved-hiding")
                 }, 0);
-            },
-            // save showNotifications setting
-            ".settings input[name='showNotifications'][type='radio']": function (evt) {
+            }
+        },
+        // save showNotifications setting
+        {
+            selector: ".settings input[name='showNotifications'][type='radio']",
+            evtType: "click",
+            callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
                 Settings.set("showNotifications", optionValue);
 
@@ -345,23 +333,35 @@ parallel({
                 window.setTimeout(function () {
                     savedElem.addClass("saved-hiding")
                 }, 0);
-            },
-            // play music file
-            ".music span.play": function (evt) {
+            }
+        },
+        // play music file
+        {
+            selector: ".music .play",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.updatePlaylist();
 
                 var songContainer = this.closestParent("p.song");
                 Sounds.play(songContainer.data("url"));
 
                 evt.stopImmediatePropagation();
-            },
-            // pause music file
-            ".music span.pause": function (evt) {
+            }
+        },
+        // pause music file
+        {
+            selector: ".music .pause",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.pause();
                 evt.stopImmediatePropagation();
-            },
-            // скачивание песни в sync file system
-            ".music span.cloud": function (evt) {
+            }
+        },
+        // save MP3 file into Google Drive cloud
+        {
+            selector: ".music .cloud",
+            evtType: "click",
+            callback: function (evt) {
                 evt.stopImmediatePropagation();
 
                 if (this.hasClass("pending"))
@@ -377,9 +377,13 @@ parallel({
 
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL, audioId);
                 this.addClass("pending");
-            },
-            // скачивание песни
-            ".music a[download]": function (evt) {
+            }
+        },
+        // download MP3 file to local computer
+        {
+            selector: ".music a[download]",
+            evtType: "click",
+            callback: function (evt) {
                 evt.stopImmediatePropagation();
 
                 var songContainer = this.closest("p.song");
@@ -388,8 +392,13 @@ parallel({
                     artist: songContainer.data("artist"),
                     title: songContainer.data("title")
                 });
-            },
-            ".music div.more": function (evt) {
+            }
+        },
+        // load more songs on window croll
+        {
+            selector: ".music .more",
+            evtType: "click",
+            callback: function (evt) {
                 if (this.hasClass("loading"))
                     return;
 
@@ -422,8 +431,13 @@ parallel({
                         VK.searchMusic(queryString, {offset: totalSongsListed}, onDataReady);
                         break;
                 }
-            },
-            "a[href^='artist:'], a[href^='album:']": function (evt) {
+            }
+        },
+        // search for artists
+        {
+            selector: "a[href^='artist:'], a[href^='album:']",
+            evtType: "click",
+            callback: function (evt) {
                 evt.preventDefault();
                 evt.stopImmediatePropagation();
 
@@ -444,38 +458,67 @@ parallel({
                 headerElem.val(searchValue);
 
                 headerBtn.click();
-            },
-            ".music p.song": function (evt) {
+            }
+        },
+        // update currently playing song currentTime
+        {
+            selector: ".music p.song",
+            evtType: "click",
+            callback: function (evt) {
                 if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
                     Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
                 }
-            },
-            // start playing songs from header
-            "footer span.play": function () {
+            }
+        },
+        // start playing songs from header
+        {
+            selector: "footer .play",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.play();
-            },
-            // pause playing songs from header
-            "footer span.pause": function () {
+            }
+        },
+        // pause playing songs
+        {
+            selector: "footer .pause",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.pause();
-            },
-            // play previous song from header
-            "footer span.prev": function () {
+            }
+        },
+        // play previous song
+        {
+            selector: "footer .prev",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.playPrev();
-            },
-            // play next song from header
-            "footer span.next": function () {
+            }
+        },
+        // play next song
+        {
+            selector: "footer .next",
+            evtType: "click",
+            callback: function (evt) {
                 Sounds.playNext();
-            },
-            // включение режимов "shuffle" и "repeat"
-            "footer span.mode": function (evt) {
+            }
+        },
+        // enable/disable shuffle/repeat playing modes
+        {
+            selector: "footer .mode",
+            evtType: "click",
+            callback: function (evt) {
                 if (this.hasClass("active")) {
                     Sounds.disableMode();
                 } else {
                     Sounds.enableMode(this.data("mode"));
                 }
-            },
-            // set playing track current time
-            "footer .song-playing-bg": function (evt) {
+            }
+        },
+        // set playing track current time
+        {
+            selector: "footer .song-playing-bg",
+            evtType: "click",
+            callback: function (evt) {
                 var isPlaying = $("footer span.play").hasClass("hidden");
                 var percent = evt.layerX / document.body.clientWidth;
 
@@ -483,353 +526,101 @@ parallel({
                     return;
 
                 Sounds.updateCurrentTime(percent);
-            },
-        };
-
-        $(document.body).bind("click", function (evt) {
-            var elem;
-            var selectedRoute;
-
-            stuff:
-            for (var route in routes) {
-                elem = evt.target;
-                while (elem && elem !== document.documentElement) {
-                    if (matchesSelectorFn.call(elem, route)) {
-                        selectedRoute = route;
-                        break stuff;
-                    }
-
-                    elem = elem.parentNode;
-                }
             }
-
-            if (!selectedRoute)
-                return;
-
-            routes[selectedRoute].call(elem, evt);
-        }).bind("submit", function (evt) {
-            evt.preventDefault();
-
-            var lastButton = $(this, "button[type='button']:last-of-type");
-            if (!lastButton)
-                throw new Error("No button found for making fake submit");
-
-            lastButton.click();
-        });
-
-        window.addEventListener("online", function (evt) {
-            var headerSearchInput = $("header input[type='search']");
-
-            if (headerSearchInput) {
-                headerSearchInput.removeAttr("disabled");
-            }
-        }, false);
-
-        window.addEventListener("offline", function () {
-            var headerSearchInput = $("header input[type='search']");
-
-            if (headerSearchInput) {
-                headerSearchInput.attr("disabled", "disabled");
-                drawCloudSongs();
-            }
-        }, false);
-
-        var headerSearchInput = $("header input[type='search']");
-        if (headerSearchInput) {
-            headerSearchInput.bind("keyup", function () {
+        },
+        {
+            selector: "header input[type='search']",
+            evtType: "keyup",
+            callback: function (evt) {
                 this.removeData();
-            }).bind("search", function () {
+            }
+        },
+        {
+            selector: "header input[type='search']",
+            evtType: "search",
+            callback: function (evt) {
                 if (!this.val().length) {
                     drawCurrentAudio();
                 }
-            });
-        }
-
-        var volumeRangeInput = $("footer input[type='range']");
-        if (volumeRangeInput) {
-            volumeRangeInput.bind("change", function () {
+            }
+        },
+        // change volume level
+        {
+            selector: "footer input[type='range']",
+            evtType: "change",
+            callback: function (evt) {
                 Sounds.changeVolumeLevel(this.value);
-            });
+            }
         }
+    ];
 
-        window.onscroll = function () {
-            var pageHeight = Math.max(document.body.offsetHeight, document.body.clientHeight);
-            var scrollTop = window.innerHeight + window.scrollY;
-            var more = $(".music div.more");
-
-            if (scrollTop + 160 >= pageHeight && more) {
-                more.click();
-            }
-        };
-    }
-
-    function drawCurrentAudio() {
-        emptyContent();
-
-        VK.getCurrent(0, function (data) {
-            var more = (data.count > data.songs.length);
-
-            Templates.render("songs", {
-                songs: data.songs,
-                more: more,
-                type: "current"
-            }, function (music) {
-                fillContent("", music, function () {
-                    Sounds.onVisibleTracksUpdated();
-                });
-            });
-        });
-
-        CPA.sendAppView("User.CurrentAudio");
-    }
-
-    function drawCloudSongs() {
-        emptyContent();
-
-        SyncFS.requestCurrentFilesList(function (songs) {
-            Templates.render("songs", {songs: songs}, function (music) {
-                fillContent("", music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
-                    // update songs data from Google Drive syncable filesystem
-                    $$(".music p.song").each(function () {
-                        var audioSrc = this.data("url");
-                        var durationElem = $(this, ".duration");
-
-                        var audio = new Audio(audioSrc);
-                        audio.bind("durationchange", function () {
-                            durationElem.html(Math.floor(audio.duration / 60) + ":" + strpad(Math.ceil(audio.duration) % 60));
-                        });
-                    });
-                });
-            });
-        });
-
-        CPA.sendAppView("User.CloudSongs");
-    }
-
-    function drawSearchSongs(searchQuery) {
-        emptyContent();
-
-        parallel({
-            vk: function (callback) {
-                VK.searchMusic(searchQuery, {}, callback);
-            },
-            lastfm: function (callback) {
-                Lastfm.getArtistInfo(searchQuery, callback);
-            }
-        }, function (res) {
-            parallel({
-                info: function (callback) {
-                    Templates.render("info-artist", {
-                        hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: createValidHTML(res.lastfm.info),
-                        artist: searchQuery,
-                        albums: res.lastfm.albums,
-                        similarArtists: chrome.i18n.getMessage("similarArtists"),
-                        similarList: res.lastfm.similar
-                    }, callback);
-                },
-                music: function (callback) {
-                    var more = (res.vk.count > res.vk.songs.length);
-
-                    Templates.render("songs", {
-                        songs: res.vk.songs,
-                        more: more,
-                        type: "global",
-                        query: searchQuery
-                    }, callback);
-                }
-            }, function (data) {
-                fillContent(data.info, data.music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
-                    res.lastfm.albums.forEach(function (album) {
-                        if (!album.cover)
-                            return;
-
-                        // загружаем обложку альбома
-                        Covers.load(album.cover);
-                    });
-                });
-            });
-        });
-
-        CPA.sendAppView("User.Search");
-    }
-
-    // todo mbid support
-    function drawArtist(artist) {
-        emptyContent();
-
-        parallel({
-            vk: function (callback) {
-                VK.searchMusicByArtist(artist, {}, callback);
-            },
-            lastfm: function (callback) {
-                Lastfm.getArtistInfo(artist, callback);
-            }
-        }, function (res) {
-            parallel({
-                info: function (callback) {
-                    // @todo res.lastfm.tracks
-
-                    Templates.render("info-artist", {
-                        hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: createValidHTML(res.lastfm.info),
-                        artist: artist,
-                        albums: res.lastfm.albums,
-                        similarArtists: chrome.i18n.getMessage("similarArtists"),
-                        similarList: res.lastfm.similar
-                    }, callback);
-                },
-                music: function (callback) {
-                    var more = (res.vk.count > res.vk.songs.length);
-
-                    Templates.render("songs", {
-                        songs: res.vk.songs,
-                        more: more,
-                        type: "artist",
-                        query: artist
-                    }, callback);
-                }
-            }, function (data) {
-                fillContent(data.info, data.music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
-                    res.lastfm.albums.forEach(function (album) {
-                        if (!album.cover)
-                            return;
-
-                        // обновляем обложку альбома
-                        Covers.load(album.cover);
-                    });
-                });
-            });
-        });
-
-        CPA.sendAppView("User.SearchArtist");
-    }
-
-    function drawAlbum(searchData) {
-        emptyContent();
-
-        Lastfm.getAlbumInfo(searchData, function (album) {
-            parallel({
-                info: function (callback) {
-                    Templates.render("info-album", {
-                        albumCover: album.cover,
-                        artist: album.artist,
-                        title: album.title,
-                        albumDescription: createValidHTML(album.albumDescription)
-                    }, callback);
-                },
-                music: function (callback) {
-                    var queueSongs = [];
-                    album.songs.forEach(function (song) {
-                        queueSongs.push({
-                            artist: album.artist,
-                            song: song.title,
-                            number: song.number
-                        });
-                    });
-
-                    Templates.render("song-queue", {songs: queueSongs}, callback);
-                }
-            }, function (res) {
-                fillContent(res.info, res.music, function () {
-                    Covers.load(album.cover);
-                });
-
-                if (!album.songs.length)
+    var mutationObserver = new MutationObserver(function (mutationRecords, observer) {
+        mutationRecords.forEach(function (mutationRecord) {
+            [].forEach.call(mutationRecord.addedNodes, function (node) {
+                if (node.nodeType !== Node.ELEMENT_NODE)
                     return;
 
-                (function parseSongsList(songRank) {
-                    window.setTimeout(function () {
-                        var song = album.songs[songRank].title;
-                        var duration = album.songs[songRank].duration;
-                        var originalRank = album.songs[songRank].number;
-                        var searchQuery = [];
-
-                        (album.artist + " " + song).replace(/\-/g, " ").replace(/[\.|,]/g, " ").split(" ").forEach(function (word) {
-                            word = word.toLowerCase().trim();
-                            if (!word.length)
-                                return;
-
-                            searchQuery.push(word);
-                        });
-
-                        // существует множество ремиксов, отсеиваем их поиском по длительности песни
-                        VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
-                            if (data.count) {
-                                var trackIndex = 0; // по умолчанию отдаем первый трек
-
-                                for (var i = 0; i < data.songs.length; i++) {
-                                    if (data.songs[i].originalDuration == duration) {
-                                        trackIndex = i;
-                                        break;
-                                    }
-                                }
-
-                                Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
-                                    $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
-                                    Sounds.onVisibleTracksUpdated();
-                                });
-                            }
-
-                            if (songRank < album.songs.length - 1) {
-                                parseSongsList(songRank + 1);
-                            }
-                        });
-                    }, 350);
-                })(0);
+                evtHandlers.forEach(function (handlerData) {
+                    $$(node, handlerData.selector).bind(handlerData.evtType, handlerData.callback);
+                });
             });
-        });
 
-        CPA.sendAppView("User.SearchAlbum");
-    }
+            [].forEach.call(mutationRecord.removedNodes, function (node) {
+                if (node.nodeType !== Node.ELEMENT_NODE)
+                    return;
 
-    function drawSettings() {
-        emptyContent();
-
-        CPA.isTrackingPermitted(function (isTrackingPermitted) {
-            Templates.render("settings", {
-                vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
-                dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
-                lastFmAuthTitle: chrome.i18n.getMessage("lastFmAuthTitle"),
-                lastFmAuthorized: (Settings.get("lastfmToken").length > 0),
-                dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
-                getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
-                smoothSwitchTitle: chrome.i18n.getMessage("smoothSwitchTitle"),
-                smoothSwitch: Settings.get("smoothTracksSwitch"),
-                sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
-                sendStat: isTrackingPermitted,
-                showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
-                showNotifications: Settings.get("showNotifications"),
-                saved: chrome.i18n.getMessage("saved"),
-                yes: chrome.i18n.getMessage("yes"),
-                no: chrome.i18n.getMessage("no")
-            }, function (html) {
-                fillContent(html, "", function () {
-                    var isHeaderPayShown = ($("header div.pay") !== null);
-                    if (isHeaderPayShown)
-                        return;
-
-                    Templates.render("info-pay", {
-                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                        payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                        cwsRate: chrome.i18n.getMessage("rateCWS"),
-                        close: chrome.i18n.getMessage("close")
-                    }, function (html) {
-                        $(".info").prepend(html);
-                    });
-
-                    // set transitionend listeners
-                    $$(".settings .saved").bind("transitionend", function () {
-                        this.addClass("hidden").removeClass("saved-hiding");
-                    });
+                evtHandlers.forEach(function (handlerData) {
+                    $$(node, handlerData.selector).unbind(handlerData.evtType, handlerData.callback);
                 });
             });
         });
-    }
+    });
+
+    mutationObserver.observe(document.body, {
+        subtree: true,
+        childList: true
+    });
+
+    window.addEventListener("online", function (evt) {
+        var headerSearchInput = $("header input[type='search']");
+
+        if (headerSearchInput) {
+            headerSearchInput.removeAttr("disabled");
+        }
+    }, false);
+
+    window.addEventListener("offline", function () {
+        var headerSearchInput = $("header input[type='search']");
+
+        if (headerSearchInput) {
+            headerSearchInput.attr("disabled", "disabled");
+            drawCloudSongs();
+        }
+    }, false);
+
+    window.addEventListener("scroll", function () {
+        var pageHeight = Math.max(document.body.offsetHeight, document.body.clientHeight);
+        var scrollTop = window.innerHeight + window.scrollY;
+        var more = $(".music div.more");
+
+        if (scrollTop + 160 >= pageHeight && more) {
+            more.click();
+        }
+    }, false);
+
+    document.body.bind("submit", function (evt) {
+        evt.preventDefault();
+
+        var lastButton = $(this, "button[type='button']:last-of-type");
+        if (!lastButton)
+            throw new Error("No button found for making fake submit");
+
+        lastButton.click();
+    });
+
+    return;
+
+    Navigation.pushState("base");
+
+
 });

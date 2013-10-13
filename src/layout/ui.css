@@ -116,19 +116,19 @@ header {
     z-index: 100;
 }
 
-header .local {
+header .header-local {
     color: white !important;
     font-size: 24px;
     line-height: 18px;
     cursor: pointer;
 }
 
-header .local::before {
+header .header-local::before {
     margin-right: 6px;
     vertical-align: middle;
 }
 
-header .local .counter {
+header .header-local .counter {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -137,7 +137,7 @@ header input[type="search"] {
     padding-right: 8px;
 }
 
-header .search {
+header .header-search {
     cursor: pointer;
     margin-left: 8px;
 }
