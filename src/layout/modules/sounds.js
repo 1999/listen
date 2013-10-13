@@ -463,8 +463,6 @@ Sounds = (function () {
                     nextTrackIndex = 0;
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
-                } else if (playingMode === MODE_REPEAT) {
-                    nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex + 1 < playlist.length) ? currentTrackPlaylistIndex + 1 : 0;
                 }
@@ -505,8 +503,6 @@ Sounds = (function () {
                     nextTrackIndex = 0;
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
-                } else if (playingMode === MODE_REPEAT) {
-                    nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex === 0) ? playlist.length - 1 : currentTrackPlaylistIndex - 1;
                 }
