@@ -416,6 +416,19 @@
             return this;
         },
         /**
+         * Unbind event listener from every element of the list
+         * @param {String} evtType
+         * @param {Function} callback
+         * @param {Boolean} singleton
+         * @return {NodeList} refers to this
+         */
+        unbind: function (evtType, callback, singleton) {
+            for (var i = 0; i < this.length; i++)
+                this[i].unbind(evtType, callback, singleton);
+
+            return this;
+        },
+        /**
          * Empty innerHTML properties of every element in the list
          * @return {NodeList} refers to this
          */

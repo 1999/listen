@@ -559,6 +559,11 @@ parallel({
                 if (node.nodeType !== Node.ELEMENT_NODE)
                     return;
 
+                // we can't check an empty node for querySelector/matchesSelector
+                if (!node.hasChildNodes()) {
+                    node = node.parentNode;
+                }
+
                 evtHandlers.forEach(function (handlerData) {
                     $$(node, handlerData.selector).bind(handlerData.evtType, handlerData.callback);
                 });
@@ -566,6 +571,14 @@ parallel({
 
             [].forEach.call(mutationRecord.removedNodes, function (node) {
                 if (node.nodeType !== Node.ELEMENT_NODE)
+                    return;
+
+                // we can't check an empty node for querySelector/matchesSelector
+                if (!node.hasChildNodes()) {
+                    node = node.parentNode;
+                }
+
+                if (!node)
                     return;
 
                 evtHandlers.forEach(function (handlerData) {
