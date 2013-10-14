@@ -79,7 +79,7 @@ parallel({
             selector: "header .header-settings",
             evtType: "click",
             callback: function (evt) {
-                Navigation.pushState("settings");
+                Navigation.dispatch("settings");
             }
         },
         // Google Drive synchronized tracks
@@ -87,7 +87,7 @@ parallel({
             selector: "header .header-local",
             evtType: "click",
             callback: function (evt) {
-                Navigation.pushState("cloud");
+                Navigation.dispatch("cloud");
             }
         },
         // go back to the previous app view
@@ -280,8 +280,7 @@ parallel({
                     });
                 });
 
-                Navigation.pushState("base");
-                Navigation.clearStatesHistory();
+                Navigation.dispatch("base");
             }
         },
         // save sendStat option value
@@ -618,9 +617,10 @@ parallel({
         lastButton.click();
     });
 
-    return;
 
-    Navigation.pushState("base");
-
-
+    if (Settings.get("vkToken").length) {
+        Navigation.dispatch("user");
+    } else {
+        Navigation.dispatch("guest");
+    }
 });

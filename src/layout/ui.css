@@ -116,6 +116,13 @@ header {
     z-index: 100;
 }
 
+header .header-navback.inactive,
+header .header-navforward.inactive {
+    color: #666;
+    cursor: default;
+    pointer-events: none;
+}
+
 header .header-local {
     color: white !important;
     font-size: 24px;

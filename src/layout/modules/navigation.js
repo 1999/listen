@@ -2,6 +2,163 @@ Navigation = (function () {
     "use strict";
 
     var states = [];
+    var currentStateIndex = -1;
+
+
+    function pushState(state, args) {
+        switch (state) {
+            case "guest":
+                states.length = 0;
+                currentStateIndex = -1;
+                break;
+
+            case "settings":
+                if (!states.length || states[states.length - 1].view !== "settings") {
+                    states.push({view: "settings"});
+                    currentStateIndex += 1;
+                }
+
+                break;
+
+            case "cloud":
+                if (!states.length || states[states.length - 1].view !== "cloud") {
+                    states.push({view: "cloud"});
+                    currentStateIndex += 1;
+                }
+
+                break;
+
+            case "current":
+                if (!states.length || states[states.length - 1].view !== "current") {
+                    states.push({view: "current"});
+                    currentStateIndex += 1;
+                }
+
+                break;
+
+            case "search":
+            case "searchArtist":
+            case "searchAlbum":
+                var needsPush = false;
+
+                if (!states.length || states[states.length - 1].view !== state) {
+                    needsPush = true;
+                } else {
+                    var lastState = states[states.length - 1];
+
+                    ["mbid", "artist", "album", "searchQuery"].forEach(function (param) {
+                        if (lastState.search[param] !== args[param]) {
+                            needsPush = true;
+                        }
+                    });
+                }
+
+                if (needsPush) {
+                    states.push({view: state, search: args});
+                    currentStateIndex += 1;
+                }
+
+                break;
+        }
+
+        var navPrevBtn = $("header .header-navback");
+        var navNextBtn = $("header .header-navforward");
+
+        if (!navPrevBtn)
+            return;
+
+        switch (states.length) {
+            case 0:
+                navPrevBtn.addClass("hidden");
+                navNextBtn.addClass("hidden");
+                break;
+
+            case 1:
+                navPrevBtn.removeClass("hidden").addClass("inactive");
+                navNextBtn.removeClass("hidden").addClass("inactive");
+                break;
+
+            default:
+                navPrevBtn.removeClass("hidden").removeClass("inactive");
+                navNextBtn.removeClass("hidden").addClass("inactive");
+        }
+    }
+
+
+    function fillContent(infoHTML, musicHTML, callback) {
+        var onTransitionEnd = function () {
+            this.unbind("transitionend", onTransitionEnd);
+
+            if (Settings.get("study").indexOf("cloud") !== -1) {
+                $(".info").html(infoHTML);
+                $(".music").html(musicHTML);
+
+                callback && callback();
+                return;
+            }
+
+            Templates.render("info-callout-cloud", {
+                text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
+                downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
+                listText: chrome.i18n.getMessage("cloudStudyList")
+            }, function (studyHTML) {
+                infoHTML = studyHTML + infoHTML;
+
+                $(".info").html(infoHTML);
+                $(".music").html(musicHTML);
+
+                callback && callback();
+            });
+        };
+
+        $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
+    }
+
+    function emptyContent() {
+        $(".music").empty();
+        $(".info").empty();
+
+        $(".loading-content").removeClass("transparent");
+    }
+
+
+    function drawGuestUI(callback) {
+        $(document.body).empty().addClass("guest").removeClass("user");
+
+        Templates.render("guest", {
+            welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
+            welcomeText: chrome.i18n.getMessage("welcomeText"),
+            faqHeader: chrome.i18n.getMessage("faqHeader"),
+            faqItems: chrome.i18n.getMessage("faqText", chrome.runtime.getManifest().name).split("|").map(function (text) {
+                return {text: text};
+            }),
+            sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
+            authVK: chrome.i18n.getMessage("authorizeVK")
+        }, function (html) {
+            $(document.body).html(html);
+            callback();
+
+            CPA.sendAppView("Guest");
+        });
+    }
+
+    function drawUserUI(callback) {
+        $(document.body).empty().addClass("user").removeClass("guest");
+
+        Templates.render("user", {
+            placeholder: chrome.i18n.getMessage("searchPlaceholder"),
+            localTitle: chrome.i18n.getMessage("localTitle"),
+            volume: Settings.get("volume"),
+            isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
+            isRepeated: (Settings.get("songsPlayingMode") === "repeat"),
+            shuffleTitle: chrome.i18n.getMessage("modeShuffle"),
+            repeatTitle: chrome.i18n.getMessage("modeRepeat")
+        }, function (html) {
+            $(document.body).html(html);
+            callback();
+        });
+    }
+
 
     function drawSettings() {
         emptyContent();
@@ -45,42 +202,8 @@ Navigation = (function () {
                 });
             });
         });
-    }
 
-    function fillContent(infoHTML, musicHTML, callback) {
-        var onTransitionEnd = function () {
-            this.unbind("transitionend", onTransitionEnd);
-
-            if (Settings.get("study").indexOf("cloud") !== -1) {
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
-                return;
-            }
-
-            Templates.render("info-callout-cloud", {
-                text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
-                downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
-                listText: chrome.i18n.getMessage("cloudStudyList")
-            }, function (studyHTML) {
-                infoHTML = studyHTML + infoHTML;
-
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
-            });
-        };
-
-        $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
-    }
-
-    function emptyContent() {
-        $(".music").empty();
-        $(".info").empty();
-
-        $(".loading-content").removeClass("transparent");
+        CPA.sendAppView("User.Settings");
     }
 
     function drawCurrentAudio() {
@@ -309,54 +432,6 @@ Navigation = (function () {
         CPA.sendAppView("User.SearchAlbum");
     }
 
-    function drawBaseUI(callback) {
-        var vkToken = Settings.get("vkToken");
-        $(document.body).empty();
-
-        if (vkToken) {
-            Templates.render("user", {
-                placeholder: chrome.i18n.getMessage("searchPlaceholder"),
-                localTitle: chrome.i18n.getMessage("localTitle"),
-                volume: Settings.get("volume"),
-                isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
-                isRepeated: (Settings.get("songsPlayingMode") === "repeat"),
-                shuffleTitle: chrome.i18n.getMessage("modeShuffle"),
-                repeatTitle: chrome.i18n.getMessage("modeRepeat")
-            }, function (html) {
-                $(document.body).addClass("user").removeClass("guest").html(html);
-
-                callback && callback();
-
-                if (navigator.onLine) {
-                    drawCurrentAudio();
-                } else {
-                    drawCloudSongs();
-                }
-
-                SyncFS.requestCurrentFilesNum(function (num) {
-                    $("header span.local span.counter").text(num);
-                });
-            });
-        } else {
-            Templates.render("guest", {
-                welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
-                welcomeText: chrome.i18n.getMessage("welcomeText"),
-                faqHeader: chrome.i18n.getMessage("faqHeader"),
-                faqItems: chrome.i18n.getMessage("faqText", chrome.runtime.getManifest().name).split("|").map(function (text) {
-                    return {text: text};
-                }),
-                sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
-                authVK: chrome.i18n.getMessage("authorizeVK")
-            }, function (html) {
-                $(document.body).addClass("guest").removeClass("user").html(html);
-
-                CPA.sendAppView("Guest");
-
-                callback && callback();
-            });
-        }
-    }
-
 
     return {
         back: function Navigation_back() {
@@ -367,30 +442,66 @@ Navigation = (function () {
             // disable-enable BF buttons
         },
 
-        pushState: function Navigation_pushState(viewType, args) {
+        dispatch: function Navigation_dispatch(viewType, args) {
             switch (viewType) {
+                case "guest":
+                    drawGuestUI(function () {
+                        pushState("guest");
+                    });
+
+                    break;
+
+                // this is not actually a "view", it can be called only once
+                case "user":
+                    drawUserUI(function () {
+                        if (navigator.onLine) {
+                            drawCurrentAudio();
+                            pushState("current");
+                        } else {
+                            drawCloudSongs();
+                            pushState("cloud");
+                        }
+
+                        SyncFS.requestCurrentFilesNum(function (num) {
+                            $("header span.local span.counter").text(num);
+                        });
+                    });
+
+                    break;
+
                 case "settings":
-                    // CPA.log!
+                    drawSettings();
+                    pushState("settings");
                     break;
 
                 case "cloud":
+                    drawCloudSongs();
+                    pushState("cloud");
                     break;
 
-                case "base":
-                    // base - can miss token
+                case "current":
+                    drawCurrentAudio();
+                    pushState("current");
+                    break;
+
+                case "search":
+                    drawSearchSongs(args.searchQuery);
+                    pushState("search", {searchQuery: args.searchQuery});
+                    break;
+
+                case "searchArtist":
+                    drawArtist(args.artist);
+                    pushState("searchArtist", {artist: args.artist});
+                    break;
+
+                case "searchAlbum":
+                    drawAlbum(args);
+                    pushState("searchAlbum", args);
                     break;
 
                 default:
                     throw new Error("Unsupported viewType: " + viewType);
             }
-        },
-
-        replaceState: function Navigation_replaceState() {
-            states.length = 0;
-        },
-
-        clearStatesHistory: function Navigation_clearStatesHistory() {
-
         }
     };
 })();
