@@ -241,7 +241,7 @@ parallel({
                             });
                         });
 
-                        Navigation.replaceState("settings");
+                        Navigation.dispatch("settings");
                     });
                 });
             }
@@ -259,7 +259,7 @@ parallel({
                     });
                 });
 
-                Navigation.replaceState("settings");
+                Navigation.dispatch("settings");
             }
         },
         // drop VK token
@@ -280,7 +280,7 @@ parallel({
                     });
                 });
 
-                Navigation.dispatch("base");
+                Navigation.dispatch("guest");
             }
         },
         // save sendStat option value
