@@ -4,9 +4,11 @@ SyncFS = (function () {
     var ID3V1_START = "TAG";
     var NULLSTRING = String.fromCharCode(0);
 
-    var pendingDownloads = []; // список URL скачиваемых файлов
     var downloadedFilesIds = []; // список ID скачанных файлов
     var cachedCounter = -1;
+
+    var pendingQueue = [];
+    var downloadingURL;
 
     chrome.syncFileSystem.onFileStatusChanged.addListener(function (details) {
         if (details.direction !== "remote_to_local")
@@ -150,11 +152,11 @@ SyncFS = (function () {
 
             if (cachedCounter > 0) {
                 output = cachedCounter;
-                if (pendingDownloads.length) {
+                if (downloadingURL) {
                     output += "+";
                 }
             } else {
-                output = pendingDownloads.length ? "..." : "";
+                output = downloadingURL ? "..." : "";
             }
 
             return output;
@@ -168,13 +170,27 @@ SyncFS = (function () {
          * @param {String} url
          */
         save: function SyncFS_save(artist, title, url, audioId) {
+            if (downloadingURL) {
+                var hasUrlInQueue = pendingQueue.some(function (elem) {
+                    return (elem.url === url);
+                });
+
+                if (!hasUrlInQueue) {
+                    pendingQueue.push({
+                        artist: artist,
+                        title: title,
+                        url: url,
+                        audioId: audioId
+                    });
+                }
+
+                return;
+            }
+
             artist = artist.trim();
             title = title.trim();
 
-            if (pendingDownloads.indexOf(url) !== -1)
-                return;
-
-            pendingDownloads.push(url);
+            downloadingURL = url;
             notifyAppWindows();
 
             loadResource(url, {
@@ -215,9 +231,6 @@ SyncFS = (function () {
                             fs.root.getFile(artist + " - " + title + ".mp3", {create: true}, function (fileEntry) {
                                 fileEntry.createWriter(function (fileWriter) {
                                     fileWriter.onwriteend = function (evt) {
-                                        var index = pendingDownloads.indexOf(url);
-                                        pendingDownloads.splice(index, 1);
-
                                         CPA.sendEvent("Actions", "saveGoogleDrive", {
                                             artist: artist,
                                             title: title
@@ -227,6 +240,12 @@ SyncFS = (function () {
                                         downloadedFilesIds.push(audioId);
 
                                         notifyAppWindows();
+                                        downloadingURL = null;
+
+                                        if (pendingQueue.length) {
+                                            var args = pendingQueue.shift();
+                                            SyncFS.save(args.artist, args.title, args.url, args.audioId);
+                                        }
                                     };
 
                                     fileWriter.onprogress = function (evt) {
@@ -237,10 +256,13 @@ SyncFS = (function () {
                                     fileWriter.onerror = function (evt) {
                                         console.error("Write failed: " + evt);
 
-                                        var index = pendingDownloads.indexOf(url);
-                                        pendingDownloads.splice(index, 1);
-
                                         notifyAppWindows();
+                                        downloadingURL = null;
+
+                                        if (pendingQueue.length) {
+                                            var args = pendingQueue.shift();
+                                            SyncFS.save(args.artist, args.title, args.url, args.audioId);
+                                        }
                                     };
 
                                     fileWriter.write(resultBlob);
@@ -252,10 +274,13 @@ SyncFS = (function () {
                 onerror: function (error) {
                     console.error(error);
 
-                    var index = pendingDownloads.indexOf(url);
-                    pendingDownloads.splice(index, 1);
-
                     notifyAppWindows();
+                    downloadingURL = null;
+
+                    if (pendingQueue.length) {
+                        var args = pendingQueue.shift();
+                        SyncFS.save(args.artist, args.title, args.url, args.audioId);
+                    }
                 },
                 onprogress: function (percents) {
                     console.log("[%s] %i percents downloaded", url, percents);

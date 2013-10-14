@@ -6,7 +6,7 @@ SyncFS = (function () {
     chrome.runtime.onMessage.addListener(function (req, sender, sendResponse) {
         if (req.action === "syncFsCounterUpdated") {
             downloadedFilesIds = req.files;
-            $("header span.local span.counter").text(req.value);
+            $("header span.header-local span.counter").text(req.value);
         }
     });
 

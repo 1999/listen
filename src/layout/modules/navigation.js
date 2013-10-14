@@ -496,7 +496,7 @@ Navigation = (function () {
                 case "user":
                     drawUserUI(function () {
                         SyncFS.requestCurrentFilesNum(function (num) {
-                            $("header span.local span.counter").text(num);
+                            $("header span.header-local span.counter").text(num);
                         });
 
                         if (navigator.onLine) {
