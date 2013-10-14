@@ -5,62 +5,7 @@ Navigation = (function () {
     var currentStateIndex = -1;
 
 
-    function pushState(state, args) {
-        switch (state) {
-            case "guest":
-                states.length = 0;
-                currentStateIndex = -1;
-                break;
-
-            case "settings":
-                if (!states.length || states[states.length - 1].view !== "settings") {
-                    states.push({view: "settings"});
-                    currentStateIndex += 1;
-                }
-
-                break;
-
-            case "cloud":
-                if (!states.length || states[states.length - 1].view !== "cloud") {
-                    states.push({view: "cloud"});
-                    currentStateIndex += 1;
-                }
-
-                break;
-
-            case "current":
-                if (!states.length || states[states.length - 1].view !== "current") {
-                    states.push({view: "current"});
-                    currentStateIndex += 1;
-                }
-
-                break;
-
-            case "search":
-            case "searchArtist":
-            case "searchAlbum":
-                var needsPush = false;
-
-                if (!states.length || states[states.length - 1].view !== state) {
-                    needsPush = true;
-                } else {
-                    var lastState = states[states.length - 1];
-
-                    ["mbid", "artist", "album", "searchQuery"].forEach(function (param) {
-                        if (lastState.search[param] !== args[param]) {
-                            needsPush = true;
-                        }
-                    });
-                }
-
-                if (needsPush) {
-                    states.push({view: state, search: args});
-                    currentStateIndex += 1;
-                }
-
-                break;
-        }
-
+    function updateBackForwardButtonsState() {
         var navPrevBtn = $("header .header-navback");
         var navNextBtn = $("header .header-navforward");
 
@@ -79,8 +24,54 @@ Navigation = (function () {
                 break;
 
             default:
-                navPrevBtn.removeClass("hidden").removeClass("inactive");
-                navNextBtn.removeClass("hidden").addClass("inactive");
+                if (currentStateIndex) {
+                    navPrevBtn.removeClass("hidden").removeClass("inactive");
+                } else {
+                    navPrevBtn.removeClass("hidden").addClass("inactive");
+                }
+
+                if (currentStateIndex === states.length - 1) {
+                    navNextBtn.removeClass("hidden").addClass("inactive");
+                } else {
+                    navNextBtn.removeClass("hidden").removeClass("inactive");
+                }
+        }
+    }
+
+    function drawUIAccordingToState() {
+        if (!Settings.get("vkToken").length) {
+            states.length = 0;
+            currentStateIndex = -1;
+
+            drawGuestUI();
+            return;
+        }
+
+        var currentState = states[currentStateIndex];
+        switch (currentState.view) {
+            case "settings":
+                drawSettings();
+                break;
+
+            case "cloud":
+                drawCloudSongs();
+                break;
+
+            case "current":
+                drawCurrentAudio();
+                break;
+
+            case "search":
+                drawSearchSongs(currentState.search.searchQuery);
+                break;
+
+            case "searchArtist":
+                drawArtist(currentState.search.artist);
+                break;
+
+            case "searchAlbum":
+                drawAlbum(currentState.search);
+                break;
         }
     }
 
@@ -122,7 +113,7 @@ Navigation = (function () {
     }
 
 
-    function drawGuestUI(callback) {
+    function drawGuestUI() {
         $(document.body).empty().addClass("guest").removeClass("user");
 
         Templates.render("guest", {
@@ -136,8 +127,6 @@ Navigation = (function () {
             authVK: chrome.i18n.getMessage("authorizeVK")
         }, function (html) {
             $(document.body).html(html);
-            callback();
-
             CPA.sendAppView("Guest");
         });
     }
@@ -155,13 +144,16 @@ Navigation = (function () {
             repeatTitle: chrome.i18n.getMessage("modeRepeat")
         }, function (html) {
             $(document.body).html(html);
-            callback();
+            callback && callback();
         });
     }
 
 
     function drawSettings() {
         emptyContent();
+
+        // update search input data
+        $("header input[type='search']").val("");
 
         CPA.isTrackingPermitted(function (isTrackingPermitted) {
             Templates.render("settings", {
@@ -209,6 +201,9 @@ Navigation = (function () {
     function drawCurrentAudio() {
         emptyContent();
 
+        // update search input data
+        $("header input[type='search']").val("");
+
         VK.getCurrent(0, function (data) {
             var more = (data.count > data.songs.length);
 
@@ -228,6 +223,9 @@ Navigation = (function () {
 
     function drawCloudSongs() {
         emptyContent();
+
+        // update search input data
+        $("header input[type='search']").val("");
 
         SyncFS.requestCurrentFilesList(function (songs) {
             Templates.render("songs", {songs: songs}, function (music) {
@@ -253,6 +251,10 @@ Navigation = (function () {
 
     function drawSearchSongs(searchQuery) {
         emptyContent();
+
+        // update search input data
+        var searchElem = $("header input[type='search']");
+        searchElem.removeData().val(searchQuery);
 
         parallel({
             vk: function (callback) {
@@ -304,6 +306,10 @@ Navigation = (function () {
     // todo mbid support
     function drawArtist(artist) {
         emptyContent();
+
+        // update search input data
+        var searchElem = $("header input[type='search']");
+        searchElem.removeData().val("artist:" + artist);
 
         parallel({
             vk: function (callback) {
@@ -357,7 +363,24 @@ Navigation = (function () {
     function drawAlbum(searchData) {
         emptyContent();
 
-        Lastfm.getAlbumInfo(searchData, function (album) {
+        // update search input data
+        var searchElem = $("header input[type='search']").removeData().val(searchData.searchQuery);
+        var lfmSearchData = {};
+
+        if (searchData.mbid) {
+            searchElem.data("mbid", searchData.mbid);
+            lfmSearchData.mbid = searchData.mbid;
+        } else {
+            searchElem.data({
+                artist: searchData.artist,
+                album: searchData.album
+            });
+
+            lfmSearchData.artist = searchData.artist;
+            lfmSearchData.album = searchData.album;
+        }
+
+        Lastfm.getAlbumInfo(lfmSearchData, function (album) {
             parallel({
                 info: function (callback) {
                     Templates.render("info-album", {
@@ -435,73 +458,95 @@ Navigation = (function () {
 
     return {
         back: function Navigation_back() {
+            if (!states.length)
+                throw new Error("States list is empty");
 
+            if (currentStateIndex === 0)
+                throw new Error("Current state is the first one");
+
+            currentStateIndex -= 1;
+            drawUIAccordingToState();
+            updateBackForwardButtonsState();
         },
 
         forward: function Navigation_forward() {
-            // disable-enable BF buttons
+            if (!states.length)
+                throw new Error("States list is empty");
+
+            if (currentStateIndex === states.length - 1)
+                throw new Error("Current state is the last one");
+
+            currentStateIndex += 1;
+            drawUIAccordingToState();
+            updateBackForwardButtonsState();
         },
 
         dispatch: function Navigation_dispatch(viewType, args) {
+            if (states.length) {
+                // cut all states after current
+                states.length = currentStateIndex + 1;
+            }
+
             switch (viewType) {
                 case "guest":
-                    drawGuestUI(function () {
-                        pushState("guest");
-                    });
-
+                    // do nothing
                     break;
 
                 // this is not actually a "view", it can be called only once
                 case "user":
                     drawUserUI(function () {
-                        if (navigator.onLine) {
-                            drawCurrentAudio();
-                            pushState("current");
-                        } else {
-                            drawCloudSongs();
-                            pushState("cloud");
-                        }
-
                         SyncFS.requestCurrentFilesNum(function (num) {
                             $("header span.local span.counter").text(num);
                         });
+
+                        if (navigator.onLine) {
+                            Navigation.dispatch("current");
+                        } else {
+                            Navigation.dispatch("cloud");
+                        }
                     });
 
+                    return;
                     break;
 
                 case "settings":
-                    drawSettings();
-                    pushState("settings");
-                    break;
-
                 case "cloud":
-                    drawCloudSongs();
-                    pushState("cloud");
-                    break;
-
                 case "current":
-                    drawCurrentAudio();
-                    pushState("current");
+                    if (!states.length || states[currentStateIndex].view !== viewType) {
+                        states.push({view: viewType});
+                        currentStateIndex += 1;
+                    }
+
                     break;
 
                 case "search":
-                    drawSearchSongs(args.searchQuery);
-                    pushState("search", {searchQuery: args.searchQuery});
-                    break;
-
                 case "searchArtist":
-                    drawArtist(args.artist);
-                    pushState("searchArtist", {artist: args.artist});
-                    break;
-
                 case "searchAlbum":
-                    drawAlbum(args);
-                    pushState("searchAlbum", args);
+                    var needsPush = false;
+
+                    if (states[currentStateIndex].view !== viewType) {
+                        needsPush = true;
+                    } else {
+                        ["mbid", "artist", "album", "searchQuery"].forEach(function (param) {
+                            if (states[currentStateIndex].search[param] !== args[param]) {
+                                needsPush = true;
+                            }
+                        });
+                    }
+
+                    if (needsPush) {
+                        states.push({view: viewType, search: args});
+                        currentStateIndex += 1;
+                    }
+
                     break;
 
                 default:
                     throw new Error("Unsupported viewType: " + viewType);
             }
+
+            drawUIAccordingToState();
+            updateBackForwardButtonsState();
         }
     };
 })();

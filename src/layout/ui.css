@@ -144,7 +144,7 @@ header input[type="search"] {
     padding-right: 8px;
 }
 
-header .header-search {
+header .search {
     cursor: pointer;
     margin-left: 8px;
 }

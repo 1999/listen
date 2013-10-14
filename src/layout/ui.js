@@ -70,7 +70,7 @@ parallel({
                     });
 
                     // @todo redraw every page
-                    drawBaseUI(bindHandlers);
+                    Navigation.dispatch("user");
                 });
             }
         },
@@ -100,7 +100,7 @@ parallel({
         },
         // go to the next app view
         {
-            selector: "header .header-forward",
+            selector: "header .header-navforward",
             evtType: "click",
             callback: function (evt) {
                 Navigation.forward();
@@ -108,7 +108,7 @@ parallel({
         },
         // search for bands, albums, songs etc
         {
-            selector: "header .header-search",
+            selector: "header .search",
             evtType: "click",
             callback: function (evt) {
                 var searchElem = $("header input[type='search']");
@@ -116,26 +116,26 @@ parallel({
                 var matches;
 
                 if (!navigator.onLine)
-                    return drawCloudSongs();
+                    return Navigation.dispatch("cloud");
 
                 if (!searchQuery.length)
-                    return drawCurrentAudio();
+                    return Navigation.dispatch("current");
 
                 matches = searchQuery.match(/^artist:(.+)/);
                 if (matches)
-                    return drawArtist(matches[1]);
+                    return Navigation.dispatch("searchArtist", {artist: matches[1]});
 
                 var mbid = searchElem.data("mbid");
                 var artist = searchElem.data("artist");
                 var album = searchElem.data("album");
 
                 if (mbid.length)
-                    return drawAlbum({mbid: mbid});
+                    return Navigation.dispatch("searchAlbum", {mbid: mbid, searchQuery: searchQuery});
 
                 if (artist.length && album.length)
-                    return drawAlbum({artist: artist, album: album});
+                    return Navigation.dispatch("searchAlbum", {artist: artist, album: album, searchQuery: searchQuery});
 
-                drawSearchSongs(searchQuery);
+                Navigation.dispatch("search", {searchQuery: searchQuery});
             }
         },
         // close pay layer with "close" link
@@ -539,7 +539,7 @@ parallel({
             evtType: "search",
             callback: function (evt) {
                 if (!this.val().length) {
-                    drawCurrentAudio();
+                    Navigation.dispatch("current");
                 }
             }
         },
@@ -593,7 +593,7 @@ parallel({
 
         if (headerSearchInput) {
             headerSearchInput.attr("disabled", "disabled");
-            drawCloudSongs();
+            Navigation.dispatch("cloud");
         }
     }, false);
 
