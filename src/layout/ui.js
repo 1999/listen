@@ -472,6 +472,8 @@ parallel({
             selector: ".music p.song",
             evtType: "click",
             callback: function (evt) {
+                var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+
                 if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
                     Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
                 }
