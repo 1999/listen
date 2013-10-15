@@ -135,6 +135,10 @@
         "en": "More",
         "ru": "Еще"
     },
+    "mostPopularTracks": {
+        "en": "Most popular tracks",
+        "ru": "Самые прослушиваемые композиции"
+    },
     "no": {
         "en": "No, thanks",
         "ru": "Нет, спасибо"

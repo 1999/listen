@@ -79,6 +79,51 @@ Navigation = (function () {
         }
     }
 
+    function parseSongsList(nodeList, index) {
+        index = index || 0;
+
+        if (!nodeList.length)
+            return;
+
+        window.setTimeout(function () {
+            var song = nodeList[index].data("track");
+            var artist = nodeList[index].data("artist");
+            var duration = nodeList[index].data("duration") || 0;
+            var searchQuery = [];
+
+            (artist + " " + song).replace(/\-/g, " ").replace(/[\.|,]/g, " ").split(" ").forEach(function (word) {
+                word = word.toLowerCase().trim();
+                if (!word.length)
+                    return;
+
+                searchQuery.push(word);
+            });
+
+            // существует множество ремиксов, отсеиваем их поиском по длительности песни
+            VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
+                if (data.count) {
+                    var trackIndex = 0; // по умолчанию отдаем первый трек
+
+                    for (var i = 0; i < data.songs.length; i++) {
+                        if (!duration || data.songs[i].originalDuration == duration) {
+                            trackIndex = i;
+                            break;
+                        }
+                    }
+
+                    Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
+                        nodeList[index].after(html).remove();
+                        Sounds.onVisibleTracksUpdated();
+                    });
+                }
+
+                if (index < nodeList.length - 1) {
+                    parseSongsList(nodeList, index + 1);
+                }
+            });
+        }, 350);
+    }
+
 
     function fillContent(infoHTML, musicHTML, callback) {
         var onTransitionEnd = function () {
@@ -330,12 +375,18 @@ Navigation = (function () {
                 },
                 music: function (callback) {
                     var more = (res.vk.count > res.vk.songs.length);
+                    var popularSongsQueue = res.lastfm.tracks.map(function (track) {
+                        track.artist = artist;
+                        return track;
+                    });
 
                     Templates.render("songs", {
                         songs: res.vk.songs,
                         more: more,
                         type: "global",
-                        query: searchQuery
+                        query: searchQuery,
+                        mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),
+                        popular: popularSongsQueue
                     }, callback);
                 }
             }, function (data) {
@@ -349,6 +400,8 @@ Navigation = (function () {
                         // загружаем обложку альбома
                         Covers.load(album.cover);
                     });
+
+                    parseSongsList($$(".music .song-queue"));
                 });
             });
         });
@@ -374,8 +427,6 @@ Navigation = (function () {
         }, function (res) {
             parallel({
                 info: function (callback) {
-                    // @todo res.lastfm.tracks
-
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
                         artistDescription: createValidHTML(res.lastfm.info),
@@ -387,12 +438,18 @@ Navigation = (function () {
                 },
                 music: function (callback) {
                     var more = (res.vk.count > res.vk.songs.length);
+                    var popularSongsQueue = res.lastfm.tracks.map(function (track) {
+                        track.artist = artist;
+                        return track;
+                    });
 
                     Templates.render("songs", {
                         songs: res.vk.songs,
                         more: more,
                         type: "artist",
-                        query: artist
+                        query: artist,
+                        mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),
+                        popular: popularSongsQueue
                     }, callback);
                 }
             }, function (data) {
@@ -406,6 +463,8 @@ Navigation = (function () {
                         // обновляем обложку альбома
                         Covers.load(album.cover);
                     });
+
+                    parseSongsList($$(".music .song-queue"));
                 });
             });
         });
@@ -449,7 +508,8 @@ Navigation = (function () {
                         queueSongs.push({
                             artist: album.artist,
                             song: song.title,
-                            number: song.number
+                            number: song.number,
+                            duration: song.duration
                         });
                     });
 
@@ -458,50 +518,12 @@ Navigation = (function () {
             }, function (res) {
                 fillContent(res.info, res.music, function () {
                     Covers.load(album.cover);
+
+                    if (!album.songs.length)
+                        return;
+
+                    parseSongsList($$(".music .song-queue"));
                 });
-
-                if (!album.songs.length)
-                    return;
-
-                (function parseSongsList(songRank) {
-                    window.setTimeout(function () {
-                        var song = album.songs[songRank].title;
-                        var duration = album.songs[songRank].duration;
-                        var originalRank = album.songs[songRank].number;
-                        var searchQuery = [];
-
-                        (album.artist + " " + song).replace(/\-/g, " ").replace(/[\.|,]/g, " ").split(" ").forEach(function (word) {
-                            word = word.toLowerCase().trim();
-                            if (!word.length)
-                                return;
-
-                            searchQuery.push(word);
-                        });
-
-                        // существует множество ремиксов, отсеиваем их поиском по длительности песни
-                        VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
-                            if (data.count) {
-                                var trackIndex = 0; // по умолчанию отдаем первый трек
-
-                                for (var i = 0; i < data.songs.length; i++) {
-                                    if (data.songs[i].originalDuration == duration) {
-                                        trackIndex = i;
-                                        break;
-                                    }
-                                }
-
-                                Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
-                                    $(".music p.song-queue[data-queue='" + originalRank + "']").after(html).remove();
-                                    Sounds.onVisibleTracksUpdated();
-                                });
-                            }
-
-                            if (songRank < album.songs.length - 1) {
-                                parseSongsList(songRank + 1);
-                            }
-                        });
-                    }, 350);
-                })(0);
             });
         });
 

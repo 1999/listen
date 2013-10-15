@@ -1,3 +1,15 @@
+{{#popular.length}}
+    <div class="most-popular-tracks">
+        <div class="lead">{{mostPopularTracks}}</div>
+
+        {{#popular}}
+            <p class="song-queue" data-artist="{{artist}}" data-track="{{song}}" data-duration="{{duration}}">
+                <strong><a href="artist:{{artist}}">{{artist}}</a></strong> - {{song}}
+            </p>
+        {{/popular}}
+    </div>
+{{/popular.length}}
+
 {{#songs}}
     <p class="song" data-url="{{source}}" data-vkid="{{id}}" data-artist="{{artist}}" data-title="{{song}}">
         <span class="pull-right text-muted duration">{{duration}}</span>

@@ -76,12 +76,16 @@ Lastfm = (function () {
                 tracks: function (callback) {
                     makeAPIRequest("GET", false, {
                         method: "artist.gettoptracks",
+                        limit: 10,
                         artist: searchQuery
                     }, function (xml) {
                         var tracks = [];
 
                         [].forEach.call(xml.querySelectorAll("toptracks > track"), function (track) {
-                            tracks.push(track.querySelector("name").textContent);
+                            tracks.push({
+                                song: track.querySelector("name").textContent,
+                                duration: track.querySelector("duration").textContent
+                            });
                         });
 
                         callback(tracks);

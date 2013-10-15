@@ -337,6 +337,15 @@ div.pay .btn-link {
     clear: both;
 }
 
+.music .most-popular-tracks {
+    margin-bottom: 16px;
+}
+
+.music .most-popular-tracks .lead {
+    padding: 0 16px;
+    margin-bottom: 8px;
+}
+
 .music .more {
     margin: 12px 0 0;
     cursor: pointer;
