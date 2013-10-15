@@ -143,6 +143,14 @@
         "en": "No, thanks",
         "ru": "Нет, спасибо"
     },
+    "notificationTrackPrev": {
+        "en": "Play previous track",
+        "ru": "Перейти к предыдущей песне"
+    },
+    "notificationTrackNext": {
+        "en": "Play next track",
+        "ru": "Перейти к следующей песне"
+    },
     "rateCWS": {
         "en": "Rate in Web Store",
         "ru": "Оценить в Web Store"

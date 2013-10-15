@@ -3,6 +3,7 @@ Navigation = (function () {
 
     var states = [];
     var currentStateIndex = -1;
+    var visibilityState = true;
 
 
     function updateBackForwardButtonsState() {
@@ -623,6 +624,18 @@ Navigation = (function () {
 
             drawUIAccordingToState();
             updateBackForwardButtonsState();
+        },
+
+        get currentView() {
+            return states.length ? states[currentStateIndex].view : null;
+        },
+
+        get appWindowVisible() {
+            return visibilityState;
+        },
+
+        set appWindowVisible(value) {
+            visibilityState = value;
         }
     };
 })();

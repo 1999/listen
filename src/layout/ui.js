@@ -628,6 +628,12 @@ parallel({
         }
     }, false);
 
+    // @see https://code.google.com/p/chromium/issues/detail?id=90793
+    document.addEventListener("webkitvisibilitychange", function () {
+        Navigation.appWindowVisible = !document.webkitHidden;
+        console.log(document.webkitHidden);
+    }, false);
+
     document.body.bind("submit", function (evt) {
         evt.preventDefault();
 

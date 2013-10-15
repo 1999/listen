@@ -6,14 +6,67 @@ Sounds = (function () {
     var MODE_REPEAT = "repeat";
     var MODE_DEFAULT = "";
 
+    var NOTIFICATION_NAME = "switchTrack";
+    var NOTIFICATION_TIMEOUT_MS = 5000;
+
     var playlist = [];
     var playingTracks = [];
+    var notificationTimeoutId;
+
+    chrome.notifications.onClicked.addListener(function () {
+        chrome.notifications.clear(NOTIFICATION_NAME, function () {});
+        clearTimeout(notificationTimeoutId);
+        notificationTimeoutId = null;
+
+        chrome.app.window.current().show();
+    });
+
+    chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+        chrome.notifications.clear(NOTIFICATION_NAME, function () {});
+        clearTimeout(notificationTimeoutId);
+        notificationTimeoutId = null;
+
+        switch (buttonIndex) {
+            case 0: Sounds.playPrev(); break;
+            case 1: Sounds.playNext(); break;
+        }
+    });
 
     function getRandomTrackIndex() {
         var rand = Math.random();
         var interval = 1 / playlist.length;
 
         return (rand === 1) ? playlist.length - 1 : Math.floor(rand / interval);
+    }
+
+    function showNotification(options) {
+        var method = "create";
+
+        if (notificationTimeoutId) {
+            clearTimeout(notificationTimeoutId);
+            method = "update";
+        }
+
+        chrome.notifications[method](NOTIFICATION_NAME, {
+            type: "basic",
+            iconUrl: options.cover || chrome.runtime.getURL("pics/icons/128.png"),
+            title: options.artist,
+            message: options.track,
+            buttons: [
+                {
+                    title: chrome.i18n.getMessage("notificationTrackPrev")
+                },
+                {
+                    title: chrome.i18n.getMessage("notificationTrackNext")
+                }
+            ]
+        }, function () {
+            notificationTimeoutId = setTimeout(function () {
+                chrome.notifications.clear(NOTIFICATION_NAME, function () {});
+                notificationTimeoutId = null;
+            }, NOTIFICATION_TIMEOUT_MS);
+        });
+
     }
 
     function getPlaylistIndexOfURL(url) {
@@ -403,6 +456,12 @@ Sounds = (function () {
                 if (!isTrackContinuedPlaying) {
                     var track = new Track(audioSrc);
                     playingTracks.push(track);
+
+                    showNotification({
+                        artist: playlist[playlistIndex].artist.trim(),
+                        track: playlist[playlistIndex].title.trim(),
+                        cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
+                    });
 
                     // update statistics
                     var songsPlayed = Settings.get("songsPlayed");
