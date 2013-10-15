@@ -1,6 +1,6 @@
 {
     "advLastFM": {
-        "en": "@todo",
+        "en": "Similar artist and album list is working with LastFM API. Make it even more precise by starting scrobbling with your LastFM account!",
         "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Чтобы он был таким же классным, начните скробблить свою музыку в LastFM!"
     },
     "alreadyRated": {
@@ -20,8 +20,8 @@
         "ru": "Войти ВКонтакте"
     },
     "changelog_3_0_fulltext_search": {
-        "en": "More precise artist and album search",
-        "ru": "Еще более точный поиск по исполнителям и альбомам"
+        "en": "More precise artist and album search with new API",
+        "ru": "Еще более точный поиск по исполнителям и альбомам с помощью новых API"
     },
     "changelog_3_0_hotkeys": {
         "en": "Hotkeys support",

@@ -212,7 +212,7 @@ parallel({
         },
         // get LFM token
         {
-            selector: ".settings .get-lastfm-token",
+            selector: ".study .study-lastfm-auth, .settings .get-lastfm-token",
             evtType: "click",
             callback: function (evt) {
                 var btn = this.attr("disabled", "disabled");

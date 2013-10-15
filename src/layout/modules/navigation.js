@@ -130,7 +130,16 @@ Navigation = (function () {
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
-            if (Settings.get("study").indexOf("cloud") !== -1) {
+            var lessonNeeds, tplData;
+            var lessonsPassed = Settings.get("study");
+
+            if (lessonsPassed.indexOf("cloud") === -1) {
+                lessonNeeds = "cloud";
+            } else if (lessonsPassed.indexOf("lastfm") === -1 && !Lastfm.isAuthorized && Navigation.currentView !== "settings") {
+                lessonNeeds = "lastfm";
+            }
+
+            if (!lessonNeeds) {
                 $(".info").html(infoHTML);
                 $(".music").html(musicHTML);
 
@@ -138,11 +147,27 @@ Navigation = (function () {
                 return;
             }
 
-            Templates.render("info-callout-cloud", {
-                text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
-                downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
-                listText: chrome.i18n.getMessage("cloudStudyList")
-            }, function (studyHTML) {
+            switch (lessonNeeds) {
+                case "cloud":
+                    tplData = {
+                        text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
+                        downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
+                        listText: chrome.i18n.getMessage("cloudStudyList")
+                    };
+
+                    break;
+
+                case "lastfm":
+                    tplData = {
+                        text: chrome.i18n.getMessage("advLastFM"),
+                        authTitle: chrome.i18n.getMessage("getLastFmAuth"),
+                        close: chrome.i18n.getMessage("close")
+                    };
+
+                    break;
+            }
+
+            Templates.render("info-callout-" + lessonNeeds, tplData, function (studyHTML) {
                 infoHTML = studyHTML + infoHTML;
 
                 $(".info").html(infoHTML);
