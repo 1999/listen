@@ -319,6 +319,14 @@ div.pay .btn-link {
     margin-bottom: 5px;
 }
 
+.study .wtf {
+    border-bottom: 1px dotted;
+}
+
+.study .wtf:hover {
+    border-bottom: none;
+}
+
 .settings .saved {
     margin-left: 12px;
     transition: all .8s ease-in;
