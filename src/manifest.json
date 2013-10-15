@@ -22,6 +22,19 @@
         }
     },
 
+    "changelog": {
+        "3.0": [
+            "settings",
+            "lastfm",
+            "navigation",
+            "sound_problems",
+            "lovely_songs",
+            "hotkeys",
+            "notifications",
+            "fulltext_search"
+        ]
+    },
+
     "icons" : {
         "128" : "pics/icons/128.png",
         "48" : "pics/icons/48.png",
@@ -41,6 +54,7 @@
         "app.window",
         "fullscreen",
         "identity",
+        "notifications",
         "storage",
         "syncFileSystem",
         "unlimitedStorage",

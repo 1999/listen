@@ -82,6 +82,14 @@ parallel({
                 Navigation.dispatch("settings");
             }
         },
+        // opening changelog
+        {
+            selector: "header .header-news",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.dispatch("news");
+            }
+        },
         // Google Drive synchronized tracks
         {
             selector: "header .header-local",

@@ -5,7 +5,7 @@
             <span class="glyphicon glyphicon-arrow-right header-navforward" role="button"></span>
         </div>
         <div class="form-group">
-            <input size="35" class="form-control input-lg" type="search" placeholder="{{placeholder}}">
+            <input size="45" class="form-control input-lg" type="search" placeholder="{{placeholder}}">
         </div>
         <div class="form-group">
             <button type="button" class="btn btn-default btn-lg search">
@@ -13,9 +13,10 @@
             </button>
         </div>
         <div class="form-group pull-right manage-local">
-            <span class="glyphicon glyphicon-align-justify header-settings" role="button"></span>
+            <span title="{{newsTitle}}" class="glyphicon glyphicon-bell header-news{{#blink}} header-news-blinking{{/blink}}" role="button"></span>
+            <span title="{{settingsTitle}}" class="glyphicon glyphicon-align-justify header-settings" role="button"></span>
 
-            <span class="glyphicon glyphicon-cloud-download header-local">
+            <span title="{{cloudTitle}}" class="glyphicon glyphicon-cloud-download header-local">
                 <span class="counter"></span>
             </span>
         </div>

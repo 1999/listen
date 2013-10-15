@@ -53,6 +53,10 @@ Navigation = (function () {
                 drawSettings();
                 break;
 
+            case "news":
+                drawChangelog();
+                break;
+
             case "cloud":
                 drawCloudSongs();
                 break;
@@ -134,6 +138,17 @@ Navigation = (function () {
     function drawUserUI(callback) {
         $(document.body).empty().addClass("user").removeClass("guest");
 
+        var blink = false;
+        var changelog = chrome.runtime.getManifest().changelog;
+        var seenChangelog = Settings.get("changelog");
+
+        for (var key in changelog) {
+            if (seenChangelog.indexOf(key) === -1) {
+                blink = true;
+                break;
+            }
+        }
+
         Templates.render("user", {
             placeholder: chrome.i18n.getMessage("searchPlaceholder"),
             localTitle: chrome.i18n.getMessage("localTitle"),
@@ -141,7 +156,11 @@ Navigation = (function () {
             isShuffled: (Settings.get("songsPlayingMode") === "shuffle"),
             isRepeated: (Settings.get("songsPlayingMode") === "repeat"),
             shuffleTitle: chrome.i18n.getMessage("modeShuffle"),
-            repeatTitle: chrome.i18n.getMessage("modeRepeat")
+            repeatTitle: chrome.i18n.getMessage("modeRepeat"),
+            newsTitle: chrome.i18n.getMessage("appNews"),
+            settingsTitle: chrome.i18n.getMessage("settings"),
+            cloudTitle: chrome.i18n.getMessage("cloudListTitle"),
+            blink: blink
         }, function (html) {
             $(document.body).html(html);
             callback && callback();
@@ -196,6 +215,40 @@ Navigation = (function () {
         });
 
         CPA.sendAppView("User.Settings");
+    }
+
+    function drawChangelog() {
+        emptyContent();
+
+        var changelog = chrome.runtime.getManifest().changelog;
+        var seenChangelog = Settings.get("changelog");
+
+        var tplData = {
+            changelogKeys: [],
+            appName: chrome.runtime.getManifest().name
+        };
+
+        Object.keys(changelog).forEach(function (key) {
+            var changelogData = changelog[key].map(function (i18nKey) {
+                return chrome.i18n.getMessage("changelog_" + key.replace(/\./g, "_") + "_" + i18nKey);
+            });
+
+            tplData.changelogKeys.push({
+                changelog: changelogData,
+                key: key
+            });
+
+            if (seenChangelog.indexOf(key) === -1) {
+                seenChangelog.push(key);
+            }
+        });
+
+        Templates.render("news", tplData, function (html) {
+            fillContent(html, "");
+        });
+
+        $("header .header-news").removeClass("header-news-blinking");
+        Settings.set("changelog", seenChangelog);
     }
 
     function drawCurrentAudio() {
@@ -512,6 +565,7 @@ Navigation = (function () {
                 case "settings":
                 case "cloud":
                 case "current":
+                case "news":
                     if (!states.length || states[currentStateIndex].view !== viewType) {
                         states.push({view: viewType});
                         currentStateIndex += 1;

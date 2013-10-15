@@ -1,15 +1,91 @@
 {
+    "advLastFM": {
+        "en": "@todo",
+        "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Чтобы он был таким же классным, начните скробблить свою музыку в LastFM!"
+    },
+    "alreadyRated": {
+        "en": "I've already done that",
+        "ru": "Я уже оценил приложение"
+    },
 	"appDescription": {
 		"en": "Chrome app for listening and scrobbling your music in VK and LastFM social networks",
 		"ru": "Приложение для прослушивания, скачивания и скробблинга музыки ВКонтакте и LastFM"
 	},
-	"welcomeHeader": {
-		"en": "Hey dude!",
-        "ru": "Привет, дружок!"
-	},
-    "welcomeText": {
-        "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even download files on your local computer (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
-        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
+    "appNews": {
+        "en": "App news",
+        "ru": "Новости приложения"
+    },
+    "authorizeVK": {
+        "en": "Grant VK Access",
+        "ru": "Войти ВКонтакте"
+    },
+    "changelog_3_0_fulltext_search": {
+        "en": "More precise artist and album search",
+        "ru": "Еще более точный поиск по исполнителям и альбомам"
+    },
+    "changelog_3_0_hotkeys": {
+        "en": "Hotkeys support",
+        "ru": "Поддержка шорткатов"
+    },
+    "changelog_3_0_lastfm": {
+        "en": "LastFM support, including \"scrobbling\" and \"now playing\" features - available in settings",
+        "ru": "Поддержка LastFM: скробблинг и \"сейчас играет\" - доступно в настройках"
+    },
+    "changelog_3_0_lovely_songs": {
+        "en": "The most popular artist songs on artist's page",
+        "ru": "Самые прослушиваемые песни у исполнителя на его странице"
+    },
+    "changelog_3_0_navigation": {
+        "en": "Back-forward buttons navigation",
+        "ru": "Навигация по приложению через кнопки вперед-назад"
+    },
+    "changelog_3_0_notifications": {
+        "en": "Rich notifications when track is switching - you can enable them for Windows in settings",
+        "ru": "Красивые всплывающие уведомления при переключении треков - доступно для пользователей Windows в настройках"
+    },
+    "changelog_3_0_settings": {
+        "en": "Settings page",
+        "ru": "Страница настроек"
+    },
+    "changelog_3_0_sound_problems": {
+        "en": "Sound problems are now fixed",
+        "ru": "Решена проблема с изменением уровня громкости звука"
+    },
+    "close": {
+        "en": "Close",
+        "ru": "Закрыть"
+    },
+    "cloudListTitle": {
+        "en": "List all music files in the cloud",
+        "ru": "Показать список файлов в облаке"
+    },
+    "cloudStudyDownload": {
+        "en": "This button is located near every song link. If you click this button you will <strong>start saving music file from VK to your Google Drive cloud</strong>. If this button is inactive then probably you have saved this file before or you're not authorized on current Chrome device",
+        "ru": "При нажатии на эту иконку, расположенную около каждой песни, ты сможешь <strong>сохранить песню из ВКонтакте в облако</strong> Google Drive. Если эта кнопка неактивна, то скорее всего песня уже была сохранена в облако или ты не авторизован в Chrome"
+    },
+    "cloudStudyList": {
+        "en": "This button is located in the upper right corner of the app window. You will see the <strong>list of music files in your Google Drive cloud</strong> if you click on this button. Also there can be a little counter nearby - this is a number of files in your cloud",
+        "ru": "А эта иконка расположена в верхнем правом углу окна приложения. При нажатии на нее откроется <strong>список песен в твоем облаке</strong> Google Drive. Еще около нее может показываться количество песен в облаке"
+    },
+    "cloudStudyText": {
+        "en": "<strong>$1</strong> app can <strong>save music files from VK to your Google Drive cloud</strong> and play them. These files will become available on all your Chrome devices",
+        "ru": "Приложение <strong>$1</strong> позволяет <strong>сохранять музыку из ВКонтакте в облако Google Drive и проигрывать её</strong> оттуда. После сохранения песни в облако она станет доступна локально на всех твоих компьютерах с Chrome"
+    },
+    "cloudTitle": {
+        "en": "Save into Google Drive cloud for further local access",
+        "ru": "Сохранить в облако Google Drive для локального доступа"
+    },
+    "downloadTitle": {
+        "en": "Download file",
+        "ru": "Скачать файл"
+    },
+    "dropLastFmAuth": {
+        "en": "Scrobbling is enabled. Reset token",
+        "ru": "Скробблинг включен. Сбросить токен"
+    },
+    "dropVkAuth": {
+        "en": "Reset token",
+        "ru": "Сбросить токен"
     },
     "faqHeader": {
         "en": "Tiny FAQ",
@@ -23,33 +99,9 @@
         "en": "I agree to send statistics",
         "ru": "Я согласен отправлять статистику"
     },
-    "authorizeVK": {
-        "en": "Grant VK Access",
-        "ru": "Войти ВКонтакте"
-    },
-    "searchPlaceholder": {
-        "en": "Search artists, songs and albums",
-        "ru": "Поиск исполнителей, песен и альбомов"
-    },
-    "localTitle": {
-        "en": "Saved songs",
-        "ru": "Сохраненные песни"
-    },
-    "close": {
-        "en": "Close",
-        "ru": "Закрыть"
-    },
-    "cloudTitle": {
-        "en": "Save into Google Drive cloud for further local access",
-        "ru": "Сохранить в облако Google Drive для локального доступа"
-    },
-    "downloadTitle": {
-        "en": "Download file",
-        "ru": "Скачать файл"
-    },
-    "advLastFM": {
-        "en": "@todo",
-        "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Чтобы он был таким же классным, начните скробблить свою музыку в LastFM!"
+    "getLastFmAuth": {
+        "en": "Get token and start scrobbling",
+        "ru": "Получить токен и начать скробблинг"
     },
     "happyBirthday": {
         "en" : "Happy birthday, $1! We wish you good luck, lots of money and tons of new intresting music!",
@@ -59,25 +111,65 @@
         "en": "You are using $1 for a long time. It's time to rate the app in Chrome Web Store!",
         "ru": "Вы пользуетесь приложением $1 уже достаточно давно. Самое время оценить его в Chrome Web Store!"
     },
-    "rateCWS": {
-        "en": "Rate",
-        "ru": "Оценить"
+    "lastFmAuthTitle": {
+        "en": "LastFM authorization and scrobbling",
+        "ru": "Авторизация и скробблинг в LastFM"
     },
-    "alreadyRated": {
-        "en": "I've already done that",
-        "ru": "Я уже оценил приложение"
+    "localTitle": {
+        "en": "Saved songs",
+        "ru": "Сохраненные песни"
+    },
+    "modeRepeat": {
+        "en": "Repeat playing track",
+        "ru": "Повторять проигрываемый трек"
+    },
+    "modeShuffle": {
+        "en": "Shuffle songs",
+        "ru": "Проигрывать в случайном порядке"
     },
     "moneyMaker": {
         "en": "<strong>$1</strong> must stay as a free app without advertisements. You can become a part of the app's history by transferring any amount of money to <a href='$2' target='_blank'>developer's Yandex.Money account</a> or by rating $1 app in <a href='$3' target='_blank'>Chrome Web Store</a>.",
         "ru": "<strong>$1</strong> должно оставаться бесплатным приложением без рекламы. Ты можешь поспособствовать этому, переведя любую сумму на <a href='$2' target='_blank'>этот счет</a> в Яндекс.Деньгах или оценив приложение в <a href='$3' target='_blank'>Chrome Web Store</a>."
     },
-    "yandexMoney": {
-        "en": "Pay via Yandex.Money",
-        "ru": "Перевести через Я.Деньги"
+    "more": {
+        "en": "More",
+        "ru": "Еще"
+    },
+    "no": {
+        "en": "No, thanks",
+        "ru": "Нет, спасибо"
     },
     "rateCWS": {
         "en": "Rate in Web Store",
         "ru": "Оценить в Web Store"
+    },
+    "saved": {
+        "en": "Saved",
+        "ru": "Сохранено"
+    },
+    "searchPlaceholder": {
+        "en": "Search artists, songs and albums",
+        "ru": "Поиск исполнителей, песен и альбомов"
+    },
+    "sendStatisticsTitle": {
+        "en": "Send statistics (you help us very much when you send it)",
+        "ru": "Отправлять статистику (отправляя статистику, вы спасаете котиков)"
+    },
+    "settings": {
+        "en": "Settings",
+        "ru": "Настройки"
+    },
+    "showNotificationsTitle": {
+        "en": "Show notification when track switches",
+        "ru": "Показывать уведомления при переключении треков"
+    },
+    "similarArtists": {
+        "en": "Similar artists",
+        "ru": "Похожие исполнители"
+    },
+    "smoothSwitchTitle": {
+        "en": "Switch tracks smoothly",
+        "ru": "Плавно переключать треки"
     },
     "unknownArtist": {
         "en": "Unknown artist",
@@ -87,76 +179,24 @@
         "en": "Unknown song",
         "ru": "Неизвестный трек"
     },
-    "more": {
-        "en": "More",
-        "ru": "Еще"
-    },
-    "modeShuffle": {
-        "en": "Shuffle songs",
-        "ru": "Проигрывать в случайном порядке"
-    },
-    "modeRepeat": {
-        "en": "Repeat playing track",
-        "ru": "Повторять проигрываемый трек"
-    },
-    "similarArtists": {
-        "en": "Similar artists",
-        "ru": "Похожие исполнители"
-    },
-    "cloudStudyText": {
-        "en": "<strong>$1</strong> app can <strong>save music files from VK to your Google Drive cloud</strong> and play them. These files will become available on all your Chrome devices",
-        "ru": "Приложение <strong>$1</strong> позволяет <strong>сохранять музыку из ВКонтакте в облако Google Drive и проигрывать её</strong> оттуда. После сохранения песни в облако она станет доступна локально на всех твоих компьютерах с Chrome"
-    },
-    "cloudStudyDownload": {
-        "en": "This button is located near every song link. If you click this button you will <strong>start saving music file from VK to your Google Drive cloud</strong>. If this button is inactive then probably you have saved this file before or you're not authorized on current Chrome device",
-        "ru": "При нажатии на эту иконку, расположенную около каждой песни, ты сможешь <strong>сохранить песню из ВКонтакте в облако</strong> Google Drive. Если эта кнопка неактивна, то скорее всего песня уже была сохранена в облако или ты не авторизован в Chrome"
-    },
-    "cloudStudyList": {
-        "en": "This button is located in the upper right corner of the app window. You will see the <strong>list of music files in your Google Drive cloud</strong> if you click on this button. Also there can be a little counter nearby - this is a number of files in your cloud",
-        "ru": "А эта иконка расположена в верхнем правом углу окна приложения. При нажатии на нее откроется <strong>список песен в твоем облаке</strong> Google Drive. Еще около нее может показываться количество песен в облаке"
-    },
-    "yes": {
-        "en": "Yes, please",
-        "ru": "Да, пожалуйста"
-    },
-    "no": {
-        "en": "No, thanks",
-        "ru": "Нет, спасибо"
-    },
     "vkAuthTitle": {
         "en": "VK authorization",
         "ru": "Авторизация ВКонтакте"
     },
-    "dropVkAuth": {
-        "en": "Reset token",
-        "ru": "Сбросить токен"
+    "welcomeHeader": {
+        "en": "Hey dude!",
+        "ru": "Привет, дружок!"
     },
-    "lastFmAuthTitle": {
-        "en": "LastFM authorization and scrobbling",
-        "ru": "Авторизация и скробблинг в LastFM"
+    "welcomeText": {
+        "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even download files on your local computer (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
+        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
     },
-    "dropLastFmAuth": {
-        "en": "Scrobbling is enabled. Reset token",
-        "ru": "Скробблинг включен. Сбросить токен"
+    "yandexMoney": {
+        "en": "Pay via Yandex.Money",
+        "ru": "Перевести через Я.Деньги"
     },
-    "getLastFmAuth": {
-        "en": "Get token and start scrobbling",
-        "ru": "Получить токен и начать скробблинг"
-    },
-    "smoothSwitchTitle": {
-        "en": "Switch tracks smoothly",
-        "ru": "Плавно переключать треки"
-    },
-    "sendStatisticsTitle": {
-        "en": "Send statistics (you help us very much when you send it)",
-        "ru": "Отправлять статистику (отправляя статистику, вы спасаете котиков)"
-    },
-    "showNotificationsTitle": {
-        "en": "Show notification when track switches",
-        "ru": "Показывать уведомления при переключении треков"
-    },
-    "saved": {
-        "en": "Saved",
-        "ru": "Сохранено"
+    "yes": {
+        "en": "Yes, please",
+        "ru": "Да, пожалуйста"
     }
 }
