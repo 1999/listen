@@ -40,6 +40,9 @@ Sounds = (function () {
     }
 
     function showNotification(options) {
+        if (!Settings.get("showNotifications"))
+            return;
+
         var method = "create";
 
         if (notificationTimeoutId) {
