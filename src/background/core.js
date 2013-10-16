@@ -14,9 +14,27 @@ window.onerror = function(msg, url, line) {
         document.body.appendChild(iframe);
     }, false);
 
+    chrome.notifications && chrome.notifications.onClicked.addListener(function (notificationId) {
+        if (notificationId === "update2to3") {
+            chrome.notifications.clear("update2to3", function () {});
+            chrome.app.window.current().show();
+        }
+    });
+
+    chrome.notifications && chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+        if (notificationId === "update2to3") {
+            chrome.notifications.clear("update2to3", function () {});
+
+            if (buttonIndex === 0) {
+                chrome.app.window.current().show();
+            }
+        }
+    });
+
 
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
+        var appName = chrome.runtime.getManifest().name;
         var currentVersion = chrome.runtime.getManifest().version;
 
         switch (details.reason) {
@@ -50,6 +68,21 @@ window.onerror = function(msg, url, line) {
                     chrome.storage.local.set({
                         "settings.showDownloadButtons": true
                     });
+
+                    chrome.notifications && chrome.notifications.create("update2to3", {
+                        type: "basic",
+                        iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
+                        title: chrome.i18n.getMessage("notificationUpdate2to3Title", appName),
+                        message: chrome.i18n.getMessage("notificationUpdate2to3Body", appName),
+                        buttons: [
+                            {
+                                title: chrome.i18n.getMessage("yesGogogo")
+                            },
+                            {
+                                title: chrome.i18n.getMessage("no")
+                            }
+                        ]
+                    }, function () {});
                 }
 
                 chrome.storage.local.get("installId", function (records) {

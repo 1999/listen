@@ -155,6 +155,14 @@
         "en": "Play next track",
         "ru": "Перейти к следующей песне"
     },
+    "notificationUpdate2to3Body": {
+        "en": "Now the app supports LastFM scrobbling, inside-app navigation and settings, shortcuts and many other cool features. Would you like to take a look and start using the app?",
+        "ru": "Теперь в приложении поддерживается скробблинг в LastFM, есть настройки, навигация внутри приложения, поддерживаются шорткаты и многое другое. Хотите открыть приложение и начать всем этим пользоваться?"
+    },
+    "notificationUpdate2to3Title": {
+        "en": "$1 was updated to version 3.0",
+        "ru": "Приложение $1 обновилось до версии 3.0"
+    },
     "rateCWS": {
         "en": "Rate in Web Store",
         "ru": "Оценить в Web Store"
@@ -214,5 +222,9 @@
     "yes": {
         "en": "Yes, please",
         "ru": "Да, пожалуйста"
+    },
+    "yesGogogo": {
+        "en": "Yes, definitely!",
+        "ru": "Да, хочу!"
     }
 }

@@ -13,7 +13,11 @@ Sounds = (function () {
     var playingTracks = [];
     var notificationTimeoutId;
 
-    chrome.notifications && chrome.notifications.onClicked.addListener(function () {
+    chrome.notifications && chrome.notifications.onClicked.addListener(function (notificationId) {
+        if (notificationId !== NOTIFICATION_NAME) {
+            return;
+        }
+
         chrome.notifications.clear(NOTIFICATION_NAME, function () {});
         clearTimeout(notificationTimeoutId);
         notificationTimeoutId = null;
@@ -22,6 +26,10 @@ Sounds = (function () {
     });
 
     chrome.notifications && chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+        if (notificationId !== NOTIFICATION_NAME) {
+            return;
+        }
+
         chrome.notifications.clear(NOTIFICATION_NAME, function () {});
         clearTimeout(notificationTimeoutId);
         notificationTimeoutId = null;
@@ -69,7 +77,6 @@ Sounds = (function () {
                 notificationTimeoutId = null;
             }, NOTIFICATION_TIMEOUT_MS);
         });
-
     }
 
     function getPlaylistIndexOfURL(url) {
