@@ -24,32 +24,32 @@
         "ru": "И немного дегтя в бочку меда: <strong>для новых пользователей $1 прямых ссылок на скачивание музыки в приложении не будет</strong>. Это связано с <a href='http://vk.com/dev/rules' target='_blank'>правилами ВКонтакте</a>, которые надо соблюдать :)"
     },
     "changelog_3_0_fulltext_search": {
-        "en": "More precise artist and album search with new API",
-        "ru": "Еще более точный поиск по исполнителям и альбомам с помощью новых API"
+        "en": "<strong>More precise artists and albums search with new API</strong>. Try this search and you will probably find the albums which were missing in LastFM service",
+        "ru": "<strong>Еще более точный поиск по исполнителям и альбомам с помощью новых API</strong>. Попробуйте поискать ваших любимых исполнителей, альбомов которых нет на LastFM. Теперь они вполне могут найтись."
     },
     "changelog_3_0_hotkeys": {
         "en": "<strong>Hotkeys support when the app's windows is active</strong>. Press <em>Space</em> to play/pause current track, <em>Left and Right</em> switches to previous or next track, <em>Enter</em> starts playing current track from the beginning. <em>Multimedia keys</em> are also supported",
         "ru": "<strong>Поддержка шорткатов при активном окне приложения</strong>. <em>Пробел</em> для проигрывания/остановки, кнопки <em>вправо и влево</em> для перехода к следующему и предыдущему треку, <em>Enter</em> для перехода в начало песни. Также поддерживаются <em>мультимедийные клавиши</em> на клавиатуре"
     },
     "changelog_3_0_lastfm": {
-        "en": "LastFM support, including \"scrobbling\" and \"now playing\" features - available in settings",
-        "ru": "Поддержка LastFM: скробблинг и \"сейчас играет\" - доступно в настройках"
+        "en": "<strong>LastFM support, including \"scrobbling\" and \"now playing\" features</strong>. Go to settings and authorize with LastFM service to start using this",
+        "ru": "<strong>Поддержка LastFM: скробблинг и \"сейчас играет\"</strong>. Для начала скробблинга перейдите в настройки и авторизуйтесь на сервисе LastFM"
     },
     "changelog_3_0_lovely_songs": {
-        "en": "The most popular artist songs on artist's page",
-        "ru": "Самые прослушиваемые песни у исполнителя на его странице"
+        "en": "<strong>The most popular artist songs on artist's page</strong> using LastFM and other API",
+        "ru": "<strong>Самые прослушиваемые песни у исполнителя на его странице</strong>"
     },
     "changelog_3_0_navigation": {
-        "en": "Back-forward buttons navigation",
-        "ru": "Навигация по приложению через кнопки вперед-назад"
+        "en": "<strong>Back-forward buttons navigation</strong>",
+        "ru": "<strong>Навигация по приложению через кнопки вперед-назад</strong>"
     },
     "changelog_3_0_notifications": {
         "en": "<strong>Awesome rich notifications when track is switching</strong> - you can enable them for Windows, MacOS and ChromeOS in settings",
         "ru": "<strong>Красивые всплывающие уведомления при переключении треков</strong> - доступно для пользователей Windows, MacOS и ChromeOS в настройках"
     },
     "changelog_3_0_settings": {
-        "en": "<strong>Settings page</strong>",
-        "ru": "<strong>Страница настроек</strong>"
+        "en": "Settings page",
+        "ru": "Страница настроек"
     },
     "changelog_3_0_sound_problems": {
         "en": "Sound problems are now fixed",
