@@ -112,7 +112,10 @@ Navigation = (function () {
                         }
                     }
 
-                    Templates.render("songs", {songs: [data.songs[trackIndex]]}, function (html) {
+                    Templates.render("songs", {
+                        songs: [data.songs[trackIndex]],
+                        showDownload: Settings.get("showDownloadButtons"),
+                    }, function (html) {
                         nodeList[index].after(html).remove();
                         Sounds.onVisibleTracksUpdated();
                     });
@@ -342,6 +345,7 @@ Navigation = (function () {
 
         var changelog = chrome.runtime.getManifest().changelog;
         var seenChangelog = Settings.get("changelog");
+        var appName = chrome.runtime.getManifest().name;
 
         var tplData = {
             changelogKeys: [],
@@ -350,7 +354,7 @@ Navigation = (function () {
 
         Object.keys(changelog).forEach(function (key) {
             var changelogData = changelog[key].map(function (i18nKey) {
-                return chrome.i18n.getMessage("changelog_" + key.replace(/\./g, "_") + "_" + i18nKey);
+                return chrome.i18n.getMessage("changelog_" + key.replace(/\./g, "_") + "_" + i18nKey, appName);
             });
 
             tplData.changelogKeys.push({
@@ -383,6 +387,7 @@ Navigation = (function () {
             Templates.render("songs", {
                 songs: data.songs,
                 more: more,
+                showDownload: Settings.get("showDownloadButtons"),
                 type: "current"
             }, function (music) {
                 fillContent("", music, function () {
@@ -401,7 +406,10 @@ Navigation = (function () {
         $("header input[type='search']").val("");
 
         SyncFS.requestCurrentFilesList(function (songs) {
-            Templates.render("songs", {songs: songs}, function (music) {
+            Templates.render("songs", {
+                songs: songs,
+                showDownload: true,
+            }, function (music) {
                 fillContent("", music, function () {
                     Sounds.onVisibleTracksUpdated();
 
@@ -463,6 +471,7 @@ Navigation = (function () {
                     Templates.render("songs", {
                         songs: res.vk.songs,
                         more: more,
+                        showDownload: Settings.get("showDownloadButtons"),
                         type: "global",
                         query: searchQuery,
                         mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),
@@ -531,6 +540,7 @@ Navigation = (function () {
                     Templates.render("songs", {
                         songs: res.vk.songs,
                         more: more,
+                        showDownload: Settings.get("showDownloadButtons"),
                         type: "artist",
                         query: artist,
                         mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),

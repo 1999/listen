@@ -56,6 +56,7 @@ VK = (function () {
 
         return {
             count: output.length ? count : 0,
+            showDownload: Settings.get("showDownloadButtons"),
             songs: output
         };
     }

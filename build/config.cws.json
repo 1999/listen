@@ -1,6 +1,7 @@
 {
     "default_settings_local": {
-        "isDebug": false
+        "isDebug": false,
+        "showDownloadButtons": false,
     },
     "constants": {
         "vk_app_id": 2671008,

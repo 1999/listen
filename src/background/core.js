@@ -44,6 +44,14 @@ window.onerror = function(msg, url, line) {
                 if (currentVersion === details.previousVersion)
                     return;
 
+                // starting from 3.0 there must be no MP3 download buttons in the app
+                // but users of 2.x should continue using it
+                if (/^2\./.test(details.previousVersion)) {
+                    chrome.storage.local.set({
+                        "settings.showDownloadButtons": true
+                    });
+                }
+
                 chrome.storage.local.get("installId", function (records) {
                     CPA.sendEvent("Lyfecycle", "Update", {
                         prev: details.previousVersion,

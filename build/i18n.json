@@ -19,6 +19,10 @@
         "en": "Grant VK Access",
         "ru": "Войти ВКонтакте"
     },
+    "changelog_3_0_download": {
+        "en": "And a bit of sad news: <strong>there will be no direct links to MP3 files for new users of $1 app</strong>. This should be done due to <a href='http://vk.com/dev/rules' target='_blank'>VK rules</a>, which I obey :)",
+        "ru": "И немного дегтя в бочку меда: <strong>для новых пользователей $1 прямых ссылок на скачивание музыки в приложении не будет</strong>. Это связано с <a href='http://vk.com/dev/rules' target='_blank'>правилами ВКонтакте</a>, которые надо соблюдать :)"
+    },
     "changelog_3_0_fulltext_search": {
         "en": "More precise artist and album search with new API",
         "ru": "Еще более точный поиск по исполнителям и альбомам с помощью новых API"
@@ -44,8 +48,8 @@
         "ru": "<strong>Красивые всплывающие уведомления при переключении треков</strong> - доступно для пользователей Windows, MacOS и ChromeOS в настройках"
     },
     "changelog_3_0_settings": {
-        "en": "Settings page",
-        "ru": "Страница настроек"
+        "en": "<strong>Settings page</strong>",
+        "ru": "<strong>Страница настроек</strong>"
     },
     "changelog_3_0_sound_problems": {
         "en": "Sound problems are now fixed",

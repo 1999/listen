@@ -31,7 +31,8 @@
             "hotkeys",
             "notifications",
             "fulltext_search",
-            "sound_problems"
+            "sound_problems",
+            "download"
         ]
     },
 
