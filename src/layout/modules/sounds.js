@@ -13,7 +13,7 @@ Sounds = (function () {
     var playingTracks = [];
     var notificationTimeoutId;
 
-    chrome.notifications.onClicked.addListener(function () {
+    chrome.notifications && chrome.notifications.onClicked.addListener(function () {
         chrome.notifications.clear(NOTIFICATION_NAME, function () {});
         clearTimeout(notificationTimeoutId);
         notificationTimeoutId = null;
@@ -21,7 +21,7 @@ Sounds = (function () {
         chrome.app.window.current().show();
     });
 
-    chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+    chrome.notifications && chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
         chrome.notifications.clear(NOTIFICATION_NAME, function () {});
         clearTimeout(notificationTimeoutId);
         notificationTimeoutId = null;
@@ -50,7 +50,7 @@ Sounds = (function () {
             method = "update";
         }
 
-        chrome.notifications[method](NOTIFICATION_NAME, {
+        chrome.notifications && chrome.notifications[method](NOTIFICATION_NAME, {
             type: "basic",
             iconUrl: options.cover || chrome.runtime.getURL("pics/icons/128.png"),
             title: options.artist,
