@@ -61,7 +61,16 @@ YMusic = (function () {
                     };
 
                     [].forEach.call(xml.querySelectorAll("search > tracks > track[id]"), function (trackNode) {
+                        // if track artists are different, skip it
+                        var isArtistTakingPart = [].some.call(trackNode.querySelectorAll("artist[id]"), function (artist) {
+                            return (artist.getAttribute("id") == artistId);
+                        });
+
+                        if (!isArtistTakingPart)
+                            return;
+
                         output.tracks.push({
+                            artist: output.info.name,
                             song: trackNode.querySelector("title").textContent,
                             duration: Math.round(trackNode.getAttribute("duration-millis") / 1000)
                         });

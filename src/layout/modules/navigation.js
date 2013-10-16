@@ -122,11 +122,10 @@ Navigation = (function () {
                     parseSongsList(nodeList, index + 1);
                 }
             });
-        }, 350);
+        }, 500);
     }
 
     function mergeYmResultsIntoLFM(lfm, ym) {
-        console.log(lfm, ym);
         if (!lfm)
             return ym;
 
@@ -450,7 +449,7 @@ Navigation = (function () {
                 music: function (callback) {
                     var more = (res.vk.count > res.vk.songs.length);
                     var popularSongsQueue = res.lastfm.tracks.map(function (track) {
-                        track.artist = searchQuery;
+                        track.artist = track.artist ? track.artist : searchQuery;
                         return track;
                     });
 
