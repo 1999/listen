@@ -38,15 +38,11 @@ window.onerror = function(msg, url, line) {
                     chrome.runtime.setUninstallUrl(uninstallUrl);
                 }
 
-                setDayUseAlarm();
                 break;
 
             case "update":
                 if (currentVersion === details.previousVersion)
                     return;
-
-                if (/^1\./.test(details.previousVersion))
-                    setDayUseAlarm();
 
                 chrome.storage.local.get("installId", function (records) {
                     CPA.sendEvent("Lyfecycle", "Update", {
@@ -68,6 +64,15 @@ window.onerror = function(msg, url, line) {
 
                 break;
         }
+
+        chrome.alarms.get("dayuse", function (alarmInfo) {
+            if (!alarmInfo) {
+                chrome.alarms.create("dayuse", {
+                    delayInMinutes: 24 * 60,
+                    periodInMinutes: 24 * 60
+                });
+            }
+        });
     });
 
     function openAppWindow() {
@@ -75,13 +80,6 @@ window.onerror = function(msg, url, line) {
             id: uuid(),
             minWidth: 800,
             minHeight: 540
-        });
-    }
-
-    function setDayUseAlarm() {
-        chrome.alarms.create("dayuse", {
-            delayInMinutes: 24 * 60,
-            periodInMinutes: 24 * 60
         });
     }
 

@@ -24,14 +24,23 @@ CPA = (function () {
         if (alarmInfo.name !== "dayuse")
             return;
 
-        chrome.storage.local.get("installId", function (records) {
+        chrome.storage.local.get({
+            installId: null,
+            "settings.songsPlayed": Config.default_settings_local.songsPlayed,
+            "settings.songsPlayingMode": Config.default_settings_local.songsPlayingMode,
+            "settings.headerPay": Config.default_settings_local.headerPay,
+            "settings.lastfmToken": Config.default_settings_local.lastfmToken,
+            "settings.study": Config.default_settings_local.study
+        }, function (records) {
             CPA.sendEvent("Lyfecycle", "Dayuse", {
                 id: records.installId,
                 ver: chrome.runtime.getManifest().version,
-                played: Settings.get("songsPlayed"),
-                songsPlayingMode: Settings.get("songsPlayingMode"),
-                header: Settings.get("headerPay"),
-                cloudStudy: (Settings.get("study").indexOf("cloud") !== -1)
+                played: records["settings.songsPlayed"],
+                songsPlayingMode: records["settings.songsPlayingMode"],
+                header: records["settings.headerPay"],
+                cloudStudy: (records["settings.study"].indexOf("cloud") !== -1),
+                lfmStudy: (records["settings.study"].indexOf("lastfm") !== -1),
+                lfmAuth: (records["settings.lastfmToken"].length > 0)
             });
         });
     });
