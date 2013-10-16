@@ -24,8 +24,8 @@
         "ru": "Еще более точный поиск по исполнителям и альбомам с помощью новых API"
     },
     "changelog_3_0_hotkeys": {
-        "en": "Hotkeys support",
-        "ru": "Поддержка шорткатов"
+        "en": "<strong>Hotkeys support when the app's windows is active</strong>. Press <em>Space</em> to play/pause current track, <em>Left and Right</em> switches to previous or next track, <em>Enter</em> starts playing current track from the beginning. <em>Multimedia keys</em> are also supported",
+        "ru": "<strong>Поддержка шорткатов при активном окне приложения</strong>. <em>Пробел</em> для проигрывания/остановки, кнопки <em>вправо и влево</em> для перехода к следующему и предыдущему треку, <em>Enter</em> для перехода в начало песни. Также поддерживаются <em>мультимедийные клавиши</em> на клавиатуре"
     },
     "changelog_3_0_lastfm": {
         "en": "LastFM support, including \"scrobbling\" and \"now playing\" features - available in settings",
@@ -40,8 +40,8 @@
         "ru": "Навигация по приложению через кнопки вперед-назад"
     },
     "changelog_3_0_notifications": {
-        "en": "Rich notifications when track is switching - you can enable them for Windows in settings",
-        "ru": "Красивые всплывающие уведомления при переключении треков - доступно для пользователей Windows в настройках"
+        "en": "<strong>Awesome rich notifications when track is switching</strong> - you can enable them for Windows, MacOS and ChromeOS in settings",
+        "ru": "<strong>Красивые всплывающие уведомления при переключении треков</strong> - доступно для пользователей Windows, MacOS и ChromeOS в настройках"
     },
     "changelog_3_0_settings": {
         "en": "Settings page",

@@ -1,9 +1,9 @@
 {{#changelogKeys}}
     <h3 class="news-header">{{appName}} v{{key}}</h3>
 
-    <ul>
+    <ul class="news-list">
         {{#changelog}}
-            <li>{{.}}</li>
+            <li>{{{.}}}</li>
         {{/changelog}}
     </ul>
 {{/changelogKeys}}

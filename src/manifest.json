@@ -27,11 +27,11 @@
             "settings",
             "lastfm",
             "navigation",
-            "sound_problems",
             "lovely_songs",
             "hotkeys",
             "notifications",
-            "fulltext_search"
+            "fulltext_search",
+            "sound_problems"
         ]
     },
 

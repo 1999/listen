@@ -319,6 +319,11 @@ div.pay .btn-link {
     margin-bottom: 5px;
 }
 
+.info .news-list {
+    font-size: 18px;
+    line-height: 28px;
+}
+
 .study .wtf {
     border-bottom: 1px dotted;
 }
