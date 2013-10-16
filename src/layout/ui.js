@@ -640,7 +640,47 @@ parallel({
     // @see https://code.google.com/p/chromium/issues/detail?id=90793
     document.addEventListener("webkitvisibilitychange", function () {
         Navigation.appWindowVisible = !document.webkitHidden;
-        console.log(document.webkitHidden);
+    }, false);
+
+    // hotkeys
+    document.addEventListener("keyup", function (evt) {
+        if (evt.target !== document.body || document.body.hasClass("guest")) {
+            return;
+        }
+
+        var playerIsPaused = $("footer .pause").hasClass("hidden");
+
+        switch (evt.keyCode) {
+            case 32:  // space
+            case 179: // multimedia.play-pause
+                if (playerIsPaused) {
+                    Sounds.play();
+                } else {
+                    Sounds.pause();
+                }
+
+                break;
+
+            case 13: // return
+                if (!playerIsPaused) {
+                    Sounds.updateCurrentTime(0);
+                }
+
+                break;
+
+            case 37:  // left
+            case 177: // multimedia.back
+                Sounds.playPrev();
+                break;
+
+            case 39:  // right
+            case 176: // multimedia.forward
+                Sounds.playNext();
+                break;
+
+            case 178: // multimedia.stop
+                break;
+        }
     }, false);
 
     document.body.bind("submit", function (evt) {
