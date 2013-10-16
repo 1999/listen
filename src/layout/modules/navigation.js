@@ -175,6 +175,13 @@ Navigation = (function () {
             var lessonNeeds, tplData;
             var lessonsPassed = Settings.get("study");
 
+            // if user has already authorized in LastFM
+            // there's no need to encourage him to do that afterwards when he logs out
+            if (Lastfm.isAuthorized && lessonsPassed.indexOf("lastfm") === -1) {
+                lessonsPassed.push("lastfm");
+                Settings.set("study", lessonsPassed);
+            }
+
             if (lessonsPassed.indexOf("cloud") === -1) {
                 lessonNeeds = "cloud";
             } else if (lessonsPassed.indexOf("lastfm") === -1 && !Lastfm.isAuthorized && Navigation.currentView !== "settings") {
