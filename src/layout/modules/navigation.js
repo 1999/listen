@@ -125,6 +125,49 @@ Navigation = (function () {
         }, 350);
     }
 
+    function mergeYmResultsIntoLFM(lfm, ym) {
+        console.log(lfm, ym);
+        if (!lfm)
+            return ym;
+
+        if (!ym)
+            return lfm;
+
+        lfm.ymid = ym.info.ymid;
+
+        var ymTrack;
+        var hasSameTrack;
+
+        while (lfm.tracks.length < 10 && ym.tracks.length) {
+            ymTrack = ym.tracks.shift();
+
+            hasSameTrack = lfm.tracks.some(function (track) {
+                return (track.song.trim().toLowerCase() === ymTrack.song.trim().toLowerCase());
+            });
+
+            if (!hasSameTrack) {
+                lfm.tracks.push(ymTrack);
+            }
+        }
+
+        var ymAlbum;
+        var hasSameAlbum;
+
+        while (ym.albums.length) {
+            ymAlbum = ym.albums.shift();
+
+            hasSameAlbum = lfm.albums.some(function (album) {
+                return (album.title.trim().toLowerCase() === ymAlbum.title.trim().toLowerCase());
+            });
+
+            if (!hasSameAlbum) {
+                lfm.albums.push(ymAlbum);
+            }
+        }
+
+        return lfm;
+    }
+
 
     function fillContent(infoHTML, musicHTML, callback) {
         var onTransitionEnd = function () {
@@ -386,13 +429,18 @@ Navigation = (function () {
             },
             lastfm: function (callback) {
                 Lastfm.getArtistInfo(searchQuery, callback);
+            },
+            ym: function (callback) {
+                YMusic.getArtistInfo(searchQuery, callback);
             }
         }, function (res) {
+            mergeYmResultsIntoLFM(res.lastfm, res.ym);
+
             parallel({
                 info: function (callback) {
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: createValidHTML(res.lastfm.info),
+                        artistDescription: createValidHTML(res.lastfm.info || ""),
                         artist: searchQuery,
                         albums: res.lastfm.albums,
                         similarArtists: chrome.i18n.getMessage("similarArtists"),
@@ -402,7 +450,7 @@ Navigation = (function () {
                 music: function (callback) {
                     var more = (res.vk.count > res.vk.songs.length);
                     var popularSongsQueue = res.lastfm.tracks.map(function (track) {
-                        track.artist = artist;
+                        track.artist = searchQuery;
                         return track;
                     });
 
@@ -449,13 +497,18 @@ Navigation = (function () {
             },
             lastfm: function (callback) {
                 Lastfm.getArtistInfo(artist, callback);
+            },
+            ym: function (callback) {
+                YMusic.getArtistInfo(artist, callback);
             }
         }, function (res) {
+            mergeYmResultsIntoLFM(res.lastfm, res.ym);
+
             parallel({
                 info: function (callback) {
                     Templates.render("info-artist", {
                         hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
-                        artistDescription: createValidHTML(res.lastfm.info),
+                        artistDescription: createValidHTML(res.lastfm.info || ""),
                         artist: artist,
                         albums: res.lastfm.albums,
                         similarArtists: chrome.i18n.getMessage("similarArtists"),
@@ -503,22 +556,25 @@ Navigation = (function () {
 
         // update search input data
         var searchElem = $("header input[type='search']").removeData().val(searchData.searchQuery);
-        var lfmSearchData = {};
+        var reqSearchData = {};
 
         if (searchData.mbid) {
             searchElem.data("mbid", searchData.mbid);
-            lfmSearchData.mbid = searchData.mbid;
+            reqSearchData.mbid = searchData.mbid;
+        } else if (searchData.ymid) {
+            searchElem.data("ymid", searchData.ymid);
+            reqSearchData.ymid = searchData.ymid;
         } else {
             searchElem.data({
                 artist: searchData.artist,
                 album: searchData.album
             });
 
-            lfmSearchData.artist = searchData.artist;
-            lfmSearchData.album = searchData.album;
+            reqSearchData.artist = searchData.artist;
+            reqSearchData.album = searchData.album;
         }
 
-        Lastfm.getAlbumInfo(lfmSearchData, function (album) {
+        var onAlbumInfoReady = function (album) {
             parallel({
                 info: function (callback) {
                     Templates.render("info-album", {
@@ -551,9 +607,15 @@ Navigation = (function () {
                     parseSongsList($$(".music .song-queue"));
                 });
             });
-        });
 
-        CPA.sendAppView("User.SearchAlbum");
+            CPA.sendAppView("User.SearchAlbum");
+        };
+
+        if (reqSearchData.ymid) {
+            YMusic.getAlbumInfo(reqSearchData, onAlbumInfoReady);
+        } else {
+            Lastfm.getAlbumInfo(reqSearchData, onAlbumInfoReady);
+        }
     }
 
 
@@ -629,7 +691,7 @@ Navigation = (function () {
                     if (states[currentStateIndex].view !== viewType) {
                         needsPush = true;
                     } else {
-                        ["mbid", "artist", "album", "searchQuery"].forEach(function (param) {
+                        ["mbid", "ymid", "artist", "album", "searchQuery"].forEach(function (param) {
                             if (states[currentStateIndex].search[param] !== args[param]) {
                                 needsPush = true;
                             }

@@ -68,6 +68,8 @@ Lastfm = (function () {
                             artists.push(artistName.textContent);
                         });
 
+                        console.log(artists);
+
                         callback(artists);
                     }, function () {
                         callback(null);

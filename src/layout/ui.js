@@ -134,11 +134,15 @@ parallel({
                     return Navigation.dispatch("searchArtist", {artist: matches[1]});
 
                 var mbid = searchElem.data("mbid");
+                var ymid = searchElem.data("ymid");
                 var artist = searchElem.data("artist");
                 var album = searchElem.data("album");
 
                 if (mbid.length)
                     return Navigation.dispatch("searchAlbum", {mbid: mbid, searchQuery: searchQuery});
+
+                if (ymid.length)
+                    return Navigation.dispatch("searchAlbum", {ymid: ymid, searchQuery: searchQuery});
 
                 if (artist.length && album.length)
                     return Navigation.dispatch("searchAlbum", {artist: artist, album: album, searchQuery: searchQuery});
@@ -452,11 +456,14 @@ parallel({
                 var headerBtn = $("header .search");
 
                 var mbid = this.data("mbid");
+                var ymid = this.data("ymid");
                 var artist = this.data("artist");
                 var album = this.data("album");
 
                 if (mbid.length) {
                     headerElem.data("mbid", mbid);
+                } else if (ymid.length) {
+                    headerElem.data("ymid", ymid);
                 } else if (artist.length && album.length) {
                     headerElem.data({artist: artist, album: album});
                 }

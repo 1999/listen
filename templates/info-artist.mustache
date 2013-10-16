@@ -5,13 +5,13 @@
 {{#albums}}
     <figure>
         <p>
-            <a href="album:{{artist}} - {{title}}" data-mbid="{{mbid}}" data-artist="{{artist}}" data-album="{{title}}">
+            <a href="album:{{artist}} - {{title}}" data-mbid="{{mbid}}" data-ymid="{{ymid}}" data-artist="{{artist}}" data-album="{{title}}">
                 <img data-src="{{cover}}" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="126" height="126" alt="{{title}}" class="img-rounded loading">
                 <span class="glyphicon glyphicon-ban-circle nothing text-center hidden"></span>
             </a>
         </p>
         <figcaption class="text-center">
-            <a href="album:{{artist}} - {{title}}" data-mbid="{{mbid}}">{{title}}</a>
+            <a href="album:{{artist}} - {{title}}" data-mbid="{{mbid}}" data-ymid="{{ymid}}">{{title}}</a>
         </figcaption>
     </figure>
 {{/albums}}
