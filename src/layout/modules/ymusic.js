@@ -44,7 +44,29 @@ YMusic = (function () {
                 },
                 onload: function (xml) {
                     var bestArtist = xml.querySelector("search > best > artist[id]");
+                    var bestArtistName = bestArtist && bestArtist.querySelector("name").textContent;
+
                     if (!bestArtist) {
+                        return callback(null);
+                    }
+
+                    // YMusic search is too good for us
+                    // if searchQuery and bestArtist have nothing in common, drop that
+                    var haveCommon = false;
+
+                    for (var i = 0; i < searchQuery.length; i++) {
+                        // skip whitespaces
+                        if (!searchQuery[i].trim().length) {
+                            continue;
+                        }
+
+                        if (bestArtistName.indexOf(searchQuery[i]) !== -1) {
+                            haveCommon = true;
+                            break;
+                        }
+                    }
+
+                    if (!haveCommon) {
                         return callback(null);
                     }
 

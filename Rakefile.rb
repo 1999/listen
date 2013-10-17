@@ -100,6 +100,16 @@ task :build => [:i18n, :templates] do
         :ignorefile => /\.swp/,
         :ignoredir => /\.(?:svn|git|cvs)/
     )
+
+    #
+    CrxMake.make(
+        :ex_dir => OUT_PATH,
+        :pkey => File.join(Dir.home, "Dropbox", "Keys", "ListenApp.pem"),
+        :crx_output => File.join(OUT_PATH, "app.crx"),
+        :verbose => false,
+        :ignorefile => /\.swp/,
+        :ignoredir => /\.(?:svn|git|cvs)/
+    )
 end
 
 desc "Run this after you have cloned the repo"
