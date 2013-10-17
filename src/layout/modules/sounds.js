@@ -467,11 +467,13 @@ Sounds = (function () {
                     var track = new Track(audioSrc);
                     playingTracks.push(track);
 
-                    showNotification({
-                        artist: playlist[playlistIndex].artist.trim(),
-                        track: playlist[playlistIndex].title.trim(),
-                        cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
-                    });
+                    if (canBeContinued) {
+                        showNotification({
+                            artist: playlist[playlistIndex].artist.trim(),
+                            track: playlist[playlistIndex].title.trim(),
+                            cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
+                        });
+                    }
 
                     // update statistics
                     var songsPlayed = Settings.get("songsPlayed");
