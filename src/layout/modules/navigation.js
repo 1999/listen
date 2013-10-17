@@ -298,6 +298,8 @@ Navigation = (function () {
         $("header input[type='search']").val("");
 
         CPA.isTrackingPermitted(function (isTrackingPermitted) {
+            var isHeaderPayShown = ($("header div.pay") !== null);
+
             Templates.render("settings", {
                 vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
                 dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
@@ -313,22 +315,14 @@ Navigation = (function () {
                 showNotifications: Settings.get("showNotifications"),
                 saved: chrome.i18n.getMessage("saved"),
                 yes: chrome.i18n.getMessage("yes"),
-                no: chrome.i18n.getMessage("no")
+                no: chrome.i18n.getMessage("no"),
+                showPayLayer: !isHeaderPayShown,
+                payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
+                payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                cwsRate: chrome.i18n.getMessage("rateCWS"),
+                close: chrome.i18n.getMessage("close")
             }, function (html) {
                 fillContent(html, "", function () {
-                    var isHeaderPayShown = ($("header div.pay") !== null);
-                    if (isHeaderPayShown)
-                        return;
-
-                    Templates.render("info-pay", {
-                        payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                        payYaMoney: chrome.i18n.getMessage("yandexMoney"),
-                        cwsRate: chrome.i18n.getMessage("rateCWS"),
-                        close: chrome.i18n.getMessage("close")
-                    }, function (html) {
-                        $(".info").prepend(html);
-                    });
-
                     // set transitionend listeners
                     $$(".settings .saved").bind("transitionend", function () {
                         this.addClass("hidden").removeClass("saved-hiding");
