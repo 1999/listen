@@ -125,7 +125,7 @@ Sounds = (function () {
             return;
 
         if (trackIndex !== -1) {
-            Sounds.playNext();
+            Sounds.playNext(true);
         } else {
             Sounds.play(0);
         }
@@ -138,7 +138,7 @@ Sounds = (function () {
         var trackIndex = playingTracks.indexOf(this.track);
 
         if (trackIndex !== -1) {
-            Sounds.playNext();
+            Sounds.playNext(true);
         } else {
             Sounds.play(0);
         }
@@ -504,7 +504,9 @@ Sounds = (function () {
             $(songTitleElem, ".track-title").text(playlist[playlistIndex].title);
         },
 
-        playNext: function Sounds_playNext() {
+        playNext: function Sounds_playNext(autoSwitch) {
+            autoSwitch = autoSwitch || false;
+
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
             var currentTrackIndex;
@@ -532,7 +534,7 @@ Sounds = (function () {
                     nextTrackIndex = 0;
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
-                } else if (playingMode === MODE_REPEAT) {
+                } else if (playingMode === MODE_REPEAT && autoSwitch) {
                     nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex + 1 < playlist.length) ? currentTrackPlaylistIndex + 1 : 0;
@@ -544,8 +546,8 @@ Sounds = (function () {
             this.play(nextTrackIndex, false);
         },
 
-        playPrev: function Sounds_playPrev() {
-            // @todo playlist can be changed
+        playPrev: function Sounds_playPrev(autoSwitch) {
+            autoSwitch = autoSwitch || false;
 
             var playingMode = Settings.get("songsPlayingMode");
             var smoothSwitch = Settings.get("smoothTracksSwitch");
@@ -574,7 +576,7 @@ Sounds = (function () {
                     nextTrackIndex = 0;
                 } else if (playingMode === MODE_SHUFFLE) {
                     nextTrackIndex = getRandomTrackIndex();
-                } else if (playingMode === MODE_REPEAT) {
+                } else if (playingMode === MODE_REPEAT && autoSwitch) {
                     nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex === 0) ? playlist.length - 1 : currentTrackPlaylistIndex - 1;
