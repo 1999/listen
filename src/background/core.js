@@ -17,7 +17,13 @@ window.onerror = function(msg, url, line) {
     chrome.notifications && chrome.notifications.onClicked.addListener(function (notificationId) {
         if (notificationId === "update2to3") {
             chrome.notifications.clear("update2to3", function () {});
-            chrome.app.window.current().show();
+            var currentAppWindow = chrome.app.window.current();
+
+            if (currentAppWindow) {
+                currentAppWindow.show();
+            } else {
+                openAppWindow();
+            }
         }
     });
 
@@ -26,7 +32,13 @@ window.onerror = function(msg, url, line) {
             chrome.notifications.clear("update2to3", function () {});
 
             if (buttonIndex === 0) {
-                chrome.app.window.current().show();
+                var currentAppWindow = chrome.app.window.current();
+
+                if (currentAppWindow) {
+                    currentAppWindow.show();
+                } else {
+                    openAppWindow();
+                }
             }
         }
     });
