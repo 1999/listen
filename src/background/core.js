@@ -66,7 +66,8 @@ window.onerror = function(msg, url, line) {
                 // but users of 2.x should continue using it
                 if (/^2\./.test(details.previousVersion)) {
                     chrome.storage.local.set({
-                        "settings.showDownloadButtons": true
+                        "settings.showDownloadButtons": true,
+                        "settings.showNotifications": false
                     });
 
                     chrome.notifications && chrome.notifications.create("update2to3", {

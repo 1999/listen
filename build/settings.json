@@ -11,7 +11,7 @@
         "lastfmToken": "", /* токен LastFM */
         "smoothTracksSwitch": false,
         "showDownloadButtons": true,
-        "showNotifications": false,
+        "showNotifications": true,
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
         "study": [], /* показанные обучалки */
