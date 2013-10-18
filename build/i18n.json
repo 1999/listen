@@ -156,12 +156,12 @@
         "ru": "Перейти к следующей песне"
     },
     "notificationUpdate2to3Body": {
-        "en": "Now the app supports LastFM scrobbling, inside-app navigation and settings, shortcuts and many other cool features. Would you like to take a look and start using the app?",
-        "ru": "Теперь в приложении поддерживается скробблинг в LastFM, есть настройки, навигация внутри приложения, поддерживаются шорткаты и многое другое. Хотите открыть приложение и начать всем этим пользоваться?"
+        "en": "$1 app now supports LastFM scrobbling, in-app navigation, shortcuts and many other cool stuff.\n\nWanna take a look?",
+        "ru": "В приложении $1 стал поддерживаться скробблинг в LastFM, появилась навигация, поддержка шорткатов и многое другое.\n\nХочешь начать этим пользоваться?"
     },
     "notificationUpdate2to3Title": {
-        "en": "$1 was updated to version 3.0",
-        "ru": "Приложение $1 обновилось до версии 3.0"
+        "en": "Hey dude! Look here!",
+        "ru": "Привет, дружок! Посмотри сюда!"
     },
     "rateCWS": {
         "en": "Rate in Web Store",
