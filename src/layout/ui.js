@@ -297,7 +297,7 @@ parallel({
         },
         // save sendStat option value
         {
-            selector: ".settings input[name='sendStatChkbx'][type='radio']",
+            selector: "input[name='sendStatChkbx'][type='radio']",
             evtType: "click",
             callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
@@ -314,7 +314,7 @@ parallel({
         },
         // save smoothTracksSwitch option value
         {
-            selector: ".settings input[name='smoothSwitch'][type='radio']",
+            selector: "input[name='smoothSwitch'][type='radio']",
             evtType: "click",
             callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
@@ -331,7 +331,7 @@ parallel({
         },
         // save showNotifications setting
         {
-            selector: ".settings input[name='showNotifications'][type='radio']",
+            selector: "input[name='showNotifications'][type='radio']",
             evtType: "click",
             callback: function (evt) {
                 var optionValue = this.value === "1" ? true : false;
