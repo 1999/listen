@@ -223,11 +223,37 @@ div.pay .btn-link {
 /* Info */
 .loading-content {
     position: absolute;
-    background: url(loading.gif) 50% 50px no-repeat;
     height: 100px;
     opacity: 1;
     transition: opacity .15s ease-in-out;
     width: 100%;
+}
+
+@-webkit-keyframes progress-spinner {
+    0%   { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes progress-spinner {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-content .spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	
+	width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+
+    border: solid 4px transparent;
+    border-top-color: black;
+    border-left-color: black;
+    border-radius: 50%;
+
+    -webkit-animation: progress-spinner 400ms linear infinite;
+    animation: progress-spinner 400ms linear infinite;
 }
 
 .loading-content.transparent {
