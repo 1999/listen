@@ -1,5 +1,5 @@
 (function () {
-    var compiledTemplates = {};
+    var compiled = {};
 
     window.addEventListener("message", function (evt) {
         var output = {
@@ -8,8 +8,27 @@
         };
 
         if (Templates[evt.data.tplName]) {
-            compiledTemplates[evt.data.tplName] = compiledTemplates[evt.data.tplName] || Hogan.compile(Templates[evt.data.tplName]);
-            output.content = compiledTemplates[evt.data.tplName].render(evt.data.placeholders);
+            if (!compiled[evt.data.tplName]) {
+                var compiledTemplate = Hogan.compile(Templates[evt.data.tplName]);
+                var depsMatches = Templates[evt.data.tplName].match(/\{\{>\s?.+?\}\}/g) || [];
+
+                var partials = {};
+                depsMatches.forEach(function (match) {
+                    var partialName = match.replace(/\{\{>\s?(.+?)\}\}/, "$1");
+
+                    if (Templates[partialName]) {
+                        partials[partialName] = Templates[partialName];
+                    }
+                });
+
+                compiled[evt.data.tplName] = {
+                    template: compiledTemplate,
+                    partials: partials
+                };
+            }
+
+            var compiledData = compiled[evt.data.tplName]
+            output.content = compiledData.template.render(evt.data.placeholders, compiledData.partials);
         }
 
         evt.source.postMessage(output, evt.origin);
