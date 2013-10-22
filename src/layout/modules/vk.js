@@ -116,6 +116,17 @@ VK = (function () {
             }, function (results) {
                 callback(xmlToArray(results.vkdata, results.syncfs));
             });
+        },
+
+        getAlbums: function VK_getAlbums(callback) {
+            makeAPIRequest("audio.getAlbums", {count: 1}, function (xml) {
+                var countNode = xml.querySelector("count");
+                var output = countNode ? countNode.textContent : null;
+
+                callback(output);
+            }, function (err) {
+                callback(null);
+            });
         }
     };
 })();

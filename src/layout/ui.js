@@ -699,4 +699,15 @@ parallel({
     } else {
         Navigation.dispatch("guest");
     }
+
+    // run needed tests
+    var neededTests = Settings.get("tests");
+
+    if (neededTests.length) {
+        neededTests.forEach(function (testName) {
+            Tests[testName]();
+        });
+
+        Settings.set("tests", []);
+    }
 });

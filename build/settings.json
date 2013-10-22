@@ -15,6 +15,7 @@
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
         "study": [], /* показанные обучалки */
+        "tests": [], /* названия необходимых тестов */
         "vkToken": "", /* токен ВКонтакте */
         "volume": 0.8 /* громкость */
     },

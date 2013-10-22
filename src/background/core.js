@@ -98,6 +98,12 @@ window.onerror = function(msg, url, line) {
                     }, function () {});
                 }
 
+                // run vkPeopleUsePlaylists test
+                // @see https://github.com/1999/listen/issues/26
+                if (currentVersion === "3.1") {
+                    chrome.storage.local.set({"settings.tests": ["vkPeopleUsePlaylists"]});
+                }
+
                 chrome.storage.local.get("installId", function (records) {
                     CPA.sendEvent("Lyfecycle", "Update", {
                         prev: details.previousVersion,
