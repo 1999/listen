@@ -508,8 +508,7 @@
                             var tmpElem = document.querySelector(arguments[0]);
                             return tmpElem;
                         } catch (ex) {
-                            ex.message += " (" + arguments[0] + ")";
-                            throw ex;
+                            throw new Error("Invalid selector: " + arguments[0]);
                         }
                     }
 

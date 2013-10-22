@@ -17,6 +17,11 @@ SyncFS = (function () {
         fileEntry.file(function (file) {
             var reader = new FileReader;
             reader.onloadend = function () {
+                if (!reader.result) {
+                    console.error("Result is null");
+                    return callback({artist: defaultArtist, song: defaultTrack});
+                }
+
                 var id3v1 = reader.result.substr(reader.result.length - 128);
                 if (id3v1.indexOf("TAG") !== 0)
                     return callback({artist: defaultArtist, song: defaultTrack});
