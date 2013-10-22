@@ -43,6 +43,16 @@
     }
 }
 
+@-webkit-keyframes progress-spinner {
+    0% {
+        -webkit-transform: rotate(0);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
 
 html, body {
     overflow-y: visible;
@@ -224,39 +234,31 @@ div.pay .btn-link {
 .loading-content {
     position: absolute;
     height: 100px;
-    opacity: 1;
-    transition: opacity .15s ease-in-out;
     width: 100%;
 }
 
-@-webkit-keyframes progress-spinner {
-    0%   { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-}
-@keyframes progress-spinner {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .loading-content .spinner {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	
-	width: 50px;
-    height: 50px;
-    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 40px;
+    height: 40px;
 
     border: solid 4px transparent;
-    border-top-color: black;
-    border-left-color: black;
+    border-top-color: #666;
+    border-left-color: #666;
     border-radius: 50%;
 
-    -webkit-animation: progress-spinner 400ms linear infinite;
-    animation: progress-spinner 400ms linear infinite;
+    -webkit-animation: progress-spinner 1s linear infinite;
+    opacity: 1;
 }
 
-.loading-content.transparent {
+.loading-content .spinner-transition {
+    transition: opacity .15s ease-in-out;
+}
+
+.loading-content .spinner-transparent {
     opacity: 0;
 }
 

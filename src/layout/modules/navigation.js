@@ -229,14 +229,14 @@ Navigation = (function () {
             });
         };
 
-        $(".loading-content").addClass("transparent").bind("transitionend", onTransitionEnd);
+        $(".loading-content .spinner").addClass("spinner-transition", "spinner-transparent").bind("transitionend", onTransitionEnd);
     }
 
     function emptyContent() {
         $(".music").empty();
         $(".info").empty();
 
-        $(".loading-content").removeClass("transparent");
+        $(".loading-content .spinner").removeClass("spinner-transparent", "spinner-transition");
     }
 
 
