@@ -1,6 +1,18 @@
 window.onerror = function(msg, url, line) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
     console.error(msgError);
+
+    chrome.storage.local.get({
+        "settings.isDebug": Config.default_settings_local.isDebug
+    }, function (records) {
+        if (!records["settings.isDebug"]) {
+            CPA.sendEvent("Errors", chrome.runtime.getManifest().version, {
+                msg: msg,
+                url: url,
+                line: line
+            });
+        }
+    });
 };
 
 (function () {
