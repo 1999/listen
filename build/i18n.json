@@ -207,6 +207,10 @@
         "en": "VK authorization",
         "ru": "Авторизация ВКонтакте"
     },
+    "wait": {
+        "en": "Please wait",
+        "ru": "Подождите"
+    },
     "welcomeHeader": {
         "en": "Hey dude!",
         "ru": "Привет, дружок!"

@@ -36,8 +36,10 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 var btn = this;
+                var initialText = this.html();
 
                 this.disabled = "disabled";
+                this.html(chrome.i18n.getMessage("wait") + "...");
                 var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
 
                 chrome.identity.launchWebAuthFlow({
@@ -51,7 +53,7 @@ parallel({
                     }),
                     interactive: true
                 }, function (responseURL) {
-                    btn.removeAttr("disabled");
+                    btn.removeAttr("disabled").html(initialText);
 
                     if (!responseURL)
                         return;
@@ -220,12 +222,17 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 var btn = this.attr("disabled", "disabled");
+                var initialText = this.html();
                 var baseURL = "https://" + chrome.runtime.id + ".chromiumapp.org/cb";
+
+                this.html(chrome.i18n.getMessage("wait") + "...");
 
                 chrome.identity.launchWebAuthFlow({
                     url: "http://www.last.fm/api/auth/?api_key=" + Config.constants.lastfm_api_key,
                     interactive: true
                 }, function (responseURL) {
+                    btn.html(initialText);
+
                     if (!responseURL) {
                         btn.removeAttr("disabled");
                         return;
