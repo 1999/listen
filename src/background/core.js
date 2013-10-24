@@ -115,24 +115,42 @@ window.onerror = function(msg, url, line) {
                 }
 
                 // run vkPeopleUsePlaylists test
-                // show "call-to-action" notification for guest users
+                // show "call-to-action" notification
                 if (currentVersion === "3.1") {
                     chrome.storage.local.set({"settings.tests": ["vkPeopleUsePlaylists"]});
 
-                    chrome.notifications && chrome.notifications.create("update3to31", {
-                        type: "basic",
-                        iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
-                        title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
-                        message: chrome.i18n.getMessage("notificationUpdate3to31CallToAction", appName),
-                        buttons: [
-                            {
-                                title: chrome.i18n.getMessage("yesGogogo")
-                            },
-                            {
-                                title: chrome.i18n.getMessage("no")
-                            }
-                        ]
-                    }, function () {});
+                    chrome.storage.local.get({
+                        "settings.songsPlayed": Config.default_settings_local.songsPlayed,
+                        "settings.vkToken": Config.default_settings_local.vkToken
+                    }, function (records) {
+                        var needNotify = false;
+                        var notificationBody;
+
+                        if (!records["settings.vkToken"].length) { // show notification to guests
+                            needNotify = true;
+                            notificationBody = chrome.i18n.getMessage("notificationUpdate3to31CallToActionGuests", appName);
+                        } else if (records["settings.songsPlayed"] < 20) { // show notification to users who don't use the app often
+                            needNotify = true;
+                            notificationBody = chrome.i18n.getMessage("notificationUpdate3to31CallToActionUsers", appName);
+                        }
+
+                        if (needNotify && chrome.notifications) {
+                            chrome.notifications.create("update3to31", {
+                                type: "basic",
+                                iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
+                                title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
+                                message: notificationBody,
+                                buttons: [
+                                    {
+                                        title: chrome.i18n.getMessage("yesGogogo")
+                                    },
+                                    {
+                                        title: chrome.i18n.getMessage("no")
+                                    }
+                                ]
+                            }, function () {});
+                        }
+                    });
                 }
 
                 chrome.storage.local.get("installId", function (records) {
