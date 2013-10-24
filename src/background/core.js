@@ -40,18 +40,22 @@ window.onerror = function(msg, url, line) {
     });
 
     chrome.notifications && chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
-        if (notificationId === "update2to3") {
-            chrome.notifications.clear("update2to3", function () {});
+        switch (notificationId) {
+            case "update2to3":
+            case "update3to31":
+                chrome.notifications.clear(notificationId, function () {});
 
-            if (buttonIndex === 0) {
-                var currentAppWindow = chrome.app.window.current();
+                if (buttonIndex === 0) {
+                    var currentAppWindow = chrome.app.window.current();
 
-                if (currentAppWindow) {
-                    currentAppWindow.show();
-                } else {
-                    openAppWindow();
+                    if (currentAppWindow) {
+                        currentAppWindow.show();
+                    } else {
+                        openAppWindow();
+                    }
                 }
-            }
+
+                break;
         }
     });
 
@@ -97,7 +101,7 @@ window.onerror = function(msg, url, line) {
                     chrome.notifications && chrome.notifications.create("update2to3", {
                         type: "basic",
                         iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
-                        title: chrome.i18n.getMessage("notificationUpdate2to3Title", appName),
+                        title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
                         message: chrome.i18n.getMessage("notificationUpdate2to3Body", appName),
                         buttons: [
                             {
@@ -111,9 +115,24 @@ window.onerror = function(msg, url, line) {
                 }
 
                 // run vkPeopleUsePlaylists test
-                // @see https://github.com/1999/listen/issues/26
+                // show "call-to-action" notification for guest users
                 if (currentVersion === "3.1") {
                     chrome.storage.local.set({"settings.tests": ["vkPeopleUsePlaylists"]});
+
+                    chrome.notifications && chrome.notifications.create("update3to31", {
+                        type: "basic",
+                        iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
+                        title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
+                        message: chrome.i18n.getMessage("notificationUpdate3to31CallToAction", appName),
+                        buttons: [
+                            {
+                                title: chrome.i18n.getMessage("yesGogogo")
+                            },
+                            {
+                                title: chrome.i18n.getMessage("no")
+                            }
+                        ]
+                    }, function () {});
                 }
 
                 chrome.storage.local.get("installId", function (records) {
