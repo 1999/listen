@@ -467,6 +467,8 @@ Sounds = (function () {
                     var track = new Track(audioSrc);
                     playingTracks.push(track);
 
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Songs played", 1);
+
                     if (canBeContinued) {
                         showNotification({
                             artist: playlist[playlistIndex].artist.trim(),
