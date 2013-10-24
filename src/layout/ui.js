@@ -395,6 +395,8 @@ parallel({
 
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL, audioId);
                 this.addClass("pending");
+                
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Cloud downloads", 1);
             }
         },
         // download MP3 file to local computer
@@ -403,13 +405,7 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 evt.stopImmediatePropagation();
-
-                var songContainer = this.closest("p.song");
-
-                CPA.sendEvent("Actions", "saveLocal", {
-                    artist: songContainer.data("artist"),
-                    title: songContainer.data("title")
-                });
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Local downloads", 1);
             }
         },
         // load more songs on window croll
