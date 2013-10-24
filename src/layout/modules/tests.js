@@ -9,7 +9,7 @@ Tests = (function () {
 
             VK.getAlbums(function (albumsCount) {
                 if (albumsCount !== null) {
-                    CPA.sendEvent("Tests", "vkPeopleUsePlaylists", albumsCount > 0);
+                    CPA.sendEvent("Tests", "vkPeopleUsePlaylists", "At least one", albumsCount > 0);
                 }
             });
         }

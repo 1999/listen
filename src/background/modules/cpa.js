@@ -25,23 +25,24 @@ CPA = (function () {
             return;
 
         chrome.storage.local.get({
-            installId: null,
             "settings.songsPlayed": Config.default_settings_local.songsPlayed,
-            "settings.songsPlayingMode": Config.default_settings_local.songsPlayingMode,
             "settings.headerPay": Config.default_settings_local.headerPay,
             "settings.lastfmToken": Config.default_settings_local.lastfmToken,
-            "settings.study": Config.default_settings_local.study
+            "settings.vkToken": Config.default_settings_local.vkToken
         }, function (records) {
-            CPA.sendEvent("Lyfecycle", "Dayuse", {
-                id: records.installId,
-                ver: chrome.runtime.getManifest().version,
-                played: records["settings.songsPlayed"],
-                songsPlayingMode: records["settings.songsPlayingMode"],
-                header: records["settings.headerPay"],
-                cloudStudy: (records["settings.study"].indexOf("cloud") !== -1),
-                lfmStudy: (records["settings.study"].indexOf("lastfm") !== -1),
-                lfmAuth: (records["settings.lastfmToken"].length > 0)
-            });
+            CPA.sendEvent("Lyfecycle", "Dayuse.New", "Total", 1); // total app users
+
+            var isAuthorized = (records["settings.vkToken"].length > 0);
+            CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is authorized", isAuthorized); // authorized users
+
+            if (isAuthorized) {
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Played songs", records["settings.songsPlayed"]); // total played songs
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is scrobbling", (records["settings.lastfmToken"].length > 0)); // LFM users
+
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header CWS clicks", records["settings.headerPay"].ratecws); // header CWS clicks
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header YaMoney clicks", records["settings.headerPay"].yamoney); // header Yamoney clicks
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header Close clicks", records["settings.headerPay"].close); // header Close clicks
+            }
         });
     });
 
@@ -59,17 +60,23 @@ CPA = (function () {
             });
         },
 
-        sendEvent: function CPA_sendEvent() {
+        sendEvent: function CPA_sendEvent(category, action, label, valueCount) {
             var args = [];
 
             for (var i = 0, len = Math.min(arguments.length, 4); i < len; i++) {
                 if (i === 3) {
-                    args.push(parseInt(arguments[3], 10));
+                    if (typeof valueCount === "boolean") {
+                        valueCount = Number(valueCount);
+                    } else if (typeof valueCount !== "number") {
+                        valueCount = parseInt(valueCount, 10) || 0;
+                    }
+
+                    args.push(valueCount);
                 } else {
-                    if (typeof arguments[i] === "object") {
+                    if (typeof arguments[i] !== "string") {
                         args.push(JSON.stringify(arguments[i]));
                     } else {
-                        args.push(arguments[i] + "");
+                        args.push(arguments[i]);
                     }
                 }
             }
