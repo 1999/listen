@@ -254,8 +254,9 @@ Navigation = (function () {
             authVK: chrome.i18n.getMessage("authorizeVK")
         }, function (html) {
             $(document.body).html(html);
-            CPA.sendAppView("Guest");
         });
+        
+        CPA.sendAppView("Guest");
     }
 
     function drawUserUI(callback) {
@@ -360,6 +361,8 @@ Navigation = (function () {
 
         $("header .header-news").removeClass("header-news-blinking");
         Settings.set("changelog", seenChangelog);
+        
+        CPA.sendAppView("User.News");
     }
 
     function drawCurrentAudio() {
@@ -610,8 +613,6 @@ Navigation = (function () {
                     parseSongsList($$(".music .song-queue"));
                 });
             });
-
-            CPA.sendAppView("User.SearchAlbum");
         };
 
         if (reqSearchData.ymid) {
@@ -619,6 +620,8 @@ Navigation = (function () {
         } else {
             Lastfm.getAlbumInfo(reqSearchData, onAlbumInfoReady);
         }
+        
+        CPA.sendAppView("User.SearchAlbum");
     }
 
 
