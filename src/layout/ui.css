@@ -237,13 +237,15 @@ div.pay .btn-link {
     width: 100%;
 }
 
-.loading-content .spinner {
+.spinner {
     position: absolute;
     top: 50%;
     left: 50%;
 
     width: 40px;
     height: 40px;
+    margin-left: -20px;
+    margin-top: -20px;
 
     border: solid 4px transparent;
     border-top-color: #666;
@@ -274,30 +276,38 @@ div.pay .btn-link {
     width: 126px;
 }
 
-.info figure .loading {
-    background: url(loading.gif) 50% 50% no-repeat;
+figure .cover-loading {
+    display: inline-block;
+    width: 126px;
+    height: 126px;
+    position: relative;
 }
 
-.info figure .nothing {
+figure.only-cover .cover-loading {
+    width: 174px;
+    height: 174px;
+}
+
+figure .nothing {
     width: 126px;
     height: 126px;
     line-height: 126px;
     font-size: 28px;
 }
 
-.info figure.only-cover .nothing {
+figure.only-cover .nothing {
     width: 174px;
     height: 174px;
     line-height: 174px;
 }
 
-.info figcaption {
+figcaption {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.info figcaption a {
+figcaption a {
     color: #333;
 }
 

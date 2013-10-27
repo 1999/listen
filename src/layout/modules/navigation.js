@@ -539,9 +539,6 @@ Navigation = (function () {
                     Sounds.onVisibleTracksUpdated();
 
                     res.lastfm.albums.forEach(function (album) {
-                        if (!album.cover)
-                            return;
-
                         // обновляем обложку альбома
                         Covers.load(album.cover);
                     });
