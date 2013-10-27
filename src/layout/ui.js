@@ -646,7 +646,7 @@ parallel({
     }, false);
 
     // hotkeys
-    document.addEventListener("keyup", function (evt) {
+    document.addEventListener("keydown", function (evt) {
         if (evt.target !== document.body || document.body.hasClass("guest")) {
             return;
         }
