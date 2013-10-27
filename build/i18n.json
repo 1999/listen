@@ -159,11 +159,11 @@
         "en": "$1 app now supports LastFM scrobbling, in-app navigation, shortcuts and many other cool stuff.\n\nWanna take a look?",
         "ru": "В приложении $1 стал поддерживаться скробблинг в LastFM, появилась навигация, поддержка шорткатов и многое другое.\n\nХочешь начать этим пользоваться?"
     },
-    "notificationUpdate3to31CallToActionGuests": {
+    "notificationUpdateCallToActionGuests": {
         "en": "$1 app is constantly getting better and you are still not using its cool features.\n\nWanna take a look?",
         "ru": "Приложение $1 становится все лучше и удобней, а ты им даже не пользуешься, чем безумно расстраиваешь котиков.\n\nХочешь взглянуть на приложение еще раз?"
     },
-    "notificationUpdate3to31CallToActionUsers": {
+    "notificationUpdateCallToActionUsers": {
         "en": "$1 app is constantly getting better and you are practically not using its cool features.\n\nWanna take a look?",
         "ru": "Приложение $1 становится все лучше и удобней, а ты им почти не пользуешься, чем безумно расстраиваешь котиков.\n\nХочешь взглянуть на приложение еще раз?"
     },
