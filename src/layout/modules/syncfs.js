@@ -15,24 +15,53 @@ SyncFS = (function () {
         var defaultTrack = chrome.i18n.getMessage("unknownTrack");
 
         fileEntry.file(function (file) {
-            var reader = new FileReader;
-            reader.onloadend = function () {
-                if (!reader.result) {
-                    console.error("Result is null");
-                    return callback({artist: defaultArtist, song: defaultTrack});
+            // blobs can contain cyrillic symbols which take 2 bytes (charCodes < 128 take 1, 128..2048 take 2, more than 2048 take 3 bytes)
+            // FileReader.prototype.readAsText() returns text, but its length can differ with blob's length
+            var songTitleByteStart = file.size - 128 + 3;
+            var blobSongTitle = file.slice(songTitleByteStart, songTitleByteStart + 30, "text/plain");
+            var songArtistByteStart = file.size - 128 + 3 + 30;
+            var blobSongArtist = file.slice(songArtistByteStart, songArtistByteStart + 30, "text/plain");
+            var tasks = {};
+
+            [
+                {
+                    title: "artist",
+                    blob: blobSongArtist
+                },
+                {
+                    title: "song",
+                    blob: blobSongTitle
                 }
+            ].forEach(function (taskData) {
+                tasks[taskData.title] = function (callback) {
+                    var reader = new FileReader;
+                    reader.onloadend = function () {
+                        if (!reader.result) {
+                            console.error("Result is null");
+                            return callback();
+                        }
 
-                var id3v1 = reader.result.substr(reader.result.length - 128);
-                if (id3v1.indexOf("TAG") !== 0)
-                    return callback({artist: defaultArtist, song: defaultTrack});
+                        var nullRegex = new RegExp(String.fromCharCode(0), "g");
+                        var output = reader.result.trim().replace(nullRegex, "");
 
+                        callback(output);
+                    };
+
+                    reader.onerror = function (err) {
+                        console.error(err);
+                        callback();
+                    };
+
+                    reader.readAsText(taskData.blob);
+                };
+            });
+
+            parallel(tasks, function (results) {
                 callback({
-                    artist: id3v1.substr(33, 30).trim(),
-                    song: id3v1.substr(3, 30).trim()
+                    artist: results.artist || defaultArtist,
+                    song: results.song || defaultTrack
                 });
-            };
-
-            reader.readAsBinaryString(file);
+            });
         }, function (err) {
             console.error(err);
             callback({artist: defaultArtist, song: defaultTrack});
