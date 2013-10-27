@@ -395,7 +395,7 @@ parallel({
 
                 SyncFS.queueFile(this.data("artist"), this.data("title"), songURL, audioId);
                 this.addClass("pending");
-                
+
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Cloud downloads", 1);
             }
         },
@@ -652,6 +652,7 @@ parallel({
         }
 
         var playerIsPaused = $("footer .pause").hasClass("hidden");
+        var keyPressed = true;
 
         switch (evt.keyCode) {
             case 32:  // space
@@ -683,6 +684,13 @@ parallel({
 
             case 178: // multimedia.stop
                 break;
+
+            default:
+                keyPressed = false;
+        }
+
+        if (keyPressed) {
+            evt.preventDefault();
         }
     }, false);
 
