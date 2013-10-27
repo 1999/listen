@@ -23,6 +23,9 @@
     },
 
     "changelog": {
+        "3.2": [
+            "cyrillic"
+        ],
         "3.0": [
             "settings",
             "lastfm",

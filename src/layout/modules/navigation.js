@@ -255,7 +255,7 @@ Navigation = (function () {
         }, function (html) {
             $(document.body).html(html);
         });
-        
+
         CPA.sendAppView("Guest");
     }
 
@@ -263,8 +263,14 @@ Navigation = (function () {
         $(document.body).empty().addClass("user").removeClass("guest");
 
         var blink = false;
-        var changelog = chrome.runtime.getManifest().changelog;
         var seenChangelog = Settings.get("changelog");
+        var changelog;
+
+        try {
+            changelog = chrome.runtime.getManifest().changelog;
+        } catch (ex) {
+            changelog = {};
+        }
 
         for (var key in changelog) {
             if (seenChangelog.indexOf(key) === -1) {
@@ -331,16 +337,24 @@ Navigation = (function () {
     function drawChangelog() {
         emptyContent();
 
-        var changelog = chrome.runtime.getManifest().changelog;
         var seenChangelog = Settings.get("changelog");
         var appName = chrome.runtime.getManifest().name;
+        var changelog;
+
+        try {
+            changelog = chrome.runtime.getManifest().changelog;
+        } catch (ex) {
+            changelog = {};
+        }
 
         var tplData = {
             changelogKeys: [],
             appName: chrome.runtime.getManifest().name
         };
 
-        Object.keys(changelog).forEach(function (key) {
+        Object.keys(changelog).sort(function (a, b) {
+            return 0 - a.localeCompare(b);
+        }).forEach(function (key) {
             var changelogData = changelog[key].map(function (i18nKey) {
                 return chrome.i18n.getMessage("changelog_" + key.replace(/\./g, "_") + "_" + i18nKey, appName);
             });
@@ -361,7 +375,7 @@ Navigation = (function () {
 
         $("header .header-news").removeClass("header-news-blinking");
         Settings.set("changelog", seenChangelog);
-        
+
         CPA.sendAppView("User.News");
     }
 
@@ -617,7 +631,7 @@ Navigation = (function () {
         } else {
             Lastfm.getAlbumInfo(reqSearchData, onAlbumInfoReady);
         }
-        
+
         CPA.sendAppView("User.SearchAlbum");
     }
 

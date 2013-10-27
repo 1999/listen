@@ -55,6 +55,10 @@
         "en": "Sound problems are now fixed",
         "ru": "Решена проблема с изменением уровня громкости звука"
     },
+    "changelog_3_2_cyrillic": {
+        "en": "Songs with non-latin symbols are now displayed correctly in Google Drive cloud",
+        "ru": "Исправлена ошибка с отображением русских исполнителей в облаке Google Drive"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"
