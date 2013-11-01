@@ -721,4 +721,6 @@ parallel({
 
         Settings.set("tests", []);
     }
+
+    Settings.set("appUsedToday", true);
 });

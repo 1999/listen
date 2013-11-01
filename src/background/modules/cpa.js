@@ -21,29 +21,40 @@ CPA = (function () {
     });
 
     chrome.alarms.onAlarm.addListener(function (alarmInfo) {
-        if (alarmInfo.name !== "dayuse")
-            return;
+        switch (alarmInfo.name) {
+            case "appUsage":
+                chrome.storage.local.set({
+                    "settings.appUsedToday": false
+                });
 
-        chrome.storage.local.get({
-            "settings.songsPlayed": Config.default_settings_local.songsPlayed,
-            "settings.headerPay": Config.default_settings_local.headerPay,
-            "settings.lastfmToken": Config.default_settings_local.lastfmToken,
-            "settings.vkToken": Config.default_settings_local.vkToken
-        }, function (records) {
-            CPA.sendEvent("Lyfecycle", "Dayuse.New", "Total", 1); // total app users
+                break;
 
-            var isAuthorized = (records["settings.vkToken"].length > 0);
-            CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is authorized", isAuthorized); // authorized users
+            case "dayuse":
+                chrome.storage.local.get({
+                    "settings.songsPlayed": Config.default_settings_local.songsPlayed,
+                    "settings.headerPay": Config.default_settings_local.headerPay,
+                    "settings.lastfmToken": Config.default_settings_local.lastfmToken,
+                    "settings.vkToken": Config.default_settings_local.vkToken,
+                    "settings.appUsedToday": Config.default_settings_local.appUsedToday
+                }, function (records) {
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Total", 1); // total app users
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Active users", records["settings.appUsedToday"]); // total users, who opened app today
 
-            if (isAuthorized) {
-                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Played songs", records["settings.songsPlayed"]); // total played songs
-                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is scrobbling", (records["settings.lastfmToken"].length > 0)); // LFM users
+                    var isAuthorized = (records["settings.vkToken"].length > 0);
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is authorized", isAuthorized); // authorized users
 
-                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header CWS clicks", records["settings.headerPay"].ratecws); // header CWS clicks
-                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header YaMoney clicks", records["settings.headerPay"].yamoney); // header Yamoney clicks
-                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header Close clicks", records["settings.headerPay"].close); // header Close clicks
-            }
-        });
+                    if (isAuthorized) {
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Played songs", records["settings.songsPlayed"]); // total played songs
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is scrobbling", (records["settings.lastfmToken"].length > 0)); // LFM users
+
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header CWS clicks", records["settings.headerPay"].ratecws); // header CWS clicks
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header YaMoney clicks", records["settings.headerPay"].yamoney); // header Yamoney clicks
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header Close clicks", records["settings.headerPay"].close); // header Close clicks
+                    }
+                });
+
+                break;
+        }
     });
 
 

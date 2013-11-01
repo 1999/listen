@@ -1,5 +1,6 @@
 {
     "local": {
+        "appUsedToday": true, /* использовалось ли приложение сегодня */
         "changelog": [], /* viewed changelog keys */
         "headerPay": {
             "yamoney": 0,
