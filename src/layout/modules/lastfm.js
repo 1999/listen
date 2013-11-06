@@ -186,13 +186,13 @@ Lastfm = (function () {
                 options.duration = durationSec;
 
             makeAPIRequest("POST", true, options, function (xml) {
-                chrome.storage.local.get("installId", function (records) {
-                    CPA.sendEvent("Actions", "LFM_updateNowPlaying", {
-                        artist: artist,
-                        title: trackTitle,
-                        id: records.installId
-                    });
-                });
+                // chrome.storage.local.get("installId", function (records) {
+                //     CPA.sendEvent("Actions", "LFM_updateNowPlaying", {
+                //         artist: artist,
+                //         title: trackTitle,
+                //         id: records.installId
+                //     });
+                // });
             });
         },
 
@@ -218,13 +218,36 @@ Lastfm = (function () {
                 options.duration = durationSec;
 
             makeAPIRequest("POST", true, options, function (xml) {
-                chrome.storage.local.get("installId", function (records) {
-                    CPA.sendEvent("Actions", "LFM_scrobble", {
-                        artist: artist,
-                        title: trackTitle,
-                        id: records.installId
+                // chrome.storage.local.get("installId", function (records) {
+                //     CPA.sendEvent("Actions", "LFM_scrobble", {
+                //         artist: artist,
+                //         title: trackTitle,
+                //         id: records.installId
+                //     });
+                // });
+            });
+        },
+
+        getRecommendedArtists: function Lastfm_getRecommendedArtists(callback) {
+            var options = {
+                method: "user.getRecommendedArtists",
+                sk: Settings.get("lastfmToken"),
+                limit: 15
+            };
+
+            makeAPIRequest("GET", true, options, function (xml) {
+                var output = [];
+
+                [].forEach.call(xml.querySelectorAll("recommendations > artist"), function (artistNode) {
+                    var image = (artistNode.querySelector("image[size='large']") || artistNode.querySelector("image[size='medium']") || artistNode.querySelector("image[size='small']"));
+
+                    output.push({
+                        artist: artistNode.querySelector("name").textContent,
+                        cover: image ? image.textContent : ""
                     });
                 });
+
+                callback(output);
             });
         }
     };

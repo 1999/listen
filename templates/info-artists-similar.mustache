@@ -1,0 +1,20 @@
+{{#recommended.length}}
+    <p class="lead recommended-artists">{{recommendedArtistsTitle}}</p>
+
+    {{#recommended}}
+        <figure data-src="{{cover}}">
+            <p>
+                <a href="artist:{{artist}}">
+                    <img src="" width="126" height="126" alt="{{artist}}" class="img-rounded hidden">
+                    <span class="glyphicon glyphicon-ban-circle nothing text-center hidden"></span>
+                </a>
+            </p>
+            <div class="cover-loading">
+                <div class="spinner"></div>
+            </div>
+            <figcaption class="text-center">
+                <a href="artist:{{artist}}">{{artist}}</a>
+            </figcaption>
+        </figure>
+    {{/recommended}}
+{{/recommended.length}}

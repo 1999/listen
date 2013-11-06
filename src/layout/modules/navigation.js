@@ -385,17 +385,40 @@ Navigation = (function () {
         // update search input data
         $("header input[type='search']").val("");
 
-        VK.getCurrent(0, function (data) {
-            var more = (data.count > data.songs.length);
+        parallel({
+            vk: function (callback) {
+                VK.getCurrent(0, function (data) {
+                    var more = (data.count > data.songs.length);
 
-            Templates.render("songs", {
-                songs: data.songs,
-                more: more,
-                showDownload: Settings.get("showDownloadButtons"),
-                type: "current"
-            }, function (music) {
-                fillContent("", music, function () {
-                    Sounds.onVisibleTracksUpdated();
+                    Templates.render("songs", {
+                        songs: data.songs,
+                        more: more,
+                        showDownload: Settings.get("showDownloadButtons"),
+                        type: "current"
+                    }, callback);
+                });
+            },
+            lastfm: function (callback) {
+                if (!Lastfm.isAuthorized)
+                    return callback({html: "", similar: []});
+
+                Lastfm.getRecommendedArtists(function (recommendedList) {
+                    Templates.render("info-artists-similar", {
+                        recommended: recommendedList,
+                        recommendedArtistsTitle: chrome.i18n.getMessage("lastFmRecommends")
+                    }, function (html) {
+                        callback({html: html, recommended: recommendedList});
+                    });
+                });
+            }
+        }, function (res) {
+            fillContent(res.lastfm.html, res.vk, function () {
+                res.lastfm.recommended.forEach(function (artist) {
+                    if (!artist.cover)
+                        return;
+
+                    // загружаем обложку исполнителя
+                    Covers.load(artist.cover);
                 });
             });
         });
