@@ -399,6 +399,22 @@ parallel({
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Cloud downloads", 1);
             }
         },
+        // add music file to own audio
+        {
+            selector: ".music .add",
+            evtType: "click",
+            callback: function (evt) {
+                evt.stopImmediatePropagation();
+
+                var self = this.addClass("add-inactive");
+                var songElem = this.closestParent("p.song");
+
+                VK.add(songElem.data("owner"), songElem.data("vkid"), function (audioId) {
+                    var newClassName = audioId ? "glyphicon-ok" : "glyphicon-remove";
+                    self.removeClass("glyphicon-plus").addClass(newClassName);
+                });
+            }
+        },
         // download MP3 file to local computer
         {
             selector: ".music a[download]",

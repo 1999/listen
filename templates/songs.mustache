@@ -11,7 +11,7 @@
 {{/popular.length}}
 
 {{#songs}}
-    <p class="song" data-url="{{source}}" data-vkid="{{id}}" data-artist="{{artist}}" data-title="{{song}}">
+    <p class="song" data-url="{{source}}" data-vkid="{{id}}" data-artist="{{artist}}" data-title="{{song}}" data-owner="{{ownerId}}">
         <span class="pull-right text-muted duration">{{duration}}</span>
 
         <span class="glyphicon glyphicon-play play"></span>
@@ -24,6 +24,8 @@
             <span class="glyphicon glyphicon-floppy-save download" title="{{downloadTitle}}"></span>
         </a>
         {{/showDownload}}
+
+        <span title="{{addTitle}}" class="glyphicon glyphicon-plus add{{#noadd}} add-inactive{{/noadd}}"></span>
 
         <strong><a href="artist:{{artist}}">{{artist}}</a></strong> - {{song}}
     </p>

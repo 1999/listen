@@ -436,7 +436,8 @@ figcaption a {
 .song .play,
 .song .pause,
 .song .cloud,
-.song .download
+.song .download,
+.song .add
  {
     margin-right: 6px;
     cursor: pointer;
@@ -445,6 +446,12 @@ figcaption a {
 .song .cloud.pending {
     color: #ccc;
     cursor: default;
+}
+
+.song .add-inactive {
+    color: #ccc;
+    cursor: default;
+    pointer-events: none;
 }
 
 .song a,

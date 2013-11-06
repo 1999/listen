@@ -82,6 +82,7 @@ SyncFS = (function () {
                     var output = [];
                     var cloudTitle = chrome.i18n.getMessage("cloudTitle");
                     var downloadTitle = chrome.i18n.getMessage("downloadTitle");
+                    var addTitle = chrome.i18n.getMessage("addToMyAudio");
                     var tasks = [];
                     var index;
 
@@ -89,15 +90,19 @@ SyncFS = (function () {
                         if (!/\.mp3$/.test(fileEntry.name))
                             return;
 
+                        // @todo duplicating VK module. needs refactoring
                         output.push({
                             id: null,
                             source: fileEntry.toURL(),
+                            ownerId: null,
+                            noadd: true,
                             artist: null,
                             song: null,
                             duration: "0:00",
                             pending: true,
                             cloudTitle: cloudTitle,
-                            downloadTitle: downloadTitle
+                            downloadTitle: downloadTitle,
+                            addTitle: addTitle
                         });
 
                         tasks.push(function (callback) {

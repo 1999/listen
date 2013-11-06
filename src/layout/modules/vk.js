@@ -26,10 +26,11 @@ VK = (function () {
         }, this);
     }
 
-    function xmlToArray(xml, isSyncfsRunning) {
+    function xmlToArray(xml, options) {
         var output = [];
         var cloudTitle = chrome.i18n.getMessage("cloudTitle");
         var downloadTitle = chrome.i18n.getMessage("downloadTitle");
+        var addTitle = chrome.i18n.getMessage("addToMyAudio");
         var countNode = xml.querySelector("count");
         var count = countNode ? parseInt(countNode.textContent, 10) : 0;
 
@@ -43,14 +44,17 @@ VK = (function () {
 
             output.push({
                 id: audioId,
-                pending: (SyncFS.downloadedIds.indexOf(audioId) !== -1 || !isSyncfsRunning),
+                ownerId: audio.querySelector("owner_id").textContent,
+                pending: (SyncFS.downloadedIds.indexOf(audioId) !== -1 || !options.syncfs),
+                noadd: options.current ? true : false,
                 source: audio.querySelector("url").textContent,
                 artist: audio.querySelector("artist").textContent,
                 song: audio.querySelector("title").textContent,
                 originalDuration: duration,
                 duration: Math.floor(duration / 60) + ":" + strpad(duration % 60),
                 cloudTitle: cloudTitle,
-                downloadTitle: downloadTitle
+                downloadTitle: downloadTitle,
+                addTitle: addTitle
             });
         });
 
@@ -80,7 +84,7 @@ VK = (function () {
                     makeAPIRequest("audio.search", params, callback);
                 }
             }, function (results) {
-                callback(xmlToArray(results.vkdata, results.syncfs));
+                callback(xmlToArray(results.vkdata, {syncfs: results.syncfs}));
             });
         },
 
@@ -101,7 +105,7 @@ VK = (function () {
                     makeAPIRequest("audio.search", params, callback);
                 }
             }, function (results) {
-                callback(xmlToArray(results.vkdata, results.syncfs));
+                callback(xmlToArray(results.vkdata, {syncfs: results.syncfs}));
             });
         },
 
@@ -114,7 +118,12 @@ VK = (function () {
                     makeAPIRequest("audio.get", {offset: offset}, callback);
                 }
             }, function (results) {
-                callback(xmlToArray(results.vkdata, results.syncfs));
+                var output = xmlToArray(results.vkdata, {
+                    syncfs: results.syncfs,
+                    current: true
+                });
+
+                callback(output);
             });
         },
 
@@ -122,6 +131,20 @@ VK = (function () {
             makeAPIRequest("audio.getAlbums", {count: 1}, function (xml) {
                 var countNode = xml.querySelector("count");
                 var output = countNode ? countNode.textContent : null;
+
+                callback(output);
+            }, function (err) {
+                callback(null);
+            });
+        },
+
+        add: function VK_add(ownerId, audioId, callback) {
+            makeAPIRequest("audio.add", {
+                audio_id: audioId,
+                owner_id: ownerId
+            }, function (xml) {
+                var responseNode = xml.querySelector("response");
+                var output = (responseNode && responseNode.textContent) ? responseNode.textContent : null;
 
                 callback(output);
             }, function (err) {
