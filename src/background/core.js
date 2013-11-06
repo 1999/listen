@@ -182,6 +182,15 @@ window.onerror = function(msg, url, line) {
                 });
             }
         });
+
+        chrome.alarms.get("appUsage", function (alarmInfo) {
+            if (!alarmInfo) {
+                chrome.alarms.create("appUsage", {
+                    when: Date.now() + 3 * 60 * 60 * 1000,
+                    periodInMinutes: 24 * 60
+                });
+            }
+        });
     });
 
     function openAppWindow() {
