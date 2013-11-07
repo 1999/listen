@@ -23,6 +23,10 @@
     },
 
     "changelog": {
+        "3.3": [
+            "recommend",
+            "add_to_audio"
+        ],
         "3.2": [
             "cyrillic"
         ],

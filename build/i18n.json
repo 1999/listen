@@ -63,6 +63,14 @@
         "en": "Songs with non-latin symbols are now displayed correctly in Google Drive cloud",
         "ru": "Исправлена ошибка с отображением русских исполнителей в облаке Google Drive"
     },
+    "changelog_3_3_recommend": {
+        "en": "<strong>LastFM recommendations based on scrobbling data</strong> are now available for those who granted access to LastFM account. Enjoy :)",
+        "ru": "Для тех, кто авторизовался в LastFM, доступны <strong>рекомендации на основе проскроббленных данных</strong>. Наслаждайтесь :)"
+    },
+    "changelog_3_3_add_to_audio": {
+        "en": "You can now <strong>add lovely tracks to your audio collection</strong> in VK",
+        "ru": "Можно <strong>добавлять песни в свои аудиозаписи</strong> ВКонтакте"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"
