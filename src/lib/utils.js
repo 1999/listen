@@ -281,6 +281,10 @@
         return hex(md51(str));
     };
 
+    exports.getCurrentLocale = function () {
+        return chrome.i18n.getMessage("@@ui_locale").split("_")[0];
+    };
+
     /**
      * Копирование свойств объекта from в объект to
      * @param {Object} from

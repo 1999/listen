@@ -11,6 +11,7 @@ Lastfm = (function () {
         }
 
         options.api_key = Config.constants.lastfm_api_key;
+        options.lang = getCurrentLocale();
         options.method = method;
 
         loadResource(BASE_URL, {
