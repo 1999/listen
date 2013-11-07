@@ -62,14 +62,8 @@ parallel({
                     if (!response.access_token)
                         return;
 
+                    // we got response.user_id here :)
                     Settings.set("vkToken", response.access_token);
-
-                    chrome.storage.local.get("installId", function (records) {
-                        CPA.sendEvent("Lyfecycle", "Authorized", {
-                            id: records.installId,
-                            uid: response.user_id
-                        });
-                    });
 
                     // @todo redraw every page
                     Navigation.dispatch("user");
@@ -251,14 +245,8 @@ parallel({
                             return;
                         }
 
+                        // we got sessionData.name here :)
                         Settings.set("lastfmToken", sessionData.key);
-
-                        chrome.storage.local.get("installId", function (records) {
-                            CPA.sendEvent("Lyfecycle", "LFM_Authorized", {
-                                id: records.installId,
-                                name: sessionData.name
-                            });
-                        });
 
                         Navigation.dispatch("settings");
                     });
@@ -271,13 +259,6 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 Settings.set("lastfmToken", "");
-
-                chrome.storage.local.get("installId", function (records) {
-                    CPA.sendEvent("Lyfecycle", "LFM_Reset", {
-                        id: records.installId
-                    });
-                });
-
                 Navigation.dispatch("settings");
             }
         },
@@ -288,16 +269,6 @@ parallel({
             callback: function (evt) {
                 Settings.set("vkToken", "");
                 Settings.set("lastfmToken", "");
-
-                chrome.storage.local.get("installId", function (records) {
-                    CPA.sendEvent("Lyfecycle", "VK_Reset", {
-                        id: records.installId
-                    });
-
-                    CPA.sendEvent("Lyfecycle", "LFM_Reset", {
-                        id: records.installId
-                    });
-                });
 
                 Navigation.dispatch("guest");
             }

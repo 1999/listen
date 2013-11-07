@@ -186,13 +186,7 @@ Lastfm = (function () {
                 options.duration = durationSec;
 
             makeAPIRequest("POST", true, options, function (xml) {
-                // chrome.storage.local.get("installId", function (records) {
-                //     CPA.sendEvent("Actions", "LFM_updateNowPlaying", {
-                //         artist: artist,
-                //         title: trackTitle,
-                //         id: records.installId
-                //     });
-                // });
+                // ...
             });
         },
 
@@ -218,13 +212,7 @@ Lastfm = (function () {
                 options.duration = durationSec;
 
             makeAPIRequest("POST", true, options, function (xml) {
-                // chrome.storage.local.get("installId", function (records) {
-                //     CPA.sendEvent("Actions", "LFM_scrobble", {
-                //         artist: artist,
-                //         title: trackTitle,
-                //         id: records.installId
-                //     });
-                // });
+                // ...
             });
         },
 

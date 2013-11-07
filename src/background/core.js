@@ -68,18 +68,9 @@ window.onerror = function(msg, url, line) {
         switch (details.reason) {
             case "install":
                 CPA.changePermittedState(true);
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Install", 1);
 
-                var installId = "{" + uuid() + "}";
-                chrome.storage.local.set({installId: installId});
-
-                var lyfecycleParams = {
-                    id: installId,
-                    ver: currentVersion
-                };
-
-                CPA.sendEvent("Lyfecycle", "Install", lyfecycleParams);
-
-                var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
+                var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
                 if (typeof chrome.runtime.setUninstallUrl === "function") {
                     chrome.runtime.setUninstallUrl(uninstallUrl);
                 }
@@ -153,23 +144,10 @@ window.onerror = function(msg, url, line) {
                 //     chrome.storage.local.set({"settings.tests": ["vkPeopleUsePlaylists"]});
                 // }
 
-                chrome.storage.local.get("installId", function (records) {
-                    CPA.sendEvent("Lyfecycle", "Update", {
-                        prev: details.previousVersion,
-                        curr: currentVersion,
-                        id: records.installId
-                    });
-
-                    var lyfecycleParams = {
-                        id: records.installId,
-                        ver: currentVersion
-                    };
-
-                    var uninstallUrl = Config.constants.goodbye_page_link + "?" + createRequestParams(lyfecycleParams);
-                    if (typeof chrome.runtime.setUninstallUrl === "function") {
-                        chrome.runtime.setUninstallUrl(uninstallUrl);
-                    }
-                });
+                var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
+                if (typeof chrome.runtime.setUninstallUrl === "function") {
+                    chrome.runtime.setUninstallUrl(uninstallUrl);
+                }
 
                 break;
         }
