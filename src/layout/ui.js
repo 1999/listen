@@ -178,16 +178,17 @@ parallel({
                 evt.stopImmediatePropagation();
             }
         },
-        // close pay layer with "Yamoney" button
+        // close pay layer with "VK Repost" button
         {
-            selector: ".pay .pay-yamoney",
+            selector: ".pay .pay-vkrepost",
             evtType: "click",
             callback: function (evt) {
                 var headerPay = Settings.get("headerPay");
-                headerPay.yamoney += 1;
+                headerPay.vkrepost = headerPay.vkrepost || 0; // vk repost appeared when ya.money completely failed
+                headerPay.vkrepost += 1;
                 Settings.set("headerPay", headerPay);
 
-                window.open(Config.constants.yamoney_link);
+                window.open(Config.constants.vk_repost_url);
 
                 Settings.set("headerRateCounter", 0);
                 this.closestParent("div.pay").remove();

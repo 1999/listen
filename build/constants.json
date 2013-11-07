@@ -1,6 +1,7 @@
 {
     "vk_app_id": 3874619,
     "vk_app_scope": ["audio", "offline"],
+    "vk_repost_url": "http://vk.com/wall-14300_24",
     "lastfm_api_key": "a2418dbea58f9f466e8ab3ee28d40040",
     "lastfm_api_sig": "2f43848209564c5b7f317a57696547e6",
     "ga_app_id": "listen_app",

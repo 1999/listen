@@ -123,6 +123,10 @@
         "en": "You are using $1 for a long time. It's time to rate the app in Chrome Web Store!",
         "ru": "Вы пользуетесь приложением $1 уже достаточно давно. Самое время оценить его в Chrome Web Store!"
     },
+    "headerCallActionText": {
+        "en": "So you like <strong>$1</strong> app? Repost info about app in <a href='$2' target='_blank'>VK</a> and don't forget to rate app in <a href='$3' target='_blank'>Chrome Web Store</a>.",
+        "ru": "Нравится <strong>$1</strong>? Тогда сделай репост <a href='$2' target='_blank'>ВКонтакте</a> и не забудь оценить приложение в <a href='$3' target='_blank'>Chrome Web Store</a>."
+    },
     "lastFmAuthTitle": {
         "en": "LastFM authorization and scrobbling",
         "ru": "Авторизация и скробблинг в LastFM"
@@ -142,10 +146,6 @@
     "modeShuffle": {
         "en": "Shuffle songs",
         "ru": "Проигрывать в случайном порядке"
-    },
-    "moneyMaker": {
-        "en": "<strong>$1</strong> must stay as a free app without advertisements. You can become a part of the app's history by transferring any amount of money to <a href='$2' target='_blank'>developer's Yandex.Money account</a> or by rating $1 app in <a href='$3' target='_blank'>Chrome Web Store</a>.",
-        "ru": "<strong>$1</strong> должно оставаться бесплатным приложением без рекламы. Ты можешь поспособствовать этому, переведя любую сумму на <a href='$2' target='_blank'>этот счет</a> в Яндекс.Деньгах или оценив приложение в <a href='$3' target='_blank'>Chrome Web Store</a>."
     },
     "more": {
         "en": "More",
@@ -227,6 +227,10 @@
         "en": "VK authorization",
         "ru": "Авторизация ВКонтакте"
     },
+    "vkRepost": {
+        "en": "Repost in VK",
+        "ru": "Репост ВКонтакте"
+    },
     "wait": {
         "en": "Please wait",
         "ru": "Подождите"
@@ -238,10 +242,6 @@
     "welcomeText": {
         "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even download files on your local computer (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
         "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
-    },
-    "yandexMoney": {
-        "en": "Pay via Yandex.Money",
-        "ru": "Перевести через Я.Деньги"
     },
     "yes": {
         "en": "Yes, please",

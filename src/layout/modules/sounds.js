@@ -202,11 +202,19 @@ Sounds = (function () {
         Settings.set("headerRateCounter", currentCnt);
 
         if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
+            var headerPay = Settings.get("headerPay");
+            var totalCloseActions = 0;
+
+            for (var key in headerPay) {
+                totalCloseActions += headerPay[key];
+            }
+
             Templates.render("header-pay", {
-                payText: chrome.i18n.getMessage("moneyMaker", [chrome.runtime.getManifest().name, Config.constants.yamoney_link, Config.constants.cws_app_link]),
-                payYaMoney: chrome.i18n.getMessage("yandexMoney"),
+                payText: chrome.i18n.getMessage("headerCallActionText", [chrome.runtime.getManifest().name, Config.constants.vk_repost_url, Config.constants.cws_app_link]),
+                vkRepost: chrome.i18n.getMessage("vkRepost"),
                 cwsRate: chrome.i18n.getMessage("rateCWS"),
-                close: chrome.i18n.getMessage("close")
+                close: chrome.i18n.getMessage("close"),
+                hideClose: ((totalCloseActions % 5) === 1) // hide close every 5th show
             }, function (html) {
                 $("header").append(html);
             });

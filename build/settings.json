@@ -4,6 +4,7 @@
         "changelog": [], /* viewed changelog keys */
         "headerPay": {
             "yamoney": 0,
+            "vkrepost": 0,
             "ratecws": 0,
             "close": 0
         },
