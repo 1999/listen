@@ -685,6 +685,14 @@ parallel({
     document.body.bind("submit", function (evt) {
         evt.preventDefault();
 
+        if (evt.target.hasClass("captcha-form")) {
+            var codeInserted = $(evt.target, ".captcha-code").val();
+            var captchaSrc = $(".img-captcha").data("src");
+
+            Captcha.checkCode(captchaSrc, codeInserted);
+            return;
+        }
+
         var lastButton = $(this, "button[type='button']:last-of-type");
         if (!lastButton)
             throw new Error("No button found for making fake submit");

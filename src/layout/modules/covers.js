@@ -3,7 +3,7 @@ Covers = (function () {
 
 
     return {
-        load: function Covers_load(url) {
+        loadFigure: function Covers_loadFigure(url) {
             var figure = $("figure[data-src='" + url + "']");
             if (!figure) {
                 return;
@@ -28,6 +28,14 @@ Covers = (function () {
                 }
 
                 $(figure, ".cover-loading").addClass("hidden");
+            });
+        },
+
+        loadImage: function Covers_loadImage(url) {
+            chrome.runtime.sendMessage({action: "coverDownload", url: url}, function (coverURL) {
+                if (coverURL) {
+                    $("[data-src='" + url + "']").attr("src", coverURL);
+                }
             });
         }
     };

@@ -80,54 +80,6 @@ Navigation = (function () {
         }
     }
 
-    function parseSongsList(nodeList, index) {
-        index = index || 0;
-
-        if (!nodeList.length)
-            return;
-
-        window.setTimeout(function () {
-            var song = nodeList[index].data("track");
-            var artist = nodeList[index].data("artist");
-            var duration = nodeList[index].data("duration") || 0;
-            var searchQuery = [];
-
-            (artist + " " + song).replace(/\-/g, " ").replace(/[\.|,]/g, " ").split(" ").forEach(function (word) {
-                word = word.toLowerCase().trim();
-                if (!word.length)
-                    return;
-
-                searchQuery.push(word);
-            });
-
-            // существует множество ремиксов, отсеиваем их поиском по длительности песни
-            VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
-                if (data.count) {
-                    var trackIndex = 0; // по умолчанию отдаем первый трек
-
-                    for (var i = 0; i < data.songs.length; i++) {
-                        if (!duration || data.songs[i].originalDuration == duration) {
-                            trackIndex = i;
-                            break;
-                        }
-                    }
-
-                    Templates.render("songs", {
-                        songs: [data.songs[trackIndex]],
-                        showDownload: Settings.get("showDownloadButtons"),
-                    }, function (html) {
-                        nodeList[index].after(html).remove();
-                        Sounds.onVisibleTracksUpdated();
-                    });
-                }
-
-                if (index < nodeList.length - 1) {
-                    parseSongsList(nodeList, index + 1);
-                }
-            });
-        }, 500);
-    }
-
     function mergeYmResultsIntoLFM(lfm, ym) {
         if (!lfm)
             return ym;
@@ -400,7 +352,7 @@ Navigation = (function () {
             },
             lastfm: function (callback) {
                 if (!Lastfm.isAuthorized)
-                    return callback({html: "", similar: []});
+                    return callback({html: "", recommended: []});
 
                 Lastfm.getRecommendedArtists(function (recommendedList) {
                     Templates.render("info-artists-similar", {
@@ -418,7 +370,7 @@ Navigation = (function () {
                         return;
 
                     // загружаем обложку исполнителя
-                    Covers.load(artist.cover);
+                    Covers.loadFigure(artist.cover);
                 });
             });
         });
@@ -514,10 +466,10 @@ Navigation = (function () {
                             return;
 
                         // загружаем обложку альбома
-                        Covers.load(album.cover);
+                        Covers.loadFigure(album.cover);
                     });
 
-                    parseSongsList($$(".music .song-queue"));
+                    MagicSearch.run($$(".music .song-queue"));
                 });
             });
         });
@@ -580,10 +532,10 @@ Navigation = (function () {
 
                     res.lastfm.albums.forEach(function (album) {
                         // обновляем обложку альбома
-                        Covers.load(album.cover);
+                        Covers.loadFigure(album.cover);
                     });
 
-                    parseSongsList($$(".music .song-queue"));
+                    MagicSearch.run($$(".music .song-queue"));
                 });
             });
         });
@@ -639,12 +591,12 @@ Navigation = (function () {
                 }
             }, function (res) {
                 fillContent(res.info, res.music, function () {
-                    Covers.load(album.cover);
+                    Covers.loadFigure(album.cover);
 
                     if (!album.songs.length)
                         return;
 
-                    parseSongsList($$(".music .song-queue"));
+                    MagicSearch.run($$(".music .song-queue"));
                 });
             });
         };

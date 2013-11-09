@@ -19,8 +19,33 @@ VK = (function () {
             responseType: "xml",
             data: options,
             onload: function (xml) {
-                onload(xml);
-                // http://d.pr/i/SubI - error node
+                var error = xml.querySelector("error");
+                if (!error) {
+                    return onload(xml);
+                }
+
+                var errorCode = error.querySelector("error_code");
+                if (!errorCode) {
+                    throw new Error("Unsupported VK error: (none)");
+                }
+
+                if (errorCode.textContent == 14) { // captcha
+                    var captchaSid = error.querySelector("captcha_sid").textContent;
+                    var captchaImg = error.querySelector("captcha_img").textContent;
+
+                    Captcha.show(captchaImg, function (codeInserted) {
+                        options.captcha_sid = captchaSid;
+                        options.captcha_key = codeInserted;
+
+                        makeAPIRequest(method, options, onload, onerror);
+                    });
+                } else if (errorCode.textContent == 6) { // too many requests
+                    window.setTimeout(function () {
+                        makeAPIRequest(method, options, onload, onerror);
+                    }, 350);
+                } else {
+                    throw new Error("Unsupported VK error: " + errorCode.textContent);
+                }
             },
             onerror: onerror
         }, this);
