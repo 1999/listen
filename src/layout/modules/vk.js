@@ -48,7 +48,7 @@ VK = (function () {
                 }
             },
             onerror: onerror
-        }, this);
+        });
     }
 
     function xmlToArray(xml, options) {
@@ -93,6 +93,8 @@ VK = (function () {
 
     return {
         searchMusic: function VK_searchMusic(query, params, callback) {
+            var pendingXHR;
+
             params = copyOwnProperties(params, {
                 q: query,
                 auto_complete: 1,
@@ -102,18 +104,22 @@ VK = (function () {
             });
 
             parallel({
+                vkdata: function (callback) {
+                    pendingXHR = makeAPIRequest("audio.search", params, callback);
+                },
                 syncfs: function (callback) {
                     SyncFS.isWorking(callback);
-                },
-                vkdata: function (callback) {
-                    makeAPIRequest("audio.search", params, callback);
                 }
             }, function (results) {
                 callback(xmlToArray(results.vkdata, {syncfs: results.syncfs}));
             });
+
+            return pendingXHR;
         },
 
-        searchMusicByArtist: function VK_searchMusic(query, params, callback) {
+        searchMusicByArtist: function VK_searchMusicByArtist(query, params, callback) {
+            var pendingXHR;
+
             params = copyOwnProperties(params, {
                 q: query,
                 auto_complete: 0,
@@ -123,24 +129,28 @@ VK = (function () {
             });
 
             parallel({
+                vkdata: function (callback) {
+                    pendingXHR = makeAPIRequest("audio.search", params, callback);
+                },
                 syncfs: function (callback) {
                     SyncFS.isWorking(callback);
-                },
-                vkdata: function (callback) {
-                    makeAPIRequest("audio.search", params, callback);
                 }
             }, function (results) {
                 callback(xmlToArray(results.vkdata, {syncfs: results.syncfs}));
             });
+
+            return pendingXHR;
         },
 
         getCurrent: function VK_getCurrent(offset, callback) {
+            var pendingXHR;
+
             parallel({
+                vkdata: function (callback) {
+                    pendingXHR = makeAPIRequest("audio.get", {offset: offset}, callback);
+                },
                 syncfs: function (callback) {
                     SyncFS.isWorking(callback);
-                },
-                vkdata: function (callback) {
-                    makeAPIRequest("audio.get", {offset: offset}, callback);
                 }
             }, function (results) {
                 var output = xmlToArray(results.vkdata, {
@@ -150,10 +160,12 @@ VK = (function () {
 
                 callback(output);
             });
+
+            return pendingXHR;
         },
 
         getAlbums: function VK_getAlbums(callback) {
-            makeAPIRequest("audio.getAlbums", {count: 1}, function (xml) {
+            return makeAPIRequest("audio.getAlbums", {count: 1}, function (xml) {
                 var countNode = xml.querySelector("count");
                 var output = countNode ? countNode.textContent : null;
 
@@ -164,7 +176,7 @@ VK = (function () {
         },
 
         add: function VK_add(ownerId, audioId, callback) {
-            makeAPIRequest("audio.add", {
+            return makeAPIRequest("audio.add", {
                 audio_id: audioId,
                 owner_id: ownerId
             }, function (xml) {

@@ -2,6 +2,7 @@ MagicSearch = (function () {
     "use strict";
 
     var currentList;
+    var pendingXHR;
 
 
     return {
@@ -17,6 +18,14 @@ MagicSearch = (function () {
 
             if (currentList !== nodeList) {
                 currentList = nodeList;
+
+                if (pendingXHR && pendingXHR.readyState !== XMLHttpRequest.DONE) {
+                    // reset performing requests
+                    pendingXHR.abort();
+
+                    // if templates rendering lasted too long, clear its layer
+                    Captcha.clear();
+                }
             }
 
             var timeStart = Date.now();
@@ -34,7 +43,9 @@ MagicSearch = (function () {
             });
 
             // cut remixes with a search for exact song duration overlap
-            VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
+            pendingXHR = VK.searchMusic(searchQuery.join(" "), {count: 10}, function (data) {
+                pendingXHR = null;
+
                 if (data.count) {
                     var trackIndex = 0; // по умолчанию отдаем первый трек
 

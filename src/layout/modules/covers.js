@@ -9,7 +9,6 @@ Covers = (function () {
                 return;
             }
 
-            figure.removeData("src");
             var coverImage = $(figure, "img");
             var coverNothing = $(figure, ".nothing");
 
@@ -21,6 +20,8 @@ Covers = (function () {
             }
 
             chrome.runtime.sendMessage({action: "coverDownload", url: url}, function (coverURL) {
+                figure.removeData("src");
+
                 if (coverURL) {
                     coverImage.attr("src", coverURL).removeClass("hidden");
                 } else {

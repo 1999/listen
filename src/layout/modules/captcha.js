@@ -32,6 +32,16 @@ Captcha = (function () {
 
             pendingCallbacks[src](code);
             delete pendingCallbacks[src];
+        },
+
+        clear: function Captcha_clear() {
+            document.documentElement.removeClass("captcha-required");
+            document.body.removeClass("captcha-required");
+
+            var captchaOverlay = $(".captcha");
+            if (captchaOverlay) {
+                captchaOverlay.remove();
+            }
         }
     };
 })();
