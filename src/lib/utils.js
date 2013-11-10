@@ -275,9 +275,9 @@
 
         if (options.onload) {
             xhr.onload = function () {
-                var responseXML = xhr.responseXML;
+                var responseXML = null;
 
-                if (isXML && !responseXML) {
+                if (isXML && !xhr.responseXML) {
                     // VK can response with invalid characters, replace them
                     // @see http://msdn.microsoft.com/en-us/library/k1y7hyy9(v=vs.71).aspx
                     var invalidCharCodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 65534, 65535].map(function (charCode) {
@@ -301,7 +301,7 @@
                     responseXML = doc;
                 }
 
-                var arg = isXML ? responseXML : xhr.response;
+                var arg = isXML ? (xhr.responseXML || responseXML) : xhr.response;
                 options.onload.call(ctx || xhr, arg);
             };
         }
