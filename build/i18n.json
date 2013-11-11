@@ -11,10 +11,10 @@
         "en": "I've already done that",
         "ru": "Я уже оценил приложение"
     },
-	"appDescription": {
-		"en": "Chrome app for listening and scrobbling your music in VK and LastFM social networks",
-		"ru": "Приложение для прослушивания, скачивания и скробблинга музыки ВКонтакте и LastFM"
-	},
+    "appDescription": {
+        "en": "Chrome app for listening and scrobbling your music in VK and LastFM social networks",
+        "ru": "Приложение для прослушивания, скачивания и скробблинга музыки ВКонтакте и LastFM"
+    },
     "appNews": {
         "en": "App news",
         "ru": "Новости приложения"
@@ -81,7 +81,7 @@
     },
     "changelog_4_0_captcha": {
         "en": "Now $1 app supports <strong>VK Captcha</strong>, which means that new search is really awesome",
-        "ru": "Теперь в приложении поддерживается <strong>показ и ввод Captcha ВКонтакте</strong>, а это значит, что поиск будет искать еще лучше"
+        "ru": "Теперь в приложении поддерживается <strong>показ и ввод Captcha ВКонтакте</strong>, а это значит, что поиск будет работать еще лучше"
     },
     "changelog_4_0_icon": {
         "en": "New icon for $1 app in this version",
