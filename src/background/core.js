@@ -69,12 +69,6 @@ window.onerror = function(msg, url, line) {
             case "install":
                 CPA.changePermittedState(true);
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Install", 1);
-
-                var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
-                if (typeof chrome.runtime.setUninstallUrl === "function") {
-                    chrome.runtime.setUninstallUrl(uninstallUrl);
-                }
-
                 break;
 
             case "update":
@@ -144,11 +138,6 @@ window.onerror = function(msg, url, line) {
                 //     chrome.storage.local.set({"settings.tests": ["vkPeopleUsePlaylists"]});
                 // }
 
-                var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
-                if (typeof chrome.runtime.setUninstallUrl === "function") {
-                    chrome.runtime.setUninstallUrl(uninstallUrl);
-                }
-
                 break;
         }
 
@@ -169,6 +158,11 @@ window.onerror = function(msg, url, line) {
                 });
             }
         });
+
+        var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
+        if (typeof chrome.runtime.setUninstallUrl === "function") {
+            chrome.runtime.setUninstallUrl(uninstallUrl);
+        }
     });
 
     function openAppWindow() {
