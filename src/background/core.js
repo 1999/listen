@@ -27,15 +27,19 @@ window.onerror = function(msg, url, line) {
     }, false);
 
     chrome.notifications && chrome.notifications.onClicked.addListener(function (notificationId) {
-        if (notificationId === "update2to3") {
-            chrome.notifications.clear("update2to3", function () {});
-            var currentAppWindow = chrome.app.window.current();
+        switch (notificationId) {
+            case "update2to3":
+            case "updateTo4":
+                chrome.notifications.clear(notificationId, function () {});
+                var currentAppWindow = chrome.app.window.current();
 
-            if (currentAppWindow) {
-                currentAppWindow.show();
-            } else {
-                openAppWindow();
-            }
+                if (currentAppWindow) {
+                    currentAppWindow.show();
+                } else {
+                    openAppWindow();
+                }
+
+                break;
         }
     });
 
@@ -99,39 +103,49 @@ window.onerror = function(msg, url, line) {
                     }, function () {});
                 }
 
-                // show "call-to-action" notification
-                chrome.storage.local.get({
-                    "settings.songsPlayed": Config.default_settings_local.songsPlayed,
-                    "settings.vkToken": Config.default_settings_local.vkToken
-                }, function (records) {
-                    var needNotify = false;
-                    var notificationBody;
+                if (currentVersion === "4.0") {
+                    // for upgrading to 4.0 users show notification about the new icon
+                    chrome.notifications && chrome.notifications.create("updateTo4", {
+                        type: "basic",
+                        iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
+                        title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
+                        message: chrome.i18n.getMessage("notificationUpdate40", appName)
+                    }, function () {});
+                } else {
+                    // show "call-to-action" notification
+                    chrome.storage.local.get({
+                        "settings.songsPlayed": Config.default_settings_local.songsPlayed,
+                        "settings.vkToken": Config.default_settings_local.vkToken
+                    }, function (records) {
+                        var needNotify = false;
+                        var notificationBody;
 
-                    if (!records["settings.vkToken"].length) { // show notification to guests
-                        needNotify = true;
-                        notificationBody = chrome.i18n.getMessage("notificationUpdateCallToActionGuests", appName);
-                    } else if (records["settings.songsPlayed"] < 20) { // show notification to users who don't use the app often
-                        needNotify = true;
-                        notificationBody = chrome.i18n.getMessage("notificationUpdateCallToActionUsers", appName);
-                    }
+                        if (!records["settings.vkToken"].length) { // show notification to guests
+                            needNotify = true;
+                            notificationBody = chrome.i18n.getMessage("notificationUpdateCallToActionGuests", appName);
+                        } else if (records["settings.songsPlayed"] < 20) { // show notification to users who don't use the app often
+                            needNotify = true;
+                            notificationBody = chrome.i18n.getMessage("notificationUpdateCallToActionUsers", appName);
+                        }
 
-                    if (needNotify && chrome.notifications) {
-                        chrome.notifications.create("update", {
-                            type: "basic",
-                            iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
-                            title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
-                            message: notificationBody,
-                            buttons: [
-                                {
-                                    title: chrome.i18n.getMessage("yesGogogo")
-                                },
-                                {
-                                    title: chrome.i18n.getMessage("no")
-                                }
-                            ]
-                        }, function () {});
-                    }
-                });
+                        if (needNotify && chrome.notifications) {
+                            chrome.notifications.create("update", {
+                                type: "basic",
+                                iconUrl: chrome.runtime.getURL("pics/icons/128.png"),
+                                title: chrome.i18n.getMessage("notificationUpdateTitle", appName),
+                                message: notificationBody,
+                                buttons: [
+                                    {
+                                        title: chrome.i18n.getMessage("yesGogogo")
+                                    },
+                                    {
+                                        title: chrome.i18n.getMessage("no")
+                                    }
+                                ]
+                            }, function () {});
+                        }
+                    });
+                }
 
                 // run vkPeopleUsePlaylists test
                 // if (currentVersion === "3.1") {
