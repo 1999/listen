@@ -3,6 +3,7 @@ MagicSearch = (function () {
 
     var currentList;
     var pendingXHR;
+    var pedingTimeout;
 
 
     return {
@@ -12,11 +13,12 @@ MagicSearch = (function () {
          */
         run: function MagicSearch_run(nodeList, index) {
             index = index || 0;
+            pedingTimeout = null;
 
             if (!nodeList.length)
                 return;
 
-            if (currentList !== nodeList) {
+            if (currentList !== nodeList && index === 0) {
                 currentList = nodeList;
 
                 if (pendingXHR && pendingXHR.readyState !== XMLHttpRequest.DONE) {
@@ -25,6 +27,10 @@ MagicSearch = (function () {
 
                     // if templates rendering lasted too long, clear its layer
                     Captcha.clear();
+                }
+
+                if (pedingTimeout) {
+                    window.clearTimeout(pedingTimeout);
                 }
             }
 
@@ -78,7 +84,7 @@ MagicSearch = (function () {
                 var timeTotal = Date.now() - timeStart;
                 var timeoutMs = Math.max(350 - timeTotal, 0);
 
-                window.setTimeout(MagicSearch.run, timeoutMs, nodeList, newIndex);
+                pedingTimeout = window.setTimeout(MagicSearch.run, timeoutMs, nodeList, newIndex);
             });
         }
     };
