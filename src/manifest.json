@@ -23,6 +23,10 @@
     },
 
     "changelog": {
+        "4.0": [
+            "captcha",
+            "icon"
+        ],
         "3.3": [
             "recommend",
             "add_to_audio"

@@ -79,6 +79,14 @@
         "en": "You can now <strong>add lovely tracks to your audio collection</strong> in VK",
         "ru": "Можно <strong>добавлять песни в свои аудиозаписи</strong> ВКонтакте"
     },
+    "changelog_4_0_captcha": {
+        "en": "Now $1 app supports <strong>VK Captcha</strong>, which means that new search is really awesome",
+        "ru": "Теперь в приложении поддерживается <strong>показ и ввод Captcha ВКонтакте</strong>, а это значит, что поиск будет искать еще лучше"
+    },
+    "changelog_4_0_icon": {
+        "en": "New icon for $1 app in this version",
+        "ru": "Новая иконка запуска приложения для новой версии"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"
