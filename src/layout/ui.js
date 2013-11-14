@@ -700,6 +700,85 @@ parallel({
         lastButton.click();
     });
 
+    // DND
+    document.body.bind("dragenter", function (evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+    }).bind("dragover", function (evt) {
+        if (Captcha.isActive)
+            return;
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        if (Captcha.isActive)
+            return;
+
+        $(".dnd-overlay").removeClass("hidden");
+        $(".dnd-container").addClass("dnd-container-dragover");
+    }).bind("dragleave", function (evt) {
+        if (Captcha.isActive)
+            return;
+
+        var matchesSelectorFn = (Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector);
+        if (!matchesSelectorFn.call(evt.target, ".dnd-container"))
+            return;
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        $(".dnd-overlay").addClass("hidden");
+        $(".dnd-container").removeClass("dnd-container-dragover");
+    }).bind("drop", function (evt) {
+        if (Captcha.isActive)
+            return;
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        $(".dnd-container").removeClass("dnd-container-dragover");
+
+        [].forEach.call(evt.dataTransfer.items, function dataTransferIterator(item) {
+            // DataTransferItem
+            if (!item.isFile && !item.isDirectory) {
+                item = item.webkitGetAsEntry();
+            }
+
+            if (item.isDirectory) {
+                item.createReader().readEntries(function (items) {
+                    [].forEach.call(items, dataTransferIterator);
+                });
+            } else {
+                if (item.name.charAt(0) === ".")
+                    return;
+
+                item.file(function (file) {
+                    if (!/^audio\//.test(file.type))
+                        return;
+
+                    var id = "rn" + Math.round(Math.random() * 100000);
+
+                    Templates.render("dnd-file", {
+                        id: id,
+                        artist: chrome.i18n.getMessage("unknownArtist"),
+                        song: chrome.i18n.getMessage("unknownTrack")
+                    }, function (html) {
+                        $(".dnd-container").append(html);
+
+                        VK.upload(file, function (percentsUploaded) {
+                            var progressElem = $("#" + id + " .progress-bar");
+                            progressElem.css("width", percentsUploaded + "%").attr("aria-valuenow", percentsUploaded);
+                        }, function (uploaded) {
+                            // ...
+                        });
+
+                        // calculate id3v1
+                    });
+                });
+            }
+        });
+    });
+
 
     if (Settings.get("vkToken").length) {
         Navigation.dispatch("user");

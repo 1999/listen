@@ -313,6 +313,13 @@
             };
         }
 
+        if (options.onUploadProgress) {
+            xhr.upload.onprogress = function (evt) {
+                var percents = Math.floor((evt.position / evt.totalSize) * 100);
+                options.onUploadProgress.call(ctx || xhr, percents);
+            };
+        }
+
         if (options.onerror) {
             xhr.onerror = function (evt) {
                 options.onerror.call(ctx || xhr, evt);

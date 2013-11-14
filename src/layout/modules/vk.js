@@ -189,36 +189,24 @@ VK = (function () {
             });
         },
 
-        upload: function VK_upload(file, callback) {
+        upload: function VK_upload(file, progressListener, callback) {
             return makeAPIRequest("audio.getUploadServer", function (xml) {
                 var uploadUrl = xml.querySelector("upload_url").textContent;
 
                 loadResource(uploadUrl, {
                     method: "POST",
                     timeout: 0,
-                    headers: {
-                        Accept: "application/xml,application/xhtml+xml"
-                    },
                     data: {
                         file: file
                     },
-                    responseType: "xml",
-                    onload: function (xml) {
-                        // {"server": "1234", "audio": "1234", "hash": "12345abcde"}
-                        var server = xml.querySelector("server").textContent;
-                        var audio = xml.querySelector("audio").textContent;
-                        var hash = xml.querySelector("hash").textContent;
-
-                        makeAPIRequest("audio.save", {
-                            server: server,
-                            audio: audio,
-                            hash: hash
-                        }, function (xml) {
-
-                        }, function (err) {
-
+                    onload: function (responseText) {
+                        makeAPIRequest("audio.save", JSON.parse(responseText), function () {
+                            callback(true);
+                        }, function () {
+                            callback(false);
                         });
-                    }
+                    },
+                    onUploadProgress: progressListener
                 });
             }, function (err) {
                 callback(null);

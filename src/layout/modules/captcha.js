@@ -10,8 +10,8 @@ Captcha = (function () {
                 insertCodePlaceholder: chrome.i18n.getMessage("captchaInputPlaceholder"),
                 codeSubmit: chrome.i18n.getMessage("captchaSubmitTitle")
             }, function (html) {
-                document.documentElement.addClass("captcha-required");
-                document.body.addClass("captcha-required");
+                document.documentElement.addClass("overlay-required");
+                document.body.addClass("overlay-required");
                 document.body.prepend(html);
 
                 document.body.scrollTop = 0;
@@ -26,8 +26,8 @@ Captcha = (function () {
                 throw new Error("No pending callback found");
             }
 
-            document.documentElement.removeClass("captcha-required");
-            document.body.removeClass("captcha-required");
+            document.documentElement.removeClass("overlay-required");
+            document.body.removeClass("overlay-required");
             $(".captcha").remove();
 
             pendingCallbacks[src](code);
@@ -35,13 +35,17 @@ Captcha = (function () {
         },
 
         clear: function Captcha_clear() {
-            document.documentElement.removeClass("captcha-required");
-            document.body.removeClass("captcha-required");
+            document.documentElement.removeClass("overlay-required");
+            document.body.removeClass("overlay-required");
 
             var captchaOverlay = $(".captcha");
             if (captchaOverlay) {
                 captchaOverlay.remove();
             }
+        },
+
+        get isActive() {
+            return (Object.keys(pendingCallbacks).length > 0);
         }
     };
 })();
