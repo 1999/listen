@@ -43,6 +43,8 @@ VK = (function () {
                     window.setTimeout(function () {
                         makeAPIRequest(method, options, onload, onerror);
                     }, 350);
+                } else if (errorCode.textContent == 270) { // copyright
+                    onerror && onerror("Copyright error");
                 } else {
                     throw new Error("Unsupported VK error: " + errorCode.textContent);
                 }

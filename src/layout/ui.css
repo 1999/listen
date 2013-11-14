@@ -211,6 +211,16 @@ body.user {
     text-overflow: ellipsis;
 }
 
+.dnd-ready-container {
+    color: white;
+    margin-top: 36px;
+}
+
+.dnd-ready-container .dnd-finish {
+    display: block;
+    margin: 8px auto;
+}
+
 /* Header */
 header {
     background: rgb(64, 64, 64) url("darknoise.png");

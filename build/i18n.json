@@ -7,6 +7,10 @@
         "en": "Similar artist and album list is working with LastFM API. Furthermore LastFM can recommend you similar artists depending on your musical taste. Start using LastFM right now!",
         "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Помимо этого LastFM умеет рекомендовать похожих исполнителей, основываясь на твоем вкусе. Начни использовать LastFM прямо сейчас!"
     },
+    "allFilesUploaded": {
+        "en": "All files uploaded",
+        "ru": "Все файлы загружены"
+    },
     "alreadyRated": {
         "en": "I've already done that",
         "ru": "Я уже оценил приложение"
@@ -110,6 +114,10 @@
     "cloudTitle": {
         "en": "Save into Google Drive cloud for further local access",
         "ru": "Сохранить в облако Google Drive для локального доступа"
+    },
+    "continue": {
+        "en": "Next",
+        "ru": "Продолжить"
     },
     "downloadTitle": {
         "en": "Download file",

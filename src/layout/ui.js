@@ -558,6 +558,15 @@ parallel({
             callback: function (evt) {
                 Sounds.changeVolumeLevel(this.value);
             }
+        },
+        // finish DND operations
+        {
+            selector: ".dnd-ready-container .dnd-finish",
+            evtType: "click",
+            callback: function (evt) {
+                DND.finish();
+                Navigation.dispatch("current");
+            }
         }
     ];
 
@@ -714,6 +723,9 @@ parallel({
         if (Captcha.isActive)
             return;
 
+        document.documentElement.addClass("overlay-required");
+        document.body.addClass("overlay-required");
+
         $(".dnd-overlay").removeClass("hidden");
         $(".dnd-container").addClass("dnd-container-dragover");
     }).bind("dragleave", function (evt) {
@@ -727,8 +739,7 @@ parallel({
         evt.stopPropagation();
         evt.preventDefault();
 
-        $(".dnd-overlay").addClass("hidden");
-        $(".dnd-container").removeClass("dnd-container-dragover");
+        DND.finish();
     }).bind("drop", function (evt) {
         if (Captcha.isActive)
             return;
@@ -737,6 +748,11 @@ parallel({
         evt.preventDefault();
 
         $(".dnd-container").removeClass("dnd-container-dragover");
+
+        var dndReadyContainer = $(".dnd-ready-container");
+        if (dndReadyContainer) {
+            dndReadyContainer.remove();
+        }
 
         [].forEach.call(evt.dataTransfer.items, function dataTransferIterator(item) {
             // DataTransferItem
@@ -756,24 +772,7 @@ parallel({
                     if (!/^audio\//.test(file.type))
                         return;
 
-                    var id = "rn" + Math.round(Math.random() * 100000);
-
-                    Templates.render("dnd-file", {
-                        id: id,
-                        artist: chrome.i18n.getMessage("unknownArtist"),
-                        song: chrome.i18n.getMessage("unknownTrack")
-                    }, function (html) {
-                        $(".dnd-container").append(html);
-
-                        VK.upload(file, function (percentsUploaded) {
-                            var progressElem = $("#" + id + " .progress-bar");
-                            progressElem.css("width", percentsUploaded + "%").attr("aria-valuenow", percentsUploaded);
-                        }, function (uploaded) {
-                            // ...
-                        });
-
-                        // calculate id3v1
-                    });
+                    DND.upload(file);
                 });
             }
         });

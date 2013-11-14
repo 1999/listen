@@ -372,4 +372,57 @@
 
         return output;
     };
+
+    exports.getArtistAndTitle = function (file, callback) {
+        var defaultArtist = chrome.i18n.getMessage("unknownArtist");
+        var defaultTrack = chrome.i18n.getMessage("unknownTrack");
+
+        // blobs can contain cyrillic symbols which take 2 bytes (charCodes < 128 take 1, 128..2048 take 2, more than 2048 take 3 bytes)
+        // FileReader.prototype.readAsText() returns text, but its length can differ with blob's length
+        var songTitleByteStart = file.size - 128 + 3;
+        var blobSongTitle = file.slice(songTitleByteStart, songTitleByteStart + 30, "text/plain");
+        var songArtistByteStart = file.size - 128 + 3 + 30;
+        var blobSongArtist = file.slice(songArtistByteStart, songArtistByteStart + 30, "text/plain");
+        var tasks = {};
+
+        [
+            {
+                title: "artist",
+                blob: blobSongArtist
+            },
+            {
+                title: "song",
+                blob: blobSongTitle
+            }
+        ].forEach(function (taskData) {
+            tasks[taskData.title] = function (callback) {
+                var reader = new FileReader;
+                reader.onloadend = function () {
+                    if (!reader.result) {
+                        console.error("Result is null");
+                        return callback();
+                    }
+
+                    var nullRegex = new RegExp(String.fromCharCode(0), "g");
+                    var output = reader.result.trim().replace(nullRegex, "");
+
+                    callback(output);
+                };
+
+                reader.onerror = function (err) {
+                    console.error(err);
+                    callback();
+                };
+
+                reader.readAsText(taskData.blob);
+            };
+        });
+
+        parallel(tasks, function (results) {
+            callback({
+                artist: results.artist || defaultArtist,
+                song: results.song || defaultTrack
+            });
+        });
+    }
 })(window);
