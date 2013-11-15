@@ -106,12 +106,7 @@ SyncFS = (function () {
                         });
 
                         tasks.push(function (callback) {
-                            fileEntry.file(function (file) {
-                                getArtistAndTitle(file, callback);
-                            }, function (err) {
-                                console.error(err);
-                                callback({artist: defaultArtist, song: defaultTrack});
-                            });
+                            getArtistAndTitle(fileEntry, callback);
                         });
                     });
 
