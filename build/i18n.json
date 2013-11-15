@@ -91,6 +91,10 @@
         "en": "New icon for $1 app in this version",
         "ru": "Новая иконка запуска приложения для новой версии"
     },
+    "changelog_4_1_dnd": {
+        "en": "Drag'n'drop files or folders to app's window to upload your MP3 files to VK. Music uploading has never been easier!",
+        "ru": "Можно загружать MP3-файлы со своего компьютера в аудиозаписи <strong>перетаскиванием файлов или папок прямо в окно приложения</strong> - загрузка музыки никогда не была проще!"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"

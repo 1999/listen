@@ -23,6 +23,9 @@
     },
 
     "changelog": {
+        "4.1": [
+            "dnd"
+        ],
         "4.0": [
             "captcha",
             "icon"
