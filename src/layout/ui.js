@@ -776,6 +776,15 @@ parallel({
                 });
             }
         });
+
+        window.setTimeout(function () {
+            // @todo this is discusting
+            // but still this is more readable than making async recursive reading of directories
+            var uploadingFiles = $$(".dnd-file");
+            if (!uploadingFiles.length) {
+                DND.finish();
+            }
+        }, 3000);
     });
 
 

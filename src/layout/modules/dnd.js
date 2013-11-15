@@ -52,6 +52,15 @@ DND = (function () {
             }, function (html) {
                 $(".dnd-container").append(html);
 
+                var pageHeight = Math.max(document.body.offsetHeight, document.body.clientHeight);
+                if ($(".dnd-overlay").clientHeight > pageHeight) {
+                    document.documentElement.removeClass("overlay-required");
+                    document.body.removeClass("overlay-required");
+                } else {
+                    document.documentElement.addClass("overlay-required");
+                    document.body.addClass("overlay-required");
+                }
+
                 getArtistAndTitleFromLocalFile(file, function (data) {
                     $("#" + id + " .dnd-artist").html(data.artist);
                     $("#" + id + " .dnd-song").html(data.song);
@@ -62,7 +71,8 @@ DND = (function () {
                     progressElem.css("width", percentsUploaded + "%").attr("aria-valuenow", percentsUploaded);
                 }, function (uploaded) {
                     var uploadingFileContainer = $("#" + id).addClass("ready");
-                    var progressElem = $(uploadingFileContainer, ".progress-bar").removeClass("active");
+                    var progressContainer = $(uploadingFileContainer, ".progress").removeClass("active", "progress-striped");
+                    var progressElem = $(uploadingFileContainer, ".progress-bar");
 
                     if (uploaded) {
                         progressElem.addClass("progress-bar-success");
