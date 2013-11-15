@@ -177,6 +177,11 @@ window.onerror = function(msg, url, line) {
         if (typeof chrome.runtime.setUninstallUrl === "function") {
             chrome.runtime.setUninstallUrl(uninstallUrl);
         }
+
+        chrome.storage.local.get("appInstallDate", function (records) {
+            records.appInstallDate = records.appInstallDate || Date.now();
+            chrome.storage.local.set(records);
+        })
     });
 
     function openAppWindow() {
