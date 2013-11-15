@@ -75,7 +75,7 @@ DND = (function () {
 
                     if (uploadingFiles.length === readyFiles.length) {
                         Templates.render("dnd-ready", {
-                            allFilesUploaded: chrome.i18n.getMessage("allFilesUploaded"),
+                            allFilesProcessed: chrome.i18n.getMessage("allFilesProcessed"),
                             nextStep: chrome.i18n.getMessage("continue")
                         }, function (html) {
                             $(".dnd-container").append(html);

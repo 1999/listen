@@ -7,9 +7,9 @@
         "en": "Similar artist and album list is working with LastFM API. Furthermore LastFM can recommend you similar artists depending on your musical taste. Start using LastFM right now!",
         "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Помимо этого LastFM умеет рекомендовать похожих исполнителей, основываясь на твоем вкусе. Начни использовать LastFM прямо сейчас!"
     },
-    "allFilesUploaded": {
-        "en": "All files uploaded",
-        "ru": "Все файлы загружены"
+    "allFilesProcessed": {
+        "en": "All files processed",
+        "ru": "Загрузка файлов закончена"
     },
     "alreadyRated": {
         "en": "I've already done that",

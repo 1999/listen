@@ -25,28 +25,43 @@ VK = (function () {
                 }
 
                 var errorCode = error.querySelector("error_code");
+                var errorMsg = error.querySelector("error_msg");
+
                 if (!errorCode) {
                     throw new Error("Unsupported VK error: (none)");
                 }
 
-                if (errorCode.textContent == 14) { // captcha
-                    var captchaSid = error.querySelector("captcha_sid").textContent;
-                    var captchaImg = error.querySelector("captcha_img").textContent;
+                switch (parseInt(errorCode.textContent, 10)) {
+                    case 6: // too many requests
+                        window.setTimeout(function () {
+                            makeAPIRequest(method, options, onload, onerror);
+                        }, 350);
 
-                    Captcha.show(captchaImg, function (codeInserted) {
-                        options.captcha_sid = captchaSid;
-                        options.captcha_key = codeInserted;
+                        break;
 
-                        makeAPIRequest(method, options, onload, onerror);
-                    });
-                } else if (errorCode.textContent == 6) { // too many requests
-                    window.setTimeout(function () {
-                        makeAPIRequest(method, options, onload, onerror);
-                    }, 350);
-                } else if (errorCode.textContent == 270) { // copyright
-                    onerror && onerror("Copyright error");
-                } else {
-                    throw new Error("Unsupported VK error: " + errorCode.textContent);
+                    case 14: // captcha
+                        var captchaSid = error.querySelector("captcha_sid").textContent;
+                        var captchaImg = error.querySelector("captcha_img").textContent;
+
+                        Captcha.show(captchaImg, function (codeInserted) {
+                            options.captcha_sid = captchaSid;
+                            options.captcha_key = codeInserted;
+
+                            makeAPIRequest(method, options, onload, onerror);
+                        });
+
+                        break;
+
+                    case 270: // copyright
+                        onerror && onerror("Copyright error");
+                        break;
+
+                    case 301: // wrong name for uploaded file
+                        onerror && onerror("Wrong filename");
+                        break;
+
+                    default:
+                        throw new Error("Unsupported VK error: " + errorCode.textContent + " (" + (errorMsg && errorMsg.textContent) + ")");
                 }
             },
             onerror: onerror
