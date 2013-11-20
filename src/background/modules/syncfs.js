@@ -118,7 +118,7 @@ SyncFS = (function () {
                                 reader.readAsBinaryString(file);
                             }, function (err) {
                                 console.error(err);
-                                calback();
+                                callback();
                             });
                         };
                     })(results[i]);

@@ -149,9 +149,9 @@ Sounds = (function () {
 
     function updateProgressElem() {
         var audioSrc = this.attr("src");
-        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
         var headerProgressElem = $("footer .song-playing-progress");
-        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
         headerProgressElem.css("width", width);
@@ -163,8 +163,8 @@ Sounds = (function () {
 
     function onPlayContinue() {
         var audioSrc = this.attr("src");
-        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
-        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
 
         if (!trackContainer || progressElem)
             return;

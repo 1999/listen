@@ -30,7 +30,7 @@ Lastfm = (function () {
             data: options,
             onload: function (xml) {
                 if (!xml || xml.documentElement.getAttribute("status") === "failed")
-                    return onerror();
+                    return onerror && onerror();
 
                 onload(xml);
             },

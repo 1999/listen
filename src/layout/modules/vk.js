@@ -32,6 +32,13 @@ VK = (function () {
                 }
 
                 switch (parseInt(errorCode.textContent, 10)) {
+                    case 5: // invalid token
+                        Settings.set("vkToken", "");
+                        Settings.set("lastfmToken", "");
+
+                        Navigation.dispatch("guest");
+                        break;
+
                     case 6: // too many requests
                         window.setTimeout(function () {
                             makeAPIRequest(method, options, onload, onerror);
