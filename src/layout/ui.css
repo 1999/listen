@@ -85,6 +85,10 @@ body.user {
     padding: 60px 0 40px;
 }
 
+button.close {
+    margin-left: 12px;
+}
+
 #sandbox {
     position: absolute;
     top: 0;
