@@ -299,7 +299,7 @@ Navigation = (function () {
                 saved: chrome.i18n.getMessage("saved"),
                 yes: chrome.i18n.getMessage("yes"),
                 no: chrome.i18n.getMessage("no"),
-                contestTitle: chrome.i18n.getMessage("contestTitle"),
+                contestTitle: chrome.i18n.getMessage("contestTitle", Config.constants.vk_contest_url),
                 contestCode: results.contest
             }, function (html) {
                 fillContent(html, "", function () {
