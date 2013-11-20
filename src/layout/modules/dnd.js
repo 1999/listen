@@ -39,7 +39,7 @@ DND = (function () {
             document.body.removeClass("overlay-required");
 
             $(".dnd-overlay").addClass("hidden");
-            $(".dnd-container").removeClass("dnd-container-dragover");
+            $(".dnd-container").empty().removeClass("dnd-container-dragover");
         },
 
         upload: function DND_upload(file) {

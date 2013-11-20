@@ -760,6 +760,11 @@ parallel({
                 item = item.webkitGetAsEntry();
             }
 
+            // webkitGetAsEntry() may return null when dragging files on windows
+            // for DataTransferItem with "text/uri-list" type
+            if (!item)
+                return;
+
             if (item.isDirectory) {
                 item.createReader().readEntries(function (items) {
                     [].forEach.call(items, dataTransferIterator);
