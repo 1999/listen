@@ -415,7 +415,7 @@ Navigation = (function () {
         SyncFS.requestCurrentFilesList(function (songs) {
             Templates.render("songs", {
                 songs: songs,
-                showDownload: true,
+                showDownload: false
             }, function (music) {
                 fillContent("", music, function () {
                     Sounds.onVisibleTracksUpdated();
