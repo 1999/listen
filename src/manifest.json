@@ -1,6 +1,6 @@
 {
     "name" : "Listen!",
-    "version" : "4.2",
+    "version" : "4.3",
     "manifest_version" : 2,
     "minimum_chrome_version" : "29",
     "description" : "__MSG_appDescription__",
@@ -45,8 +45,7 @@
             "hotkeys",
             "notifications",
             "fulltext_search",
-            "sound_problems",
-            "download"
+            "sound_problems"
         ]
     },
 

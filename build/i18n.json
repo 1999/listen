@@ -16,8 +16,8 @@
         "ru": "Я уже оценил приложение"
     },
     "appDescription": {
-        "en": "Chrome app for listening and scrobbling your music in VK and LastFM social networks",
-        "ru": "Приложение для прослушивания, скачивания и скробблинга музыки ВКонтакте и LastFM"
+        "en": "Cloud music player for Google Chrome supporting VK, LastFM and Google Drive",
+        "ru": "Облачный плеер для Google Chrome с поддержкой ВКонтакте, LastFM и Google Drive"
     },
     "appNews": {
         "en": "App news",
@@ -34,10 +34,6 @@
     "captchaSubmitTitle": {
         "en": "Check",
         "ru": "Проверить"
-    },
-    "changelog_3_0_download": {
-        "en": "And a bit of sad news: <strong>there will be no direct links to MP3 files for new users of $1 app</strong>. This should be done due to <a href='http://vk.com/dev/rules' target='_blank'>VK rules</a>, which I obey :)",
-        "ru": "И немного дегтя в бочку меда: <strong>для новых пользователей $1 прямых ссылок на скачивание музыки в приложении не будет</strong>. Это связано с <a href='http://vk.com/dev/rules' target='_blank'>правилами ВКонтакте</a>, которые надо соблюдать :)"
     },
     "changelog_3_0_fulltext_search": {
         "en": "<strong>More precise artists and albums search with new API</strong>. Try this search and you will probably find the albums which were missing in LastFM service",
@@ -284,8 +280,8 @@
         "ru": "Привет, дружок!"
     },
     "welcomeText": {
-        "en": "Search and listen to music, save it in the Google Drive cloud for <strong>further offline playing</strong> and even download files on your local computer (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
-        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже скачивать на компьютер (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
+        "en": "Search and listen to music, save it in the Google Drive cloud for further <strong>offline playing</strong> and even add music to your VK profile page (sic!) - you can do any of these things with this app. And with the help of LastFM you can listen to the whole albums and find out similar bands.",
+        "ru": "В этом приложении для Chrome ты сможешь слушать и искать музыку ВКонтакте, сохранять её в облако Google Drive для <strong>прослушивания без интернета</strong> и даже сохранять музыку к себе в аудиозаписи ВКонтакте (sic!). А еще с помощью базы данных от LastFM ты сможешь <strong>знакомиться с альбомами целиком</strong>, а также похожими исполнителями."
     },
     "yes": {
         "en": "Yes, please",
