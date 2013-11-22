@@ -54,6 +54,7 @@ MagicSearch = (function () {
 
                 if (data.count) {
                     var trackIndex = 0; // по умолчанию отдаем первый трек
+                    var bestTrack;
 
                     for (var i = 0; i < data.songs.length; i++) {
                         if (!duration || data.songs[i].originalDuration == duration) {
@@ -62,11 +63,21 @@ MagicSearch = (function () {
                         }
                     }
 
+                    bestTrack = data.songs[trackIndex];
+
                     Templates.render("songs", {
-                        songs: [data.songs[trackIndex]],
+                        songs: [bestTrack],
                         showDownload: Settings.get("showDownloadButtons"),
                     }, function (html) {
+                        // delete existing song container if exists
+                        var existingSong = $(".music p.song[data-url='" + bestTrack.source + "']");
+                        if (existingSong) {
+                            existingSong.remove();
+                        }
+
+                        // replace text with song container
                         nodeList[index].after(html).remove();
+
                         Sounds.onVisibleTracksUpdated();
                     });
                 }
