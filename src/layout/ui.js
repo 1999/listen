@@ -110,6 +110,14 @@ parallel({
                 Navigation.forward();
             }
         },
+        // show own audio
+        {
+            selector: "header .header-home",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.dispatch("current");
+            }
+        },
         // search for bands, albums, songs etc
         {
             selector: "header .search",
