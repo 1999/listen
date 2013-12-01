@@ -261,8 +261,8 @@ Navigation = (function () {
         $("header input[type='search']").val("");
 
         Templates.render("contest-info", {
-            appName: chrome.runtime.getManifest().name,
-            contestLink: Config.constants.vk_contest_url,
+            part1: chrome.i18n.getMessage("contestTextPart1", [chrome.runtime.getManifest().name, Config.constants.vk_contest_url]),
+            part2: chrome.i18n.getMessage("contestTextPart2"),
             goContest: chrome.i18n.getMessage("contestButtonParticipate")
         }, function (html) {
             fillContent(html, "");

@@ -89,7 +89,7 @@ CPA = (function () {
                             {title: chrome.i18n.getMessage("contestButtonSecond")}
                         ]
                     }, function () {});
-                }
+                });
 
                 break;
         }

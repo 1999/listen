@@ -466,6 +466,10 @@ figcaption a {
     opacity: 0;
 }
 
+.lead-contest {
+    font-size: 18px;
+}
+
 /* Music */
 .music {
     padding: 16px 0 16px;
