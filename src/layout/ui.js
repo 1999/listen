@@ -282,6 +282,15 @@ parallel({
                 Navigation.dispatch("guest");
             }
         },
+        // go to contest
+        {
+            selector: ".go-contest",
+            evtType: "click",
+            callback: function (evt) {
+                window.open(Config.constants.vk_contest_url);
+                Navigation.dispatch("current");
+            }
+        },
         // save sendStat option value
         {
             selector: "input[name='sendStatChkbx'][type='radio']",

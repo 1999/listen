@@ -40,15 +40,35 @@ window.onerror = function(msg, url, line) {
                 }
 
                 break;
+
+            case "contest":
+                var records = {};
+                records.showContestInfo = true;
+
+                chrome.storage.local.set(records, function () {
+                    chrome.storage.local.get({
+                        "settings.vkToken": Config.default_settings_local.vkToken
+                    }, function (records) {
+                        var isAuthorized = (records["settings.vkToken"].length > 0);
+
+                        if (isAuthorized) {
+                            openAppWindow();
+                        } else {
+                            window.open(Config.constants.vk_contest_url);
+                        }
+                    });
+                });
+
+                break;
         }
     });
 
     chrome.notifications && chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+        chrome.notifications.clear(notificationId, function () {});
+
         switch (notificationId) {
             case "update2to3":
             case "update":
-                chrome.notifications.clear(notificationId, function () {});
-
                 if (buttonIndex === 0) {
                     var currentAppWindow = chrome.app.window.current();
 
@@ -57,6 +77,28 @@ window.onerror = function(msg, url, line) {
                     } else {
                         openAppWindow();
                     }
+                }
+
+                break;
+
+            case "contest":
+                if (buttonIndex === 1) {
+                    var records = {};
+                    records.showContestInfo = true;
+
+                    chrome.storage.local.set(records, function () {
+                        chrome.storage.local.get({
+                            "settings.vkToken": Config.default_settings_local.vkToken
+                        }, function (records) {
+                            var isAuthorized = (records["settings.vkToken"].length > 0);
+
+                            if (isAuthorized) {
+                                openAppWindow();
+                            } else {
+                                window.open(Config.constants.vk_contest_url);
+                            }
+                        });
+                    });
                 }
 
                 break;
@@ -169,6 +211,15 @@ window.onerror = function(msg, url, line) {
                 chrome.alarms.create("appUsage", {
                     when: Date.now() + 3 * 60 * 60 * 1000,
                     periodInMinutes: 24 * 60
+                });
+            }
+        });
+
+        chrome.alarms.get("contestNotifier", function (alarmInfo) {
+            if (!alarmInfo) {
+                chrome.alarms.create("contestNotifier", {
+                    when: Date.now(),
+                    periodInMinutes: 5
                 });
             }
         });

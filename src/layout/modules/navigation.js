@@ -54,6 +54,10 @@ Navigation = (function () {
                 drawSettings();
                 break;
 
+            case "contest":
+                drawContest();
+                break;
+
             case "news":
                 drawChangelog();
                 break;
@@ -249,6 +253,23 @@ Navigation = (function () {
         });
     }
 
+
+    function drawContest() {
+        emptyContent();
+
+        // update search input data
+        $("header input[type='search']").val("");
+
+        Templates.render("contest-info", {
+            appName: chrome.runtime.getManifest().name,
+            contestLink: Config.constants.vk_contest_url,
+            goContest: chrome.i18n.getMessage("contestButtonParticipate")
+        }, function (html) {
+            fillContent(html, "");
+        });
+
+        CPA.sendAppView("User.Contest");
+    }
 
     function drawSettings() {
         emptyContent();
@@ -677,15 +698,26 @@ Navigation = (function () {
 
                 // this is not actually a "view", it can be called only once
                 case "user":
-                    drawUserUI(function () {
+                    parallel({
+                        ui: drawUserUI,
+                        contest: function (callback) {
+                            chrome.storage.local.get("showContestInfo", callback);
+                        }
+                    }, function (res) {
+                        chrome.storage.local.remove("showContestInfo");
+
                         SyncFS.requestCurrentFilesNum(function (num) {
                             $("header span.header-local span.counter").text(num);
                         });
 
-                        if (navigator.onLine) {
-                            Navigation.dispatch("current");
+                        if (res.contest.showContestInfo) {
+                            Navigation.dispatch("contest");
                         } else {
-                            Navigation.dispatch("cloud");
+                            if (navigator.onLine) {
+                                Navigation.dispatch("current");
+                            } else {
+                                Navigation.dispatch("cloud");
+                            }
                         }
                     });
 
@@ -695,6 +727,7 @@ Navigation = (function () {
                 case "settings":
                 case "cloud":
                 case "current":
+                case "contest":
                 case "news":
                     if (!states.length || states[currentStateIndex].view !== viewType) {
                         states.push({view: viewType});

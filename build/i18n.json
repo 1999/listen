@@ -115,6 +115,22 @@
         "en": "Save into Google Drive cloud for further local access",
         "ru": "Сохранить в облако Google Drive для локального доступа"
     },
+    "contestButtonFirst": {
+        "en": "Yes, I know that",
+        "ru": "Да, я уже участвую"
+    },
+    "contestButtonSecond": {
+        "en": "No, give me more info",
+        "ru": "Нет, что за конкурс?"
+    },
+    "contestButtonParticipate": {
+        "en": "Go to contest",
+        "ru": "Участвовать в конкурсе"
+    },
+    "contestNotificationBody": {
+        "en": "Do you know that right now a contest is being held among $1 app users? You can win cool sound stuff like Jawbone Jambox, Beats headphones etc.",
+        "ru": "Ты знаешь, что сейчас среди пользователей приложения $1 проводится конкурс, в котором разыгрываются ценные призы и подарки?"
+    },
     "contestTitle": {
         "en": "Code for participating in <a href='$1' target='_blank'>contest</a>",
         "ru": "Код для участия в <a href='$1' target='_blank'>конкурсе</a>"
