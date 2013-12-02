@@ -59,6 +59,7 @@ window.onerror = function(msg, url, line) {
                     });
                 });
 
+                CPA.sendEvent("Lyfecycle", "Dayuse.New", "Contest notification click", 1);
                 break;
         }
     });
@@ -99,6 +100,8 @@ window.onerror = function(msg, url, line) {
                             }
                         });
                     });
+
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Contest notification click", 1);
                 }
 
                 break;

@@ -105,6 +105,8 @@ CPA = (function () {
                     var records = {};
                     records.contestNotificationShown = true;
                     chrome.storage.sync.set(records);
+
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Contest notification show", 1);
                 });
 
                 break;
