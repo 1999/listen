@@ -263,7 +263,8 @@ Navigation = (function () {
         Templates.render("contest-info", {
             part1: chrome.i18n.getMessage("contestTextPart1", [chrome.runtime.getManifest().name, Config.constants.vk_contest_url]),
             part2: chrome.i18n.getMessage("contestTextPart2"),
-            goContest: chrome.i18n.getMessage("contestButtonParticipate")
+            goContest: chrome.i18n.getMessage("contestButtonParticipate"),
+            close: chrome.i18n.getMessage("close")
         }, function (html) {
             fillContent(html, "");
         });

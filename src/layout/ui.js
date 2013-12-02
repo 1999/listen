@@ -291,6 +291,14 @@ parallel({
                 Navigation.dispatch("current");
             }
         },
+        // close contest view
+        {
+            selector: ".away-contest",
+            evtType: "click",
+            callback: function (evt) {
+                Navigation.dispatch("current");
+            }
+        },
         // save sendStat option value
         {
             selector: "input[name='sendStatChkbx'][type='radio']",
@@ -594,7 +602,17 @@ parallel({
                     return;
 
                 // we can't check an empty node for querySelector/matchesSelector
+                var moveParent = false;
+
                 if (!node.hasChildNodes()) {
+                    moveParent = true;
+                } else {
+                    moveParent = [].every.call(node.childNodes, function (childNode) {
+                        return (childNode.nodeType !== Node.ELEMENT_NODE);
+                    });
+                }
+
+                if (moveParent) {
                     node = node.parentNode;
                 }
 

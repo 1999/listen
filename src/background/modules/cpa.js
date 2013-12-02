@@ -56,12 +56,21 @@ CPA = (function () {
                 break;
 
             case "contestNotifier":
-                chrome.storage.local.get({
-                    "settings.vkToken": Config.default_settings_local.vkToken,
-                    "appInstallDate": Date.now()
+                parallel({
+                    local: function (callback) {
+                        chrome.storage.local.get({
+                            "settings.vkToken": Config.default_settings_local.vkToken,
+                            "appInstallDate": Date.now()
+                        }, callback);
+                    },
+                    sync: function (callback) {
+                        chrome.storage.sync.get({
+                            "contestNotificationShown": false
+                        }, callback);
+                    }
                 }, function (records) {
-                    var isAuthorized = (records["settings.vkToken"].length > 0);
-                    var dayPassedAfterInstall = ((Date.now() - records.appInstallDate) > 86400000);
+                    var isAuthorized = (records.local["settings.vkToken"].length > 0);
+                    var dayPassedAfterInstall = ((Date.now() - records.local.appInstallDate) > 86400000);
                     var appName = chrome.runtime.getManifest().name;
 
                     var now = new Date;
@@ -79,9 +88,12 @@ CPA = (function () {
 
                     chrome.alarms.clear("contestNotifier");
 
+                    if (records.sync.contestNotificationShown)
+                        return;
+
                     chrome.notifications && chrome.notifications.create("contest", {
                         type: "basic",
-                        iconUrl: chrome.runtime.getURL("/pic/icon48.png"),
+                        iconUrl: chrome.runtime.getURL("/pics/icons/48.png"),
                         title: chrome.i18n.getMessage("notificationUpdateTitle"),
                         message: chrome.i18n.getMessage("contestNotificationBody", appName),
                         buttons: [
@@ -89,6 +101,10 @@ CPA = (function () {
                             {title: chrome.i18n.getMessage("contestButtonSecond")}
                         ]
                     }, function () {});
+
+                    var records = {};
+                    records.contestNotificationShown = true;
+                    chrome.storage.sync.set(records);
                 });
 
                 break;
