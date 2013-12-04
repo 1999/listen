@@ -59,6 +59,11 @@ VK = (function () {
 
                         break;
 
+                    case 17: // validation required (https://vk.com/dev/need_validation)
+                        var redirectURI = error.querySelector("redirect_uri").textContent;
+                        window.open(redirectURI);
+                        break;
+
                     case 270: // copyright
                         onerror && onerror("Copyright error");
                         break;

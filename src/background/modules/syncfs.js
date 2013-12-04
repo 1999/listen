@@ -106,6 +106,11 @@ SyncFS = (function () {
                             fileEntry.file(function (file) {
                                 var reader = new FileReader;
                                 reader.onloadend = function () {
+                                    if (!reader.result) {
+                                        console.error("Empty read result");
+                                        return callback();
+                                    }
+
                                     var id3v1 = reader.result.substr(reader.result.length - 128);
                                     var commentText = id3v1.substr(97, 30).replace(new RegExp(NULLSTRING, "g"), "");
 
