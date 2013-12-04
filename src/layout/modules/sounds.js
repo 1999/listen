@@ -94,7 +94,7 @@ Sounds = (function () {
     function dropTrackFromCurrentlyPlaying() {
         var index = playingTracks.indexOf(this.track);
         var audioSrc = this.attr("src");
-        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc + "']");
+        var progressElem = $(".music div.song-playing-bg[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
 
         var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
         if (Lastfm.isAuthorized && playlistIndex !== -1) {
