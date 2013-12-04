@@ -657,6 +657,9 @@ Sounds = (function () {
                     return (Math.random() > 0.5) ? -1 : 1;
                 });
             }
+
+            // starting from now MagicSearch can update playlist until the app view changes
+            MagicSearch.startAppendMode();
         },
 
         /**

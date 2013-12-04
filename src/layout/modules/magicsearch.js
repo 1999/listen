@@ -1,6 +1,7 @@
 MagicSearch = (function () {
     "use strict";
 
+    var appendEnabled = false;
     var currentList;
     var pendingXHR;
     var pedingTimeout;
@@ -83,6 +84,11 @@ MagicSearch = (function () {
                         // replace text with song container
                         nodeList[index].after(html).remove();
 
+                        if (appendEnabled) {
+                            Sounds.updatePlaylist();
+                        }
+
+                        // @todo wtf?
                         Sounds.onVisibleTracksUpdated();
                     });
                 }
@@ -102,6 +108,14 @@ MagicSearch = (function () {
 
                 pedingTimeout = window.setTimeout(MagicSearch.run, timeoutMs, nodeList, newIndex);
             });
+        },
+
+        startAppendMode: function MagicSearch_startAppendMode() {
+            appendEnabled = true;
+        },
+
+        stopAppendMode: function MagicSearch_stopAppendMode() {
+            appendEnabled = false;
         }
     };
 })();

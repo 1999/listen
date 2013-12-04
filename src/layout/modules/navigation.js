@@ -731,6 +731,8 @@ Navigation = (function () {
                 case "contest":
                 case "news":
                     if (!states.length || states[currentStateIndex].view !== viewType) {
+                        MagicSearch.stopAppendMode();
+
                         states.push({view: viewType});
                         currentStateIndex += 1;
                     }
@@ -753,6 +755,8 @@ Navigation = (function () {
                     }
 
                     if (needsPush) {
+                        MagicSearch.stopAppendMode();
+
                         states.push({view: viewType, search: args});
                         currentStateIndex += 1;
                     }
