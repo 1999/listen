@@ -40,13 +40,6 @@ Sounds = (function () {
         }
     });
 
-    function getRandomTrackIndex() {
-        var rand = Math.random();
-        var interval = 1 / playlist.length;
-
-        return (rand === 1) ? playlist.length - 1 : Math.floor(rand / interval);
-    }
-
     function showNotification(options) {
         if (!Settings.get("showNotifications"))
             return;
@@ -389,9 +382,7 @@ Sounds = (function () {
                 }
 
                 if (!playingTracks.length) {
-                    var trackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
-                    this.play(trackIndex, true);
-
+                    this.play(0, true);
                     return;
                 }
 
@@ -544,15 +535,13 @@ Sounds = (function () {
             if (isCurrentTrackInPlaylist) {
                 if (playlist.length === 1) {
                     nextTrackIndex = 0;
-                } else if (playingMode === MODE_SHUFFLE) {
-                    nextTrackIndex = getRandomTrackIndex();
                 } else if (playingMode === MODE_REPEAT && autoSwitch) {
                     nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex + 1 < playlist.length) ? currentTrackPlaylistIndex + 1 : 0;
                 }
             } else {
-                nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
+                nextTrackIndex = 0;
             }
 
             this.play(nextTrackIndex, false);
@@ -586,15 +575,13 @@ Sounds = (function () {
             if (isCurrentTrackInPlaylist) {
                 if (playlist.length === 1) {
                     nextTrackIndex = 0;
-                } else if (playingMode === MODE_SHUFFLE) {
-                    nextTrackIndex = getRandomTrackIndex();
                 } else if (playingMode === MODE_REPEAT && autoSwitch) {
                     nextTrackIndex = currentTrackPlaylistIndex;
                 } else {
                     nextTrackIndex = (currentTrackPlaylistIndex === 0) ? playlist.length - 1 : currentTrackPlaylistIndex - 1;
                 }
             } else {
-                nextTrackIndex = (playingMode === MODE_SHUFFLE) ? getRandomTrackIndex() : 0;
+                nextTrackIndex = 0;
             }
 
             this.play(nextTrackIndex, false);
@@ -655,13 +642,21 @@ Sounds = (function () {
         updatePlaylist: function Sounds_updatePlaylist() {
             playlist.length = 0;
 
-            $$(".music p.song").each(function () {
+            $$(".music p.song").each(function (index) {
                 playlist.push({
                     url: this.data("url"),
                     artist: this.data("artist"),
-                    title: this.data("title")
+                    title: this.data("title"),
+                    index: index
                 });
             });
+
+            var isShuffleModeEnabled = (Settings.get("songsPlayingMode") === MODE_SHUFFLE);
+            if (isShuffleModeEnabled) {
+                playlist.sort(function () {
+                    return (Math.random() > 0.5) ? -1 : 1;
+                });
+            }
         },
 
         /**
@@ -696,11 +691,25 @@ Sounds = (function () {
                     this.removeClass("active");
                 }
             });
+
+            if (mode === MODE_SHUFFLE) {
+                playlist.sort(function () {
+                    return (Math.random() > 0.5) ? -1 : 1;
+                });
+            } else {
+                playlist.sort(function (a, b) {
+                    return (a.index - b.index);
+                });
+            }
         },
 
         disableMode: function Sounds_disableMode() {
             Settings.set("songsPlayingMode", "");
             $$("footer span.mode").removeClass("active");
+
+            playlist.sort(function (a, b) {
+                return (a.index - b.index);
+            });
         }
     };
 })();
