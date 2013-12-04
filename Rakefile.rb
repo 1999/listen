@@ -94,25 +94,33 @@ task :build => [:i18n, :templates] do
         f.write(jsConfig)
     end
 
-    #
+    # update manifest
+    manifestJSONPath = File.join(OUT_PATH, "manifest.json")
+    manifestJSON = JSON.parse(File.open(manifestJSONPath).read)
+    manifestJSON["name"] = manifestJSON["name"].gsub(/\sDEV$/, "")
+
+    File.open(manifestJSONPath, "w") do |f|
+        f.write(JSON.pretty_generate(manifestJSON))
+    end
+
+    # create release ZIP
     CrxMake.zip(
         :ex_dir => OUT_PATH,
         :pkey => File.join(Dir.home, "Dropbox", "Keys", "ListenApp.pem"),
-        :zip_output => File.join(OUT_PATH, "app.zip"),
+        :zip_output => File.join(OUT_PATH, "release-" + manifestJSON["version"] + ".zip"),
         :verbose => false,
         :ignorefile => /\.swp/,
         :ignoredir => /\.(?:svn|git|cvs)/
     )
 
-    #
-    CrxMake.make(
-        :ex_dir => OUT_PATH,
-        :pkey => File.join(Dir.home, "Dropbox", "Keys", "ListenApp.pem"),
-        :crx_output => File.join(OUT_PATH, "app.crx"),
-        :verbose => false,
-        :ignorefile => /\.swp/,
-        :ignoredir => /\.(?:svn|git|cvs)/
-    )
+    # CrxMake.make(
+    #     :ex_dir => OUT_PATH,
+    #     :pkey => File.join(Dir.home, "Dropbox", "Keys", "ListenApp.pem"),
+    #     :crx_output => File.join(OUT_PATH, "app.crx"),
+    #     :verbose => false,
+    #     :ignorefile => /\.swp/,
+    #     :ignoredir => /\.(?:svn|git|cvs)/
+    # )
 end
 
 desc "Run this after you have cloned the repo"
