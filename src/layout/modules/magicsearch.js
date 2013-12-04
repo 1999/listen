@@ -69,10 +69,15 @@ MagicSearch = (function () {
                         songs: [bestTrack],
                         showDownload: Settings.get("showDownloadButtons"),
                     }, function (html) {
-                        // delete existing song container if exists
+                        // delete existing song container & its progress bar if exists
                         var existingSong = $(".music p.song[data-url='" + bestTrack.source + "']");
                         if (existingSong) {
                             existingSong.remove();
+                        }
+
+                        var existingPlayingProgress = $(".music .song-playing-bg[data-url='" + bestTrack.source + "']");
+                        if (existingPlayingProgress) {
+                            existingPlayingProgress.remove();
                         }
 
                         // replace text with song container
