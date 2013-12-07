@@ -109,6 +109,28 @@ window.onerror = function(msg, url, line) {
     });
 
 
+    // listen to messages from VK Offline extension (https://chrome.google.com/webstore/detail/vkontakte-offline/jinklgkideaicpdgmomlckebafjfibjk)
+    chrome.runtime.onMessageExternal.addListener(function (msg, sender, sendResponse) {
+        if (sender.id !== "jinklgkideaicpdgmomlckebafjfibjk")
+            return;
+
+        switch (msg.type) {
+            case "current":
+                openAppWindow();
+                break;
+
+            case "search":
+                var navigateState = {
+                    view: msg.performer ? "searchArtist" : "search",
+                    args: msg.performer ? {artist: msg.search} : {searchQuery : msg.search}
+                };
+
+                openAppWindow(navigateState);
+                break;
+        }
+    });
+
+
     // install & update handling
     chrome.runtime.onInstalled.addListener(function (details) {
         var appName = chrome.runtime.getManifest().name;
@@ -250,11 +272,15 @@ window.onerror = function(msg, url, line) {
         })
     });
 
-    function openAppWindow() {
+    function openAppWindow(navigateState) {
         chrome.app.window.create("main.html", {
             id: uuid(),
             minWidth: 800,
             minHeight: 540
+        }, function (createdWindow) {
+            if (navigateState && navigateState.view) {
+                createdWindow.contentWindow.appNavig = navigateState;
+            }
         });
     }
 

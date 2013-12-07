@@ -669,6 +669,8 @@ Navigation = (function () {
             if (currentStateIndex === 0)
                 throw new Error("Current state is the first one");
 
+            MagicSearch.stopAppendMode();
+
             currentStateIndex -= 1;
             drawUIAccordingToState();
             updateBackForwardButtonsState();
@@ -680,6 +682,8 @@ Navigation = (function () {
 
             if (currentStateIndex === states.length - 1)
                 throw new Error("Current state is the last one");
+
+            MagicSearch.stopAppendMode();
 
             currentStateIndex += 1;
             drawUIAccordingToState();
@@ -715,7 +719,11 @@ Navigation = (function () {
                             Navigation.dispatch("contest");
                         } else {
                             if (navigator.onLine) {
-                                Navigation.dispatch("current");
+                                if (window.appNavig !== undefined) {
+                                    Navigation.dispatch(appNavig.view, appNavig.args);
+                                } else {
+                                    Navigation.dispatch("current");
+                                }
                             } else {
                                 Navigation.dispatch("cloud");
                             }
@@ -744,7 +752,7 @@ Navigation = (function () {
                 case "searchAlbum":
                     var needsPush = false;
 
-                    if (states[currentStateIndex].view !== viewType) {
+                    if (currentStateIndex === -1 || states[currentStateIndex].view !== viewType) {
                         needsPush = true;
                     } else {
                         ["mbid", "ymid", "artist", "album", "searchQuery"].forEach(function (param) {
