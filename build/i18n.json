@@ -165,7 +165,7 @@
     },
     "faqText": {
         "en": "$1 app doesn't have access to VK website and it won't add download icons on any of the website's pages;|<strong>You can and you should</strong> scrobble your playing songs into the LastFM service;|You help us very much when you agree to send statistics about the app;|$1 app is designed only for finding out the new music.",
-        "ru": "Приложение $1 не имеет доступа к сайту ВКонтакте напрямую и не будет добавлять кнопки скачивания музыки на сайте;|Через приложение можно и нужно скробблить данные на LastFM;|Отправляя статистику о работе приложение вы спасаете котиков;|Приложение $1 предназначено только для ознакомления с музыкой."
+        "ru": "Приложение $1 не имеет доступа к сайту ВКонтакте напрямую и не будет добавлять кнопки скачивания музыки на сайте;|Через приложение можно и нужно скробблить данные на LastFM;|Отправляя статистику о работе приложения, вы спасаете котиков;|Приложение $1 предназначено только для ознакомления с музыкой."
     },
     "faqSendStatCheckbox": {
         "en": "I agree to send statistics",
