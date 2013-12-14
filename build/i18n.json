@@ -115,30 +115,6 @@
         "en": "Save into Google Drive cloud for further local access",
         "ru": "Сохранить в облако Google Drive для локального доступа"
     },
-    "contestButtonFirst": {
-        "en": "Yes, I know that",
-        "ru": "Да, я уже участвую"
-    },
-    "contestButtonSecond": {
-        "en": "No, give me more info",
-        "ru": "Нет, что за конкурс?"
-    },
-    "contestButtonParticipate": {
-        "en": "Участвовать в конкурсе",
-        "ru": "Участвовать в конкурсе"
-    },
-    "contestNotificationBody": {
-        "en": "Do you know that right now a contest is being held among $1 app users? You can win cool sound stuff like Jawbone Jambox, Beats headphones etc.",
-        "ru": "Ты знаешь, что сейчас среди пользователей приложения $1 проводится конкурс, в котором разыгрываются ценные призы и подарки?"
-    },
-    "contestTextPart1": {
-        "en": "Привет, дружок! Меня зовут Дима, я разработчик приложения $1 для Google Chrome. С 21 ноября по 12 декабря я провожу небольшой <strong>конкурс с классными призами среди пользователей приложения</strong>. Для участия достаточно установить приложение и авторизоваться в нем (эту часть ты уже сделал), а также <strong>сделать репост</strong> <a href='$2' target='_blank'>этой</a> записи ВКонтакте. ВСЕ! 12 декабря специальная программа посчитает всех, кто делал репосты, и случайным образом выберет 7 победителей. Да, <strong>призов будет сразу семь</strong>, потому что скоро Новый Год :)",
-        "ru": "Привет, дружок! Меня зовут Дима, я разработчик приложения $1 для Google Chrome. С 21 ноября по 12 декабря я провожу небольшой <strong>конкурс с классными призами среди пользователей приложения</strong>. Для участия достаточно установить приложение и авторизоваться в нем (эту часть ты уже сделал), а также <strong>сделать репост</strong> <a href='$2' target='_blank'>этой</a> записи ВКонтакте. ВСЕ! 12 декабря специальная программа посчитает всех, кто делал репосты, и случайным образом выберет 7 победителей. Да, <strong>призов будет сразу семь</strong>, потому что скоро Новый Год :)"
-    },
-    "contestTextPart2": {
-        "en": "К слову о призах. Один победитель получит беспроводную колонку <strong>Jawbone Jambox</strong>. Еще один победитель получит наушники <strong>Beats Solo</strong>. И сразу пять человек получат <strong>Dancing Water Speakers</strong> - классные колонки, внутри которых вода танцует в такт с музыкой. Есть небольшие ограничения, про которые я написал на странице конкурса: призы можно забрать в Санкт-Петербурге и Москве + надо иметь 50 друзей ВКонтакте. Желаю тебе удачи и капельку везения :)",
-        "ru": "К слову о призах. Один победитель получит беспроводную колонку <strong>Jawbone Jambox</strong>. Еще один победитель получит наушники <strong>Beats Solo</strong>. И сразу пять человек получат <strong>Dancing Water Speakers</strong> - классные колонки, внутри которых вода танцует в такт с музыкой. Есть небольшие ограничения, про которые я написал на странице конкурса: призы можно забрать в Санкт-Петербурге и Москве + надо иметь 50 друзей ВКонтакте. Желаю тебе удачи и капельку везения :)"
-    },
     "contestTitle": {
         "en": "Code for participating in <a href='$1' target='_blank'>contest</a>",
         "ru": "Код для участия в <a href='$1' target='_blank'>конкурсе</a>"
@@ -230,10 +206,6 @@
     "notificationUpdate2to3Body": {
         "en": "$1 app now supports LastFM scrobbling, in-app navigation, shortcuts and many other cool stuff.\n\nWanna take a look?",
         "ru": "В приложении $1 стал поддерживаться скробблинг в LastFM, появилась навигация, поддержка шорткатов и многое другое.\n\nХочешь начать этим пользоваться?"
-    },
-    "notificationUpdate40": {
-        "en": "$1 app now has a new bright icon and VK captcha support. Version 4.0 is already in your Google Chrome.",
-        "ru": "Приложение $1 получило новую яркую иконку и поддержку ввода капчи ВКонтакте. Версия 4.0 уже в твоем Google Chrome."
     },
     "notificationUpdateCallToActionGuests": {
         "en": "$1 app is constantly getting better and you are still not using its cool features.\n\nWanna take a look?",

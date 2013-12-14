@@ -54,10 +54,6 @@ Navigation = (function () {
                 drawSettings();
                 break;
 
-            case "contest":
-                drawContest();
-                break;
-
             case "news":
                 drawChangelog();
                 break;
@@ -253,24 +249,6 @@ Navigation = (function () {
         });
     }
 
-
-    function drawContest() {
-        emptyContent();
-
-        // update search input data
-        $("header input[type='search']").val("");
-
-        Templates.render("contest-info", {
-            part1: chrome.i18n.getMessage("contestTextPart1", [chrome.runtime.getManifest().name, Config.constants.vk_contest_url]),
-            part2: chrome.i18n.getMessage("contestTextPart2"),
-            goContest: chrome.i18n.getMessage("contestButtonParticipate"),
-            close: chrome.i18n.getMessage("close")
-        }, function (html) {
-            fillContent(html, "");
-        });
-
-        CPA.sendAppView("User.Contest");
-    }
 
     function drawSettings() {
         emptyContent();
@@ -703,40 +681,27 @@ Navigation = (function () {
 
                 // this is not actually a "view", it can be called only once
                 case "user":
-                    parallel({
-                        ui: drawUserUI,
-                        contest: function (callback) {
-                            chrome.storage.local.get("showContestInfo", callback);
-                        }
-                    }, function (res) {
-                        chrome.storage.local.remove("showContestInfo");
-
+                    drawUserUI(function () {
                         SyncFS.requestCurrentFilesNum(function (num) {
                             $("header span.header-local span.counter").text(num);
                         });
 
-                        if (res.contest.showContestInfo) {
-                            Navigation.dispatch("contest");
-                        } else {
-                            if (navigator.onLine) {
-                                if (window.appNavig !== undefined) {
-                                    Navigation.dispatch(appNavig.view, appNavig.args);
-                                } else {
-                                    Navigation.dispatch("current");
-                                }
+                        if (navigator.onLine) {
+                            if (window.appNavig !== undefined) {
+                                Navigation.dispatch(appNavig.view, appNavig.args);
                             } else {
-                                Navigation.dispatch("cloud");
+                                Navigation.dispatch("current");
                             }
+                        } else {
+                            Navigation.dispatch("cloud");
                         }
                     });
 
-                    return;
                     break;
 
                 case "settings":
                 case "cloud":
                 case "current":
-                case "contest":
                 case "news":
                     if (!states.length || states[currentStateIndex].view !== viewType) {
                         MagicSearch.stopAppendMode();

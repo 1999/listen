@@ -54,62 +54,6 @@ CPA = (function () {
                 });
 
                 break;
-
-            case "contestNotifier":
-                parallel({
-                    local: function (callback) {
-                        chrome.storage.local.get({
-                            "settings.vkToken": Config.default_settings_local.vkToken,
-                            "appInstallDate": Date.now()
-                        }, callback);
-                    },
-                    sync: function (callback) {
-                        chrome.storage.sync.get({
-                            "contestNotificationShown": false
-                        }, callback);
-                    }
-                }, function (records) {
-                    var isAuthorized = (records.local["settings.vkToken"].length > 0);
-                    var dayPassedAfterInstall = ((Date.now() - records.local.appInstallDate) > 86400000);
-                    var appName = chrome.runtime.getManifest().name;
-
-                    var now = new Date;
-                    var hours = now.getHours();
-                    var rightTime = false;
-
-                    if ([0, 6].indexOf(now.getDay()) !== -1) { // weekend
-                        rightTime = (hours >= 12 && hours < 21);
-                    } else {
-                        rightTime = (hours >= 15 && hours < 23);
-                    }
-
-                    if (!rightTime || !dayPassedAfterInstall)
-                        return;
-
-                    chrome.alarms.clear("contestNotifier");
-
-                    if (records.sync.contestNotificationShown)
-                        return;
-
-                    chrome.notifications && chrome.notifications.create("contest", {
-                        type: "basic",
-                        iconUrl: chrome.runtime.getURL("/pics/icons/48.png"),
-                        title: chrome.i18n.getMessage("notificationUpdateTitle"),
-                        message: chrome.i18n.getMessage("contestNotificationBody", appName),
-                        buttons: [
-                            {title: chrome.i18n.getMessage("contestButtonFirst")},
-                            {title: chrome.i18n.getMessage("contestButtonSecond")}
-                        ]
-                    }, function () {});
-
-                    var records = {};
-                    records.contestNotificationShown = true;
-                    chrome.storage.sync.set(records);
-
-                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Contest notification show", 1);
-                });
-
-                break;
         }
     });
 
