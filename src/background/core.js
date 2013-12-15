@@ -65,25 +65,38 @@ window.onerror = function(msg, url, line) {
 
     // listen to messages from VK Offline extension (https://chrome.google.com/webstore/detail/vkontakte-offline/jinklgkideaicpdgmomlckebafjfibjk)
     chrome.runtime.onMessageExternal.addListener(function (msg, sender, sendResponse) {
-        if (sender.id !== "jinklgkideaicpdgmomlckebafjfibjk")
-            return;
+        if (["mmppkefmgokcbhknfjcdbfckchbcipll", "jinklgkideaicpdgmomlckebafjfibjk"].indexOf(sender.id) === -1)
+            return sendResponse(false);
 
-        // switch (msg.type) {
-        //     case "current":
-        //         openAppWindow();
-        //         break;
+        switch (msg.action) {
+            case "isAlive":
+                sendResponse(true);
+                break;
 
-        //     case "search":
-        //         var navigateState = {
-        //             view: msg.performer ? "searchArtist" : "search",
-        //             args: msg.performer ? {artist: msg.search} : {searchQuery : msg.search}
-        //         };
+            case "getCurrent":
+                openAppWindow();
+                break;
 
-        //         openAppWindow(navigateState);
-        //         break;
-        // }
+            case "searchArtist":
+                openAppWindow({
+                    view: "searchArtist",
+                    args: {
+                        artist: msg.q
+                    }
+                });
 
-        sendResponse(true);
+                break;
+
+            case "searchSongs":
+                openAppWindow({
+                    view: "search",
+                    args: {
+                        searchQuery: msg.q
+                    }
+                });
+
+                break;
+        }
     });
 
 
