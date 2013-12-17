@@ -162,7 +162,7 @@
             var correctMatches = anchor.getAttribute("href").match(/^http:\/\/www\.last\.fm\/music\/(.+)/);
 
             if (correctMatches && !/^Read\smore/.test(anchor.textContent)) {
-                anchor.setAttribute("href", "artist:" + correctMatches[1].replace(/\+/g, " "));
+                anchor.setAttribute("href", "artist:" + decodeURIComponent(correctMatches[1].replace(/\+/g, " ")));
             } else {
                 anchor.setAttribute("target", "_blank");
             }
