@@ -124,7 +124,13 @@ task :build => [:i18n, :templates] do
 end
 
 desc "Run this after you have cloned the repo"
-task :default => [:i18n, :templates, :rebuildConfig]
+task :default => [:i18n, :templates, :rebuildConfig] do
+    puts "Add CPA library..."
+
+    srcPath = File.join("chrome-platform-analytics", "google-analytics-bundle.js")
+    destPath = File.join(SRC_PATH, "lib", "cpa.js")
+    FileUtils.copy_file(srcPath, destPath)
+end
 
 ########################################################################################################################
 #########################################################################################################################

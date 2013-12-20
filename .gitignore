@@ -21,3 +21,4 @@ out
 src/config.js
 src/sandbox/alltemplates.js
 src/_locales
+src/lib/cpa.js
