@@ -89,13 +89,20 @@ Sounds = (function () {
     }
 
     function updateProgressElem() {
+        var audioSrc = this.attr("src").replace(/'/g, "\\'");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
-        var headerProgressElem = $("footer .song-playing-progress");
-        headerProgressElem.css("width", width);
+        $("footer .song-playing-progress").css("width", width);
 
-        var progressElem = $(".music div.song-playing-bg").removeClass("hidden");
-        $(progressElem, ".song-playing-progress").css("width", width);
+        if (trackContainer) {
+            var progressElem = $(".music div.song-playing-bg").removeClass("hidden");
+            $(progressElem, ".song-playing-progress").css("width", width);
+
+            if (trackContainer.previousSibling !== progressElem) {
+                trackContainer.before(progressElem);
+            }
+        }
 
         // var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
         // if (Lastfm.isAuthorized && playlistIndex !== -1) {
@@ -107,14 +114,16 @@ Sounds = (function () {
     function onPlayContinue() {
         var audioSrc = this.attr("src").replace(/'/g, "\\'");
         var progressElem = $(".music div.song-playing-bg").data("url", audioSrc);
-        var trackContainer = $(".music p.song[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
 
-        // update song container buttons
-        $(trackContainer, ".play").addClass("hidden");
-        $(trackContainer, ".pause").removeClass("hidden");
+        if (trackContainer) {
+            // update song container buttons
+            $(trackContainer, ".play").addClass("hidden");
+            $(trackContainer, ".pause").removeClass("hidden");
 
-        trackContainer.before(progressElem);
-        $(progressElem, ".song-playing-progress").css("width", "0");
+            trackContainer.before(progressElem);
+            $(progressElem, ".song-playing-progress").css("width", "0");
+        }
     }
 
     function onDurationChange() {
