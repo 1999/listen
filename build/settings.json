@@ -21,6 +21,7 @@
         "volume": 0.8 /* громкость */
     },
     "sync": {
+        "id3v1tags": {}, /* downloaded id3v1 tags from VK */
         "sendUsageStat": true /* посылать статистику использования */
     }
 }

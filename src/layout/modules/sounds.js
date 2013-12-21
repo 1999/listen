@@ -165,7 +165,7 @@ Sounds = (function () {
     }
 
     function updateRateCounter() {
-        // @todo может быть открыта страница настроек с уже показанным преложением
+        // @todo может быть открыта страница настроек с уже показанным приложением
         var payElem = $("header div.pay");
 
         var currentCnt = Settings.get("headerRateCounter") + 1;
@@ -193,7 +193,16 @@ Sounds = (function () {
 
     // Get content-length of the MP3 file, then get its last 128 bytes with Range header
     function getID3v1Data(audioSrc, callback) {
-        // @todo cache - uploaded track cant change its ID3v1
+        var sampleHref = $("<a>").attr("href", audioSrc);
+        var storageKey = sampleHref.href.replace(sampleHref.search, "");
+        var currentCachedKeys = Settings.get("id3v1tags");
+
+        // it can also be an empty object!
+        if (currentCachedKeys[storageKey]) {
+            callback(currentCachedKeys[storageKey]);
+            return;
+        }
+
         loadResource(audioSrc, {
             method: "HEAD",
             onload: function () {
@@ -219,8 +228,16 @@ Sounds = (function () {
                                 requestID3v1(blob.slice(3, 33, "text/plain"), callback);
                             }
                         }, function (res) {
-                            if (res.tag !== "TAG")
-                                return callback();
+                            if (res.tag !== "TAG") {
+                                currentCachedKeys[storageKey] = {};
+                                Settings.set("id3v1tags", currentCachedKeys);
+
+                                callback();
+                                return;
+                            }
+
+                            currentCachedKeys[storageKey] = res;
+                            Settings.set("id3v1tags", currentCachedKeys);
 
                             callback(res);
                         });
