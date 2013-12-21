@@ -290,8 +290,6 @@ Navigation = (function () {
                 lastFmAuthorized: (Settings.get("lastfmToken").length > 0),
                 dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
                 getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
-                smoothSwitchTitle: chrome.i18n.getMessage("smoothSwitchTitle"),
-                smoothSwitch: Settings.get("smoothTracksSwitch"),
                 sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
                 sendStat: results.isTrackingPermitted,
                 showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
@@ -418,8 +416,6 @@ Navigation = (function () {
                 showDownload: false
             }, function (music) {
                 fillContent("", music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
                     // update songs data from Google Drive syncable filesystem
                     $$(".music p.song").each(function () {
                         var audioSrc = this.data("url");
@@ -487,8 +483,6 @@ Navigation = (function () {
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
                     res.lastfm.albums.forEach(function (album) {
                         if (!album.cover)
                             return;
@@ -556,8 +550,6 @@ Navigation = (function () {
                 }
             }, function (data) {
                 fillContent(data.info, data.music, function () {
-                    Sounds.onVisibleTracksUpdated();
-
                     res.lastfm.albums.forEach(function (album) {
                         // обновляем обложку альбома
                         Covers.loadFigure(album.cover);

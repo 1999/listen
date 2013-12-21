@@ -87,9 +87,6 @@ MagicSearch = (function () {
                         if (appendEnabled) {
                             Sounds.updatePlaylist();
                         }
-
-                        // @todo wtf?
-                        Sounds.onVisibleTracksUpdated();
                     });
                 }
 

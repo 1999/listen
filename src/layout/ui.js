@@ -299,23 +299,6 @@ parallel({
                 }, 0);
             }
         },
-        // save smoothTracksSwitch option value
-        {
-            selector: "input[name='smoothSwitch'][type='radio']",
-            evtType: "click",
-            callback: function (evt) {
-                var optionValue = this.value === "1" ? true : false;
-                Settings.set("smoothTracksSwitch", optionValue);
-
-                var savedElem = $(this.closestParent("div.radio"), ".saved").removeClass("hidden");
-
-                // browsers optimize classList manipulations, so .removeClass(display=none).addClass(transition) doesn't work
-                // make transition on the next tick to prevent this
-                window.setTimeout(function () {
-                    savedElem.addClass("saved-hiding")
-                }, 0);
-            }
-        },
         // save showNotifications setting
         {
             selector: "input[name='showNotifications'][type='radio']",
