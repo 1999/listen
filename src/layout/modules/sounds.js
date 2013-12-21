@@ -67,7 +67,7 @@ Sounds = (function () {
             notificationTimeoutId = setTimeout(function () {
                 chrome.notifications.clear(NOTIFICATION_NAME, function () {});
                 notificationTimeoutId = null;
-            }, NOTIFICATION_TIMEOUT_MS);
+            }, options.show ? NOTIFICATION_TIMEOUT_MS : 0);
         });
     }
 
@@ -325,12 +325,6 @@ Sounds = (function () {
                     // update statistics
                     var songsPlayed = Settings.get("songsPlayed");
                     Settings.set("songsPlayed", songsPlayed + 1);
-
-                    showNotification({
-                        artist: playlist[playlistIndex].artist.trim(),
-                        track: playlist[playlistIndex].title.trim(),
-                        cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
-                    });
                 }
             }
 
@@ -387,6 +381,13 @@ Sounds = (function () {
             }
 
             this.play(nextTrackIndex);
+
+            showNotification({
+                artist: playlist[nextTrackIndex].artist.trim(),
+                track: playlist[nextTrackIndex].title.trim(),
+                cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null,
+                show: autoSwitch
+            });
         },
 
         playPrev: function Sounds_playPrev() {
