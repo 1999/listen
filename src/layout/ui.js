@@ -1,4 +1,4 @@
-window.onerror = function(msg, url, line) {
+window.onerror = function (msg, url, line, column, trace) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
     console.error(msgError);
 
@@ -6,7 +6,8 @@ window.onerror = function(msg, url, line) {
         CPA.sendEvent("Errors", chrome.runtime.getManifest().version, {
             msg: msg,
             url: url,
-            line: line
+            line: line,
+            trace: trace || ""
         });
     }
 };
