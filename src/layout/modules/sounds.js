@@ -104,11 +104,20 @@ Sounds = (function () {
             }
         }
 
-        // var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
-        // if (Lastfm.isAuthorized && playlistIndex !== -1) {
-        //     var trackPlaylistData = playlist[playlistIndex];
-        //     Lastfm.scrobble(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
-        // }
+        // The track must be longer than 30 seconds.
+        // And the track has been played for at least half its duration, or for 4 minutes (whichever occurs earlier.)
+        // @see http://www.lastfm.ru/api/scrobbling#scrobble-requests
+        if (!this.container.scrobbled && this.duration > 30) {
+            if (this.currentTime > this.duration / 2 || this.currentTime >= 4 * 60) {
+                var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
+                if (Lastfm.isAuthorized && playlistIndex !== -1) {
+                    var trackPlaylistData = playlist[playlistIndex];
+                    Lastfm.scrobble(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
+
+                    this.container.scrobbled = true;
+                }
+            }
+        }
     }
 
     function onPlayContinue() {
@@ -229,6 +238,7 @@ Sounds = (function () {
     function Track(audioSrc) {
         this.dom = new Audio(audioSrc);
         this.dom.volume = Settings.get("volume");
+        this.dom.container = this;
 
         this.dom
             .bind("timeupdate", updateProgressElem)
