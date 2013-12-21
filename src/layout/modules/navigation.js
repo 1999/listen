@@ -256,33 +256,7 @@ Navigation = (function () {
         // update search input data
         $("header input[type='search']").val("");
 
-        parallel({
-            isTrackingPermitted: function (callback) {
-                CPA.isTrackingPermitted(callback);
-            },
-            contest: function (callback) {
-                chrome.storage.local.get("appInstallDate", function (records) {
-                    var output = "";
-
-                    var randNum = Math.random().toString().substr(2);
-                    var appInstallDate = records.appInstallDate + "";
-                    var isAuthorized = Settings.get("vkToken").length ? 1 : 0;
-
-                    var randChar = Math.random().toString().substr(2).split("").map(function (charCode) {
-                        return String.fromCharCode(parseInt(charCode, 10) + 97);
-                    }).join("");
-
-                    for (var i = 0; i < 13; i++) {
-                        output += (randChar[i] || "z");
-                        output += appInstallDate[i];
-                        output += (randNum[i] || "0");
-                    }
-
-                    output += isAuthorized;
-                    callback(output);
-                });
-            }
-        }, function (results) {
+        CPA.isTrackingPermitted(function (isTrackingPermitted) {
             Templates.render("settings", {
                 vkAuthTitle: chrome.i18n.getMessage("vkAuthTitle"),
                 dropVkAuth: chrome.i18n.getMessage("dropVkAuth"),
@@ -291,14 +265,12 @@ Navigation = (function () {
                 dropLastFmAuth: chrome.i18n.getMessage("dropLastFmAuth"),
                 getLastFmAuth: chrome.i18n.getMessage("getLastFmAuth"),
                 sendStatisticsTitle: chrome.i18n.getMessage("sendStatisticsTitle"),
-                sendStat: results.isTrackingPermitted,
+                sendStat: isTrackingPermitted,
                 showNotificationsTitle: chrome.i18n.getMessage("showNotificationsTitle"),
                 showNotifications: Settings.get("showNotifications"),
                 saved: chrome.i18n.getMessage("saved"),
                 yes: chrome.i18n.getMessage("yes"),
-                no: chrome.i18n.getMessage("no"),
-                contestTitle: chrome.i18n.getMessage("contestTitle", Config.constants.vk_contest_url),
-                contestCode: results.contest
+                no: chrome.i18n.getMessage("no")
             }, function (html) {
                 fillContent(html, "", function () {
                     // set transitionend listeners

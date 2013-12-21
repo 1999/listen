@@ -115,10 +115,6 @@
         "en": "Save into Google Drive cloud for further local access",
         "ru": "Сохранить в облако Google Drive для локального доступа"
     },
-    "contestTitle": {
-        "en": "Code for participating in <a href='$1' target='_blank'>contest</a>",
-        "ru": "Код для участия в <a href='$1' target='_blank'>конкурсе</a>"
-    },
     "continue": {
         "en": "Next",
         "ru": "Продолжить"
