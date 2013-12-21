@@ -76,16 +76,30 @@ Lastfm = (function () {
                 tracks: function (callback) {
                     makeAPIRequest("GET", false, {
                         method: "artist.gettoptracks",
-                        limit: 10,
+                        limit: 15,
                         artist: searchQuery
                     }, function (xml) {
                         var tracks = [];
+                        var trackTitles = {};
 
-                        [].forEach.call(xml.querySelectorAll("toptracks > track"), function (track) {
+                        [].forEach.call(xml.querySelectorAll("toptracks > track"), function (track, index) {
+                            if (tracks.length >= 10) {
+                                return;
+                            }
+
+                            // sometimes there are "Big city life" and "big city life" tracks in API response
+                            // fight this with trackTitles
+                            var title = track.querySelector("name").textContent.toLowerCase();
+                            if (trackTitles[title]) {
+                                return;
+                            }
+
                             tracks.push({
-                                song: track.querySelector("name").textContent,
+                                song: title,
                                 duration: track.querySelector("duration").textContent
                             });
+
+                            trackTitles[title] = 1;
                         });
 
                         callback(tracks);
