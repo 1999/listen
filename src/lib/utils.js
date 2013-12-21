@@ -372,4 +372,26 @@
 
         return output;
     };
+
+    exports.requestID3v1 = function (blob, callback) {
+        var nullRegex = new RegExp(String.fromCharCode(0), "g");
+        var reader = new FileReader;
+
+        reader.onloadend = function () {
+            if (!reader.result) {
+                console.error("FileReader result is empty");
+                callback();
+            } else {
+                var output = reader.result.replace(nullRegex, "").trim();
+                callback(output);
+            }
+        };
+
+        reader.onerror = function (evt) {
+            console.error(evt);
+            callback();
+        };
+
+        reader.readAsText(blob, "windows-1251");
+    };
 })(window);

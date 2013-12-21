@@ -89,8 +89,8 @@ Sounds = (function () {
     }
 
     function updateProgressElem() {
-        var audioSrc = this.attr("src").replace(/'/g, "\\'");
-        var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
+        var audioSrc = this.attr("src");
+        var trackContainer = $(".music p.song[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
         var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
         $("footer .song-playing-progress").css("width", width);
@@ -110,11 +110,20 @@ Sounds = (function () {
         if (!this.container.scrobbled && this.duration > 30) {
             if (this.currentTime > this.duration / 2 || this.currentTime >= 4 * 60) {
                 var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
-                if (Lastfm.isAuthorized && playlistIndex !== -1) {
-                    var trackPlaylistData = playlist[playlistIndex];
-                    Lastfm.scrobble(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
+                var duration = this.duration;
 
+                if (Lastfm.isAuthorized && playlistIndex !== -1) {
                     this.container.scrobbled = true;
+
+                    getID3v1Data(audioSrc, function (data) {
+                        var trackPlaylistData = playlist[playlistIndex];
+
+                        data = data || {};
+                        data.artist = data.artist || trackPlaylistData.artist;
+                        data.title = data.title || trackPlaylistData.title;
+
+                        Lastfm.scrobble(data.artist, data.title, null, null, Math.round(duration));
+                    });
                 }
             }
         }
@@ -136,17 +145,23 @@ Sounds = (function () {
     }
 
     function onDurationChange() {
+        var audioSrc = this.attr("src");
+        var duration = this.duration;
+
         var playlistIndex = getPlaylistIndexOfURL(this.attr("src"));
         if (!Lastfm.isAuthorized || playlistIndex === -1) {
             return;
         }
 
-        var trackPlaylistData = playlist[playlistIndex];
-        Lastfm.updateNowPlaying(trackPlaylistData.artist, trackPlaylistData.title, null, null, Math.round(this.duration));
+        getID3v1Data(audioSrc, function (data) {
+            var trackPlaylistData = playlist[playlistIndex];
 
-        // getID3v1Data(audioSrc, function (data) {
-        //     console.log(JSON.stringify(data));
-        // });
+            data = data || {};
+            data.artist = data.artist || trackPlaylistData.artist;
+            data.title = data.title || trackPlaylistData.title;
+
+            Lastfm.updateNowPlaying(data.artist, data.title, null, null, Math.round(duration));
+        });
     }
 
     function updateRateCounter() {
@@ -195,22 +210,19 @@ Sounds = (function () {
 
                         parallel({
                             tag: function (callback) {
-                                readBinary(blob.slice(0, 3, "text/plain"), callback);
+                                requestID3v1(blob.slice(0, 3, "text/plain"), callback);
                             },
                             artist: function (callback) {
-                                readBinary(blob.slice(33, 63, "text/plain"), callback);
+                                requestID3v1(blob.slice(33, 63, "text/plain"), callback);
                             },
                             title: function (callback) {
-                                readBinary(blob.slice(3, 33, "text/plain"), callback);
+                                requestID3v1(blob.slice(3, 33, "text/plain"), callback);
                             }
                         }, function (res) {
                             if (res.tag !== "TAG")
                                 return callback();
 
-                            callback({
-                                artist: res.artist.trim(),
-                                title: res.title.trim()
-                            });
+                            callback(res);
                         });
                     },
                     onerror: function (evt) {
@@ -224,15 +236,6 @@ Sounds = (function () {
                 callback();
             }
         });
-    }
-
-    function readBinary(blob, callback) {
-        var reader = new FileReader;
-        reader.onloadend = function () {
-            callback(reader.result);
-        };
-
-        reader.readAsBinaryString(blob);
     }
 
     function Track(audioSrc) {
