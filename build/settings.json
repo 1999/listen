@@ -2,7 +2,7 @@
     "local": {
         "appUsedToday": true, /* использовалось ли приложение сегодня */
         "changelog": [], /* viewed changelog keys */
-        "headerPay": {
+        "headerOverlayActions": {
             "yamoney": 0,
             "vkrepost": 0,
             "ratecws": 0,

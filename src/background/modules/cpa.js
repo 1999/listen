@@ -32,7 +32,7 @@ CPA = (function () {
             case "dayuse":
                 chrome.storage.local.get({
                     "settings.songsPlayed": Config.default_settings_local.songsPlayed,
-                    "settings.headerPay": Config.default_settings_local.headerPay,
+                    "settings.headerOverlayActions": Config.default_settings_local.headerOverlayActions,
                     "settings.lastfmToken": Config.default_settings_local.lastfmToken,
                     "settings.vkToken": Config.default_settings_local.vkToken,
                     "settings.appUsedToday": Config.default_settings_local.appUsedToday
@@ -47,9 +47,9 @@ CPA = (function () {
                         CPA.sendEvent("Lyfecycle", "Dayuse.New", "Played songs", records["settings.songsPlayed"]); // total played songs
                         CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is scrobbling", (records["settings.lastfmToken"].length > 0)); // LFM users
 
-                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header CWS clicks", records["settings.headerPay"].ratecws); // header CWS clicks
-                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header YaMoney clicks", records["settings.headerPay"].yamoney); // header Yamoney clicks
-                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header Close clicks", records["settings.headerPay"].close); // header Close clicks
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header CWS clicks", records["settings.headerOverlayActions"].ratecws); // header CWS clicks
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header YaMoney clicks", records["settings.headerOverlayActions"].yamoney); // header Yamoney clicks
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Header Close clicks", records["settings.headerOverlayActions"].close); // header Close clicks
                     }
                 });
 

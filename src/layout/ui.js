@@ -160,9 +160,9 @@ parallel({
             selector: ".pay .pay-close",
             evtType: "click",
             callback: function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.close += 1;
-                Settings.set("headerPay", headerPay);
+                var headerOverlayActions = Settings.get("headerOverlayActions");
+                headerOverlayActions.close += 1;
+                Settings.set("headerOverlayActions", headerOverlayActions);
 
                 Settings.set("headerRateCounter", 0);
                 this.closestParent("div.pay").remove();
@@ -175,9 +175,9 @@ parallel({
             selector: ".pay .pay-cwsrate",
             evtType: "click",
             callback: function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.ratecws += 1;
-                Settings.set("headerPay", headerPay);
+                var headerOverlayActions = Settings.get("headerOverlayActions");
+                headerOverlayActions.ratecws += 1;
+                Settings.set("headerOverlayActions", headerOverlayActions);
 
                 window.open(Config.constants.cws_app_link + "/reviews");
 
@@ -192,10 +192,10 @@ parallel({
             selector: ".pay .pay-vkrepost",
             evtType: "click",
             callback: function (evt) {
-                var headerPay = Settings.get("headerPay");
-                headerPay.vkrepost = headerPay.vkrepost || 0; // vk repost appeared when ya.money completely failed
-                headerPay.vkrepost += 1;
-                Settings.set("headerPay", headerPay);
+                var headerOverlayActions = Settings.get("headerOverlayActions");
+                headerOverlayActions.vkrepost = headerOverlayActions.vkrepost || 0; // vk repost appeared when ya.money completely failed
+                headerOverlayActions.vkrepost += 1;
+                Settings.set("headerOverlayActions", headerOverlayActions);
 
                 window.open(Config.constants.vk_repost_url);
 

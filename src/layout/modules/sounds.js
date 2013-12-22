@@ -165,26 +165,54 @@ Sounds = (function () {
     }
 
     function updateRateCounter() {
-        // @todo может быть открыта страница настроек с уже показанным приложением
-        var payElem = $("header div.pay");
+        // headerPayOverlay should be shown after %return% songs
+        // take Fibonacci numbers where second number is 100
+        // skip 2 numbers, start from the second from the beginning
+        function getSongsLevelByRate(rate) {
+            var fibonacciIndex = rate * 3 + 2; // 100, 500, 2100, ...
+            var numbers = [];
+            var iterNumber;
+
+            // calculate numbers
+            for (var i = 0; i <= fibonacciIndex; i++) {
+                switch (i) {
+                    case 0:
+                        iterNumber = 0;
+                        break;
+
+                    case 1:
+                        iterNumber = 100;
+                        break;
+
+                    default:
+                        iterNumber = numbers[i - 1] + numbers[i - 2];
+                        break;
+                }
+
+                numbers.push(iterNumber);
+            }
+
+            return numbers.pop();
+        }
 
         var currentCnt = Settings.get("headerRateCounter") + 1;
         Settings.set("headerRateCounter", currentCnt);
 
-        if (currentCnt >= Config.constants.header_rate_limit && !payElem) {
-            var headerPay = Settings.get("headerPay");
-            var totalCloseActions = 0;
+        var payElem = $("header div.pay");
+        var headerOverlayActions = Settings.get("headerOverlayActions");
+        var totalCloseActions = 0;
 
-            for (var key in headerPay) {
-                totalCloseActions += headerPay[key];
-            }
+        for (var key in headerOverlayActions) {
+            totalCloseActions += headerOverlayActions[key];
+        }
 
+        var songsNumToShowOverlay = getSongsLevelByRate(totalCloseActions);
+        if (currentCnt >= songsNumToShowOverlay && !payElem) {
             Templates.render("header-pay", {
                 payText: chrome.i18n.getMessage("headerCallActionText", [chrome.runtime.getManifest().name, Config.constants.vk_repost_url, Config.constants.cws_app_link]),
                 vkRepost: chrome.i18n.getMessage("vkRepost"),
                 cwsRate: chrome.i18n.getMessage("rateCWS"),
-                close: chrome.i18n.getMessage("close"),
-                hideClose: ((totalCloseActions % 5) === 1) // hide close every 5th show
+                close: chrome.i18n.getMessage("close")
             }, function (html) {
                 $("header").append(html);
             });

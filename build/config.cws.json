@@ -6,7 +6,6 @@
     "constants": {
         "vk_app_id": 2671008,
         "lastfm_api_key": "33d53f603c3f548e9bc4a3b4a1430a67",
-        "lastfm_api_sig": "5c72e97cb07c52c39ca412b71dcfb7a7",
-        "header_rate_limit": 100
+        "lastfm_api_sig": "5c72e97cb07c52c39ca412b71dcfb7a7"
     }
 }
