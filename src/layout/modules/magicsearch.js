@@ -69,6 +69,7 @@ MagicSearch = (function () {
                     Templates.render("songs", {
                         songs: [bestTrack],
                         showDownload: Settings.get("showDownloadButtons"),
+                        progress: false
                     }, function (html) {
                         // delete existing song container & its progress bar if exists
                         var existingSong = $(".music p.song[data-url='" + bestTrack.source + "']");
@@ -78,7 +79,7 @@ MagicSearch = (function () {
 
                         var existingPlayingProgress = $(".music .song-playing-bg[data-url='" + bestTrack.source + "']");
                         if (existingPlayingProgress) {
-                            existingPlayingProgress.remove();
+                            existingPlayingProgress.addClass("hidden");
                         }
 
                         // replace text with song container

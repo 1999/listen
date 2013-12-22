@@ -344,7 +344,8 @@ Navigation = (function () {
                         songs: data.songs,
                         more: more,
                         showDownload: Settings.get("showDownloadButtons"),
-                        type: "current"
+                        type: "current",
+                        progress: true
                     }, callback);
                 });
             },
@@ -385,7 +386,8 @@ Navigation = (function () {
         SyncFS.requestCurrentFilesList(function (songs) {
             Templates.render("songs", {
                 songs: songs,
-                showDownload: false
+                showDownload: false,
+                progress: true
             }, function (music) {
                 fillContent("", music, function () {
                     // update songs data from Google Drive syncable filesystem
@@ -450,7 +452,8 @@ Navigation = (function () {
                         type: "global",
                         query: searchQuery,
                         mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),
-                        popular: popularSongsQueue
+                        popular: popularSongsQueue,
+                        progress: true
                     }, callback);
                 }
             }, function (data) {
@@ -517,7 +520,8 @@ Navigation = (function () {
                         type: "artist",
                         query: artist,
                         mostPopularTracks: chrome.i18n.getMessage("mostPopularTracks"),
-                        popular: popularSongsQueue
+                        popular: popularSongsQueue,
+                        progress: true
                     }, callback);
                 }
             }, function (data) {

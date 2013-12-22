@@ -91,6 +91,18 @@
         "en": "Drag'n'drop files or folders to app's window to upload your MP3 files to VK. Music uploading has never been easier!",
         "ru": "Можно загружать MP3-файлы со своего компьютера в аудиозаписи <strong>перетаскиванием файлов или папок прямо в окно приложения</strong> - загрузка музыки никогда не была проще!"
     },
+    "changelog_4_8_lfm_scrobbling": {
+        "en": "LastFM scrobbling process is now working as expected: <strong>data is taken from id3v1 tags</strong>, and requests are sent after half of the song is over",
+        "ru": "Исправлен скробблинг в LastFM: <strong>данные берутся в первую очередь из id3v1 тэгов</strong>, отправляются при прослушивании более половины песни, а не сразу при старте"
+    },
+    "changelog_4_8_notifications": {
+        "en": "Notifications about a new song are working good. They won't bother you if you choose the track manually",
+        "ru": "Исправлен показ уведомлений о новой песне. Уведомления больше не будут всплывать при ручном выборе песен"
+    },
+    "changelog_4_8_recommend_work": {
+        "en": "A huge recommendations rework is going on right now. Stay tuned for more :)",
+        "ru": "Продолжается большая работа по улучшению внешнего вида рекомендаций. Не переключайтесь :)"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"

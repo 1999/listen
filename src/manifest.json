@@ -23,6 +23,11 @@
     },
 
     "changelog": {
+        "4.8": [
+            "lfm_scrobbling",
+            "notifications",
+            "recommend_work"
+        ],
         "4.1": [
             "dnd"
         ],

@@ -402,7 +402,10 @@ parallel({
                 var queryString = this.data("query");
 
                 var onDataReady = function (data) {
-                    Templates.render("songs", {songs: data.songs}, function (music) {
+                    Templates.render("songs", {
+                        songs: data.songs,
+                        progress: false
+                    }, function (music) {
                         var newTotalSongsListed = totalSongsListed + data.songs.length;
                         self.removeClass("loading").before(music);
 
