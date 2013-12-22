@@ -250,6 +250,8 @@ Lastfm = (function () {
                 });
 
                 callback(output);
+            }, function () {
+                callback([]);
             });
         }
     };

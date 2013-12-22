@@ -274,7 +274,12 @@
         }
 
         if (options.onload) {
-            xhr.onload = function () {
+            xhr.onload = function (evt) {
+                if (/^5/.test(xhr.status)) {
+                    options.onerror && options.onerror.call(ctx || xhr, evt);
+                    return;
+                }
+
                 var responseXML = null;
 
                 if (isXML && !xhr.responseXML) {
