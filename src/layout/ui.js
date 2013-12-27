@@ -1,4 +1,4 @@
-window.onerror = function (msg, url, line, column, trace) {
+window.onerror = function (msg, url, line, column, err) {
     var msgError = msg + " in " + url + " (line: " + line + ")";
     console.error(msgError);
 
@@ -7,7 +7,7 @@ window.onerror = function (msg, url, line, column, trace) {
             msg: msg,
             url: url,
             line: line,
-            trace: trace || ""
+            trace: err && err.stack || ""
         });
     }
 };
