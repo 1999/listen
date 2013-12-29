@@ -387,7 +387,9 @@ Navigation = (function () {
             Templates.render("songs", {
                 songs: songs,
                 showDownload: false,
-                progress: true
+                progress: true,
+                showRemove: true,
+                removeTitle: chrome.i18n.getMessage("removeTitle")
             }, function (music) {
                 fillContent("", music, function () {
                     // update songs data from Google Drive syncable filesystem

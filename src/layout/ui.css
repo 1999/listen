@@ -523,7 +523,8 @@ figcaption a {
 .song .pause,
 .song .cloud,
 .song .download,
-.song .add
+.song .add,
+.song .remove
  {
     margin-right: 6px;
     cursor: pointer;

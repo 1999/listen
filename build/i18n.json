@@ -231,6 +231,10 @@
         "en": "Rate in Web Store",
         "ru": "Оценить в Web Store"
     },
+    "removeTitle": {
+        "en": "Delete from Google Drive",
+        "ru": "Удалить из Облака"
+    },
     "saved": {
         "en": "Saved",
         "ru": "Сохранено"

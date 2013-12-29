@@ -10,6 +10,17 @@ SyncFS = (function () {
         }
     });
 
+    chrome.syncFileSystem.onFileStatusChanged.addListener(function (details) {
+        chrome.syncFileSystem.requestFileSystem(function (fs) {
+            var dirReader = fs.root.createReader();
+            dirReader.readEntries(function (results) {
+                $("header span.header-local span.counter").text(results.length || "");
+            }, function (err) {
+                throw new Error(err);
+            });
+        });
+    });
+
     function getArtistAndTitle(fileEntry, callback) {
         var defaultArtist = chrome.i18n.getMessage("unknownArtist");
         var defaultTrack = chrome.i18n.getMessage("unknownTrack");
@@ -92,7 +103,7 @@ SyncFS = (function () {
 
                         // @todo duplicating VK module. needs refactoring
                         output.push({
-                            id: null,
+                            id: fileEntry.name,
                             source: fileEntry.toURL(),
                             ownerId: null,
                             noadd: true,
@@ -118,6 +129,14 @@ SyncFS = (function () {
 
                         callback(output);
                     });
+                });
+            });
+        },
+
+        remove: function SyncFS_remove(fileName, callback) {
+            chrome.syncFileSystem.requestFileSystem(function (fs) {
+                fs.root.getFile(fileName, {create: false}, function (fileEntry) {
+                    fileEntry.remove(callback);
                 });
             });
         },

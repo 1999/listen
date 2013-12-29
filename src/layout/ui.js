@@ -363,6 +363,20 @@ parallel({
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Cloud downloads", 1);
             }
         },
+        // remove file from Google Drive cloud
+        {
+            selector: ".music .remove",
+            evtType: "click",
+            callback: function (evt) {
+                evt.stopImmediatePropagation();
+                var songElem = this.closestParent("p.song");
+
+                SyncFS.remove(songElem.data("vkid"), function () {
+                    songElem.remove();
+                    Sounds.updatePlaylist();
+                });
+            }
+        },
         // add music file to own audio
         {
             selector: ".music .add",

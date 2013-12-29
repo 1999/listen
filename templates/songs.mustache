@@ -20,10 +20,14 @@
         <span class="glyphicon glyphicon-cloud-upload cloud{{#pending}} pending{{/pending}}" title="{{cloudTitle}}" data-artist="{{artist}}" data-title="{{song}}"></span>
 
         {{#showDownload}}
-        <a href="{{source}}" download="{{artist}} - {{song}}.mp3">
-            <span class="glyphicon glyphicon-floppy-save download" title="{{downloadTitle}}"></span>
-        </a>
+            <a href="{{source}}" download="{{artist}} - {{song}}.mp3">
+                <span class="glyphicon glyphicon-floppy-save download" title="{{downloadTitle}}"></span>
+            </a>
         {{/showDownload}}
+
+        {{#showRemove}}
+            <span class="glyphicon glyphicon-remove remove" title="{{removeTitle}}"></span>
+        {{/showRemove}}
 
         <span title="{{addTitle}}" class="glyphicon glyphicon-plus add{{#noadd}} hidden{{/noadd}}"></span>
 
