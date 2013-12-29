@@ -14,7 +14,6 @@
                 "lib/md5.js",
                 "lib/cpa.js",
                 "background/modules/templates.js",
-                "background/modules/syncfs.js",
                 "background/modules/cpa.js",
                 "background/modules/covers.js",
                 "background/core.js"
