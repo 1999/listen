@@ -127,58 +127,18 @@ Navigation = (function () {
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
-            var lessonNeeds, tplData;
-            var lessonsPassed = Settings.get("study");
+            $(".info").html(infoHTML);
+            $(".music").html(musicHTML);
 
-            // if user has already authorized in LastFM
-            // there's no need to encourage him to do that afterwards when he logs out
-            if (Lastfm.isAuthorized && lessonsPassed.indexOf("lastfm") === -1) {
-                lessonsPassed.push("lastfm");
-                Settings.set("study", lessonsPassed);
-            }
-
-            if (lessonsPassed.indexOf("cloud") === -1) {
-                lessonNeeds = "cloud";
-            } else if (lessonsPassed.indexOf("lastfm") === -1 && !Lastfm.isAuthorized && Navigation.currentView !== "settings") {
-                lessonNeeds = "lastfm";
-            }
-
-            if (!lessonNeeds) {
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
-                return;
-            }
-
-            switch (lessonNeeds) {
-                case "cloud":
-                    tplData = {
-                        text: chrome.i18n.getMessage("cloudStudyText", chrome.runtime.getManifest().name),
-                        downloadText: chrome.i18n.getMessage("cloudStudyDownload"),
-                        listText: chrome.i18n.getMessage("cloudStudyList")
-                    };
-
-                    break;
-
-                case "lastfm":
-                    tplData = {
-                        text: chrome.i18n.getMessage("advLastFM"),
-                        authTitle: chrome.i18n.getMessage("getLastFmAuth"),
-                        close: chrome.i18n.getMessage("close")
-                    };
-
-                    break;
-            }
-
-            Templates.render("info-callout-" + lessonNeeds, tplData, function (studyHTML) {
-                infoHTML = studyHTML + infoHTML;
-
-                $(".info").html(infoHTML);
-                $(".music").html(musicHTML);
-
-                callback && callback();
+            // 100%-sure cloud status
+            SyncFS.downloadedIds.forEach(function (vkId) {
+                var cloudIcon = $(".song[data-vkid='" + vkId + "'] .cloud");
+                if (cloudIcon) {
+                    cloudIcon.addClass("pending");
+                }
             });
+
+            callback && callback();
         };
 
         $(".loading-content .spinner").addClass("spinner-transition", "spinner-transparent").bind("transitionend", onTransitionEnd);

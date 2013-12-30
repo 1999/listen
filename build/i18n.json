@@ -3,10 +3,6 @@
         "en": "Add to my audio",
         "ru": "Добавить в мои аудиозаписи"
     },
-    "advLastFM": {
-        "en": "Similar artist and album list is working with LastFM API. Furthermore LastFM can recommend you similar artists depending on your musical taste. Start using LastFM right now!",
-        "ru": "Поиск похожих исполнителей и альбомов работает на технологиях LastFM. Помимо этого LastFM умеет рекомендовать похожих исполнителей, основываясь на твоем вкусе. Начни использовать LastFM прямо сейчас!"
-    },
     "allFilesProcessed": {
         "en": "All files processed",
         "ru": "Загрузка файлов закончена"
@@ -110,18 +106,6 @@
     "cloudListTitle": {
         "en": "List all music files in the cloud",
         "ru": "Показать список файлов в облаке"
-    },
-    "cloudStudyDownload": {
-        "en": "This button is located near every song link. If you click this button you will <strong>start saving music file from VK to your Google Drive cloud</strong>. If this button is inactive then probably you have saved this file before or you're not authorized on current Chrome device",
-        "ru": "При нажатии на эту иконку, расположенную около каждой песни, ты сможешь <strong>сохранить песню из ВКонтакте в облако</strong> Google Drive. Если эта кнопка неактивна, то скорее всего песня уже была сохранена в облако или ты не авторизован в Chrome"
-    },
-    "cloudStudyList": {
-        "en": "This button is located in the upper right corner of the app window. You will see the <strong>list of music files in your Google Drive cloud</strong> if you click on this button. Also there can be a little counter nearby - this is a number of files in your cloud",
-        "ru": "А эта иконка расположена в верхнем правом углу окна приложения. При нажатии на нее откроется <strong>список песен в твоем облаке</strong> Google Drive. Еще около нее может показываться количество песен в облаке"
-    },
-    "cloudStudyText": {
-        "en": "<strong>$1</strong> app can <strong>save music files from VK to your Google Drive cloud</strong> and play them. These files will become available on all your Chrome devices",
-        "ru": "Приложение <strong>$1</strong> позволяет <strong>сохранять музыку из ВКонтакте в облако Google Drive и проигрывать её</strong> оттуда. После сохранения песни в облако она станет доступна локально на всех твоих компьютерах с Chrome"
     },
     "cloudTitle": {
         "en": "Save into Google Drive cloud for further local access",
