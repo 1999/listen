@@ -205,24 +205,9 @@ parallel({
                 evt.stopImmediatePropagation();
             }
         },
-        // close study layer(s)
-        {
-            selector: ".study button.close",
-            evtType: "click",
-            callback: function (evt) {
-                var container = this.closestParent(".study");
-                var currentStudy = Settings.get("study");
-
-                currentStudy.push(container.data("study"));
-                Settings.set("study", currentStudy);
-
-                container.remove();
-                evt.stopImmediatePropagation();
-            }
-        },
         // get LFM token
         {
-            selector: ".study .study-lastfm-auth, .settings .get-lastfm-token",
+            selector: ".settings .get-lastfm-token",
             evtType: "click",
             callback: function (evt) {
                 var btn = this.attr("disabled", "disabled");

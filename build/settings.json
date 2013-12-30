@@ -15,7 +15,7 @@
         "showNotifications": true,
         "songsPlayed": 0,
         "songsPlayingMode": "", /* shuffle или repeat */
-        "study": [], /* показанные обучалки */
+        "studyCloud": false, /* is it neccessary to study user about Google Drive */
         "tests": [], /* названия необходимых тестов */
         "vkToken": "", /* токен ВКонтакте */
         "volume": 0.8 /* громкость */

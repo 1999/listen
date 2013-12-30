@@ -122,6 +122,7 @@ window.onerror = function(msg, url, line, column, err) {
                 }
 
                 records["settings.changelog"] = seenChangelog;
+                records["settings.studyCloud"] = true;
                 chrome.storage.local.set(records);
                 break;
 
