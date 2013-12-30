@@ -239,6 +239,10 @@
         "en": "Saved",
         "ru": "Сохранено"
     },
+    "savingToTheCloud": {
+        "en": "Uploading $2 ($1) song to Google Drive cloud...",
+        "ru": "Загружаю трек $2 ($1) в облако Google Drive..."
+    },
     "searchPlaceholder": {
         "en": "Search artists, songs and albums",
         "ru": "Поиск исполнителей, песен и альбомов"
