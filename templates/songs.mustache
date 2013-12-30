@@ -17,7 +17,9 @@
         <span class="glyphicon glyphicon-play play"></span>
         <span class="glyphicon glyphicon-pause pause hidden"></span>
 
-        <span class="glyphicon glyphicon-cloud-upload cloud{{#pending}} pending{{/pending}}" title="{{cloudTitle}}" data-artist="{{artist}}" data-title="{{song}}"></span>
+        {{^hideCloud}}
+            <span class="glyphicon glyphicon-cloud-upload cloud{{#pending}} pending{{/pending}}" title="{{cloudTitle}}" data-artist="{{artist}}" data-title="{{song}}"></span>
+        {{/hideCloud}}
 
         {{#showDownload}}
             <a href="{{source}}" download="{{artist}} - {{song}}.mp3">

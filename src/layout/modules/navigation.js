@@ -347,6 +347,7 @@ Navigation = (function () {
             Templates.render("songs", {
                 songs: songs,
                 showDownload: false,
+                hideCloud: true,
                 progress: true,
                 showRemove: true,
                 removeTitle: chrome.i18n.getMessage("removeTitle")

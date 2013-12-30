@@ -229,7 +229,6 @@ SyncFS = (function () {
                             artist: null,
                             song: null,
                             duration: "0:00",
-                            pending: true,
                             cloudTitle: cloudTitle,
                             downloadTitle: downloadTitle,
                             addTitle: addTitle
@@ -263,7 +262,10 @@ SyncFS = (function () {
                             }
                         }
 
-                        fileEntry.remove(callback, onStatusChange);
+                        fileEntry.remove(function () {
+                            onStatusChange();
+                            callback();
+                        });
                     });
                 });
             });
