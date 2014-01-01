@@ -13,8 +13,9 @@ SyncFS = (function () {
 
     // load downloaded files vkids immediately
     chrome.syncFileSystem.requestFileSystem(function (fs) {
-        if (!fs)
-            return;
+        if (!fs) {
+            throw new Error("Syncable filesystem doesn't exist");
+        }
 
         var dirReader = fs.root.createReader();
         dirReader.readEntries(function (results) {
@@ -59,7 +60,7 @@ SyncFS = (function () {
 
                 callback(cnt);
             }, function (err) {
-                throw new Error(err);
+                throw new Error(err.message + " (code " + err.code + ")");
             });
         });
     }
@@ -247,6 +248,8 @@ SyncFS = (function () {
 
                         callback(output);
                     });
+                }, function (err) {
+                    throw new Error(err.message + " (code " + err.code + ")");
                 });
             });
         },
