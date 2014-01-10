@@ -537,6 +537,7 @@ figcaption a {
     padding: 5px 0;
     background: #e8e8e8;
     z-index: 1;
+    border-bottom: 4px solid #5BC0DE;
 }
 
 .song .play,
@@ -568,7 +569,7 @@ figcaption a {
 
 footer {
     background: white;
-    padding: 12px 0 8px 8px;
+    padding: 8px 0 8px 8px;
     position: fixed;
     width: 100%;
     bottom: 0;
@@ -577,6 +578,12 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    box-shadow: 0 0 6px #888;
+}
+
+footer .footer-player {
+    position: relative;
+    z-index: 2;
 }
 
 footer .player-buttons,
@@ -587,7 +594,6 @@ footer .mode-volume {
 
 footer .mode-volume {
     padding-right: 8px;
-    background: white;
 }
 
 footer .player-buttons > span,
@@ -630,19 +636,10 @@ footer input[type='range'] {
     margin-left: 8px;
 }
 
-footer .song-playing-bg {
-    height: 4px;
+footer .song-playing-progress {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    cursor: pointer;
-    background: #dadada;
-}
-
-footer .song-playing-bg .song-playing-progress {
-    background: #5BC0DE;
-    height: 4px;
-    display: inline-block;
-    vertical-align: top;
+    bottom: 0;
+    background: #e8e8e8;
 }

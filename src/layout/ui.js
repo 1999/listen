@@ -518,20 +518,6 @@ parallel({
                 }
             }
         },
-        // set playing track current time
-        {
-            selector: "footer .song-playing-bg",
-            evtType: "click",
-            callback: function (evt) {
-                var isPlaying = $("footer span.play").hasClass("hidden");
-                var percent = evt.layerX / document.body.clientWidth;
-
-                if (!isPlaying)
-                    return;
-
-                Sounds.updateCurrentTime(percent);
-            }
-        },
         {
             selector: "header input[type='search']",
             evtType: "keyup",
