@@ -247,6 +247,22 @@
         "en": "Similar artists",
         "ru": "Похожие исполнители"
     },
+    "syncfsBroken": {
+        "en": "Oops, an error occured<sup>**</sup> when $1 app was loading the list of tracks in your Cloud. Restart Google Chrome<sup>*</sup> to fix this problem.",
+        "ru": "При загрузке треков из Облака произошла ошибка<sup>**</sup>. Попробуй перезагрузить Google Chrome<sup>*</sup>, после чего эта ошибка должна пропасть"
+    },
+    "syncfsBrokenGetFile": {
+        "en": "Oops, something went wrong when uploading file to Google Drive cloud. Restart your Chrome to fix this problem.",
+        "ru": "При загрузке файла в Облако произошла ошибка. Попробуй перезагрузить Google Chrome, это поможет."
+    },
+    "syncfsBrokenTip1": {
+        "en": "This can be done with <a href='$1' target='_blank'>Restart your browser</a> extension",
+        "ru": "Кстати, это очень удобно сделать с помощью расширения <a href='$1' target='_blank'>Restart your browser</a>"
+    },
+    "syncfsBrokenTip2": {
+        "en": "Google Chrome developers have already <a href='$1' target='_blank'>fixed</a> this problem, and expect fix to land in the next Chrome release",
+        "ru": "Разработчики Google Chrome <a href='$1' target='_blank'>обещают</a> исправить эту проблему в следующей версии браузера"
+    },
     "unknownArtist": {
         "en": "Unknown artist",
         "ru": "Неизвестный исполнитель"

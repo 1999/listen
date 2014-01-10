@@ -36,6 +36,8 @@ SyncFS = (function () {
                     }
                 });
             });
+        }, function (err) {
+            throw new Error(err.message + " (code " + err.code + ")");
         });
     });
 
@@ -60,6 +62,7 @@ SyncFS = (function () {
 
                 callback(cnt);
             }, function (err) {
+                callback(0);
                 throw new Error(err.message + " (code " + err.code + ")");
             });
         });
@@ -246,9 +249,10 @@ SyncFS = (function () {
                             output[index].song = data.song;
                         });
 
-                        callback(output);
+                        callback(null, output);
                     });
                 }, function (err) {
+                    callback(err.message + " (code " + err.code + ")");
                     throw new Error(err.message + " (code " + err.code + ")");
                 });
             });
@@ -385,6 +389,16 @@ SyncFS = (function () {
 
                                         fileWriter.write(resultBlob);
                                     });
+                                }, function (err) {
+                                    var songElem = $(".music .song[data-url='" + downloadingURL.replace(/'/g, "\\'") + "']");
+                                    var cloudElem = $(songElem, ".cloud").removeClass("pending");
+
+                                    chrome.notifications.update(notificationId, {
+                                        type: "basic",
+                                        message: chrome.i18n.getMessage("syncfsBrokenGetFile")
+                                    }, function () {});
+
+                                    throw new Error(err.message + " (code " + err.code + ")");
                                 });
                             });
                         });

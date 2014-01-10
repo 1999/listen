@@ -348,7 +348,19 @@ Navigation = (function () {
         Settings.set("studyCloud", false);
         $("header .header-local").removeClass("header-local-blinking");
 
-        SyncFS.requestCurrentFilesList(function (songs) {
+        SyncFS.requestCurrentFilesList(function (err, songs) {
+            if (err) {
+                Templates.render("info-callout-syncfs-broken", {
+                    text: chrome.i18n.getMessage("syncfsBroken", chrome.runtime.getManifest().name),
+                    tip1: chrome.i18n.getMessage("syncfsBrokenTip1", Config.constants.restart_your_browser),
+                    tip2: chrome.i18n.getMessage("syncfsBrokenTip2", Config.constants.syncfs_broken_issue)
+                }, function (html) {
+                    fillContent(html, "");
+                });
+
+                return;
+            }
+
             Templates.render("songs", {
                 songs: songs,
                 showDownload: false,
