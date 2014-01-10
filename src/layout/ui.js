@@ -265,6 +265,9 @@ parallel({
                 Settings.set("vkToken", "");
                 Settings.set("lastfmToken", "");
 
+                Sounds.pause();
+                Sounds.updatePlaylist();
+
                 Navigation.dispatch("guest");
             }
         },

@@ -491,7 +491,7 @@ Sounds = (function () {
 
         pause: function Sounds_pause() {
             if (!playingTrack)
-                throw new Error("Tracks are not playing");
+                return;
 
             playingTrack.dom.pause();
 
