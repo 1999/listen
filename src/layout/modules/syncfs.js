@@ -391,7 +391,9 @@ SyncFS = (function () {
                                     });
                                 }, function (err) {
                                     var songElem = $(".music .song[data-url='" + downloadingURL.replace(/'/g, "\\'") + "']");
-                                    var cloudElem = $(songElem, ".cloud").removeClass("pending");
+                                    if (songElem) {
+                                        $(songElem, ".cloud").removeClass("pending");
+                                    }
 
                                     chrome.notifications.update(notificationId, {
                                         type: "basic",
