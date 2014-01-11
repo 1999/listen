@@ -344,7 +344,7 @@ Navigation = (function () {
         $("header input[type='search']").val("");
 
         // prevent study
-        Settings.set("studyCloud", false);
+        SyncFS.preventStudy();
 
         SyncFS.requestCurrentFilesList(function (err, songs) {
             if (err) {

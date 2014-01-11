@@ -208,6 +208,16 @@ SyncFS = (function () {
 
 
     return {
+        preventStudy: function SyncFS_preventStudy() {
+            var currentStudy = Settings.get("studyCloud");
+            if (!currentStudy)
+                return;
+
+            Settings.set("studyCloud", false);
+
+            // ...
+        },
+
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
             chrome.syncFileSystem.requestFileSystem(function (fs) {
                 var dirReader = fs.root.createReader();
