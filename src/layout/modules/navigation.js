@@ -202,7 +202,6 @@ Navigation = (function () {
             newsTitle: chrome.i18n.getMessage("appNews"),
             settingsTitle: chrome.i18n.getMessage("settings"),
             cloudTitle: chrome.i18n.getMessage("cloudListTitle"),
-            studyCloud: Settings.get("studyCloud"),
             blink: blink
         }, function (html) {
             $(document.body).html(html);
@@ -346,7 +345,6 @@ Navigation = (function () {
 
         // prevent study
         Settings.set("studyCloud", false);
-        $("header .header-local").removeClass("header-local-blinking");
 
         SyncFS.requestCurrentFilesList(function (err, songs) {
             if (err) {
