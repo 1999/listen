@@ -95,9 +95,9 @@
         "en": "Notifications about a new song are working good. They won't bother you if you choose the track manually",
         "ru": "Исправлен показ уведомлений о новой песне. Уведомления больше не будут всплывать при ручном выборе песен"
     },
-    "changelog_4_8_recommend_work": {
-        "en": "A huge recommendations rework is going on right now. Stay tuned for more :)",
-        "ru": "Продолжается большая работа по улучшению внешнего вида рекомендаций. Не переключайтесь :)"
+    "changelog_5_0_cloud": {
+        "en": "Working with Google Drive cloud is now better than before: progress bar is shown when you save file into the cloud and all errors are processed",
+        "ru": "Улучшена работа с Облаком: теперь при сохранении аудиозаписей в Облако виден прогресс, а возможные ошибки устранены"
     },
     "close": {
         "en": "Close",

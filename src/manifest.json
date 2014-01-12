@@ -22,10 +22,12 @@
     },
 
     "changelog": {
+        "5.0": [
+            "cloud"
+        ],
         "4.8": [
             "lfm_scrobbling",
-            "notifications",
-            "recommend_work"
+            "notifications"
         ],
         "4.1": [
             "dnd"
