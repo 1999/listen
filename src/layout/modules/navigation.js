@@ -127,8 +127,8 @@ Navigation = (function () {
         var onTransitionEnd = function () {
             this.unbind("transitionend", onTransitionEnd);
 
-            $(".info").html(infoHTML);
-            $(".music").html(musicHTML);
+            $(".info").html(infoHTML || "");
+            $(".music").html(musicHTML || "");
 
             // 100%-sure cloud status
             SyncFS.downloadedIds.forEach(function (vkId) {
@@ -279,9 +279,7 @@ Navigation = (function () {
             }
         });
 
-        Templates.render("news", tplData, function (html) {
-            fillContent(html, "");
-        });
+        Templates.render("news", tplData, fillContent);
 
         $("header .header-news").removeClass("header-news-blinking");
         Settings.set("changelog", seenChangelog);
@@ -385,9 +383,15 @@ Navigation = (function () {
                     text: chrome.i18n.getMessage("syncfsBroken", chrome.runtime.getManifest().name),
                     tip1: chrome.i18n.getMessage("syncfsBrokenTip1", Config.constants.restart_your_browser),
                     tip2: chrome.i18n.getMessage("syncfsBrokenTip2", Config.constants.syncfs_broken_issue)
-                }, function (html) {
-                    fillContent(html, "");
-                });
+                }, fillContent);
+
+                return;
+            }
+
+            if (!songs.length) {
+                Templates.render("info-callout-cloud-empty", {
+                    text: chrome.i18n.getMessage("cloudEmpty")
+                }, fillContent);
 
                 return;
             }

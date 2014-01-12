@@ -103,6 +103,10 @@
         "en": "Close",
         "ru": "Закрыть"
     },
+    "cloudEmpty": {
+        "en": "Google Drive cloud is empty right now",
+        "ru": "Пока что в Облаке ничего нет"
+    },
     "cloudListTitle": {
         "en": "List all music files in the cloud",
         "ru": "Показать список файлов в облаке"

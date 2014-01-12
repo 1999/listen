@@ -13,8 +13,8 @@ SyncFS = (function () {
 
     // load downloaded files vkids immediately
     chrome.syncFileSystem.requestFileSystem(function (fs) {
-        if (!fs) {
-            throw new Error("Syncable filesystem doesn't exist");
+        if (!fs || !fs.root) {
+            return; // probably not authorized
         }
 
         var dirReader = fs.root.createReader();
@@ -210,6 +210,11 @@ SyncFS = (function () {
     return {
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
             chrome.syncFileSystem.requestFileSystem(function (fs) {
+                if (!fs || !fs.root) {
+                    callback(null, []); // probably not authorized
+                    return;
+                }
+
                 var dirReader = fs.root.createReader();
 
                 dirReader.readEntries(function (results) {
