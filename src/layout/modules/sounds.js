@@ -67,7 +67,7 @@ Sounds = (function () {
             notificationTimeoutId = setTimeout(function () {
                 chrome.notifications.clear(NOTIFICATION_NAME, function () {});
                 notificationTimeoutId = null;
-            }, options.show ? NOTIFICATION_TIMEOUT_MS : 0);
+            }, NOTIFICATION_TIMEOUT_MS);
         });
     }
 
@@ -449,12 +449,13 @@ Sounds = (function () {
 
             this.play(nextTrackIndex);
 
-            showNotification({
-                artist: playlist[nextTrackIndex].artist.trim(),
-                track: playlist[nextTrackIndex].title.trim(),
-                cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null,
-                show: autoSwitch
-            });
+            if (autoSwitch && playingMode !== MODE_REPEAT) {
+                showNotification({
+                    artist: playlist[nextTrackIndex].artist.trim(),
+                    track: playlist[nextTrackIndex].title.trim(),
+                    cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
+                });
+            }
         },
 
         playPrev: function Sounds_playPrev() {
