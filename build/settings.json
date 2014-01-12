@@ -1,6 +1,6 @@
 {
     "local": {
-        "appUsedToday": true, /* использовалось ли приложение сегодня */
+        "appUsedToday": true,
         "changelog": [], /* viewed changelog keys */
         "headerOverlayActions": {
             "yamoney": 0,
@@ -9,19 +9,19 @@
             "close": 0
         },
         "headerRateCounter": 0, /* количество треков, проигранных до конца, после 100 показываем header rate */
-        "isDebug": true, /* локальная разработка или нет */
-        "lastfmToken": "", /* токен LastFM */
+        "isDebug": true,
+        "lastfmToken": "",
         "showDownloadButtons": true,
         "showNotifications": true,
         "songsPlayed": 0,
-        "songsPlayingMode": "", /* shuffle или repeat */
-        "studyCloud": false, /* is it neccessary to study user about Google Drive */
+        "songsPlayingMode": "", /* shuffle or repeat */
         "tests": [], /* названия необходимых тестов */
-        "vkToken": "", /* токен ВКонтакте */
-        "volume": 0.8 /* громкость */
+        "vkToken": "",
+        "volume": 0.8
     },
     "sync": {
         "id3v1tags": {}, /* downloaded id3v1 tags from VK */
-        "sendUsageStat": true /* посылать статистику использования */
+        "sendUsageStat": true, /* show usage stat */
+        "studyCloud": false /* is it neccessary to study user about Google Drive */
     }
 }

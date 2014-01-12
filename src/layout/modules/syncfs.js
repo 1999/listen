@@ -208,16 +208,6 @@ SyncFS = (function () {
 
 
     return {
-        preventStudy: function SyncFS_preventStudy() {
-            var currentStudy = Settings.get("studyCloud");
-            if (!currentStudy)
-                return;
-
-            Settings.set("studyCloud", false);
-
-            // ...
-        },
-
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
             chrome.syncFileSystem.requestFileSystem(function (fs) {
                 var dirReader = fs.root.createReader();
@@ -290,6 +280,14 @@ SyncFS = (function () {
 
         requestCurrentFilesNum: function SyncFS_requestCurrentFilesNum(callback) {
             requestFilesNum(function (num) {
+                var currentStudy = Settings.get("studyCloud");
+
+                // if there's a need to show study UI, set counter to "1"
+                // so user will see a cloud icon and "1" near it until he clicks on it
+                if (!num && currentStudy) {
+                    num = 1;
+                }
+
                 callback(num || "");
             });
         },

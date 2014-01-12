@@ -337,14 +337,47 @@ Navigation = (function () {
         CPA.sendAppView("User.CurrentAudio");
     }
 
+    function drawCloudStudy() {
+        Settings.set("studyCloud", false);
+
+        SyncFS.requestCurrentFilesNum(function (num) {
+            $("header span.header-local span.counter").text(num);
+        });
+
+        Templates.render("cloud-study", {
+            whatIsCloud: chrome.i18n.getMessage("cloudStudyWhatIsCloud"),
+            cloudDescription: chrome.i18n.getMessage("cloudStudyCloudDescription", chrome.runtime.getManifest().name),
+
+            how2Upload: chrome.i18n.getMessage("cloudStudyUpload"),
+            uploadDescription: chrome.i18n.getMessage("cloudStudyUploadDescription"),
+            uploadImage: Config.constants.upload_cloud_image,
+
+            how2List: chrome.i18n.getMessage("cloudStudyListing"),
+            listDescription: chrome.i18n.getMessage("cloudStudyListingDescription"),
+            listImage: Config.constants.list_cloud_image,
+
+            back: chrome.i18n.getMessage("cloudStudyBack"),
+            next: chrome.i18n.getMessage("cloudStudyForward"),
+            okay: chrome.i18n.getMessage("cloudStudyOkay")
+        }, function (html) {
+            fillContent(html, "", function () {
+                Covers.loadImage(Config.constants.upload_cloud_image);
+                Covers.loadImage(Config.constants.list_cloud_image);
+            });
+        });
+    }
+
     function drawCloudSongs() {
         emptyContent();
 
         // update search input data
         $("header input[type='search']").val("");
 
-        // prevent study
-        SyncFS.preventStudy();
+        var currentStudy = Settings.get("studyCloud");
+        if (currentStudy) {
+            drawCloudStudy();
+            return;
+        }
 
         SyncFS.requestCurrentFilesList(function (err, songs) {
             if (err) {

@@ -1,7 +1,6 @@
 Covers = (function () {
     "use strict";
 
-
     return {
         loadFigure: function Covers_loadFigure(url) {
             var figure = $("figure[data-src='" + url + "']");

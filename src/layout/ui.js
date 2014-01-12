@@ -305,6 +305,63 @@ parallel({
                 }, 0);
             }
         },
+        // see next/prev cloud study page
+        {
+            selector: ".cloud-study button",
+            evtType: "click",
+            callback: function (evt) {
+                var currentView = $(".cloud-study:not(.hide)").data("step");
+                var nextView = this.data("view");
+
+                if (!nextView) {
+                    Navigation.dispatch("current");
+                    return;
+                }
+
+                var btn = this;
+                var initialText = this.html();
+                var timeoutMs = (nextView > currentView) ? 200 : 0;
+
+                this.disabled = "disabled";
+                this.html(chrome.i18n.getMessage("wait") + "...");
+
+                setTimeout(function () {
+                    $$(".cloud-study").each(function () {
+                        if (this.data("step") === nextView) {
+                            this.removeClass("hide");
+                        } else {
+                            this.addClass("hide");
+                        }
+                    });
+
+                    btn.html(initialText).removeAttr("disabled");
+                }, timeoutMs);
+            }
+        },
+        // show thumbs up con when user clicks on any icon during cloud studying
+        {
+            selector: ".cloud-study .glyphicon",
+            evtType: "click",
+            callback: function (evt) {
+                var icon = this;
+                var thumbsUpClass = "glyphicon-thumbs-up";
+                var origGlyphIcon;
+
+                this.className.split(" ").forEach(function (className) {
+                    if (className.indexOf("glyphicon-") === 0 && className !== thumbsUpClass) {
+                        origGlyphIcon = className;
+                    }
+                });
+
+                if (!origGlyphIcon)
+                    return;
+
+                this.removeClass(origGlyphIcon).addClass(thumbsUpClass);
+                setTimeout(function () {
+                    icon.removeClass(thumbsUpClass).addClass(origGlyphIcon);
+                }, 500);
+            }
+        },
         // play music file
         {
             selector: ".music .play",

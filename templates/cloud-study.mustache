@@ -1,0 +1,33 @@
+<div class="cloud-study" data-step="1">
+    <h2>{{whatIsCloud}}</h2>
+    <div class="bs-callout bs-callout-info">
+        <p class="lead">{{{cloudDescription}}}</p>
+    </div>
+    <form class="form-inline" role="form">
+        <button type="button" class="btn btn-primary" data-view="2">{{next}}</button>
+    </form>
+</div>
+<div class="cloud-study hide" data-step="2">
+    <h2>{{how2Upload}}</h2>
+    <div class="bs-callout bs-callout-info">
+        <p class="lead">{{{uploadDescription}}}</p>
+        <span class="glyphicon glyphicon-cloud-upload cloud-upload-icon fun-icon"></span>
+        <img data-src="{{uploadImage}}" width="268" height="95" alt="" class="img-thumbnail faq-image">
+    </div>
+    <form class="form-inline" role="form">
+        <button type="button" class="btn btn-link" data-view="1">{{back}}</button>
+        <button type="button" class="btn btn-primary" data-view="3">{{next}}</button>
+    </form>
+</div>
+<div class="cloud-study hide" data-step="3">
+    <h2>{{how2List}}</h2>
+    <div class="bs-callout bs-callout-info">
+        <p class="lead">{{{listDescription}}}</p>
+        <span class="glyphicon glyphicon-cloud-download cloud-list-icon fun-icon"></span>
+        <img data-src="{{listImage}}" width="153" height="100" alt="" class="img-thumbnail faq-image">
+    </div>
+    <form class="form-inline" role="form">
+        <button type="button" class="btn btn-link" data-view="2">{{back}}</button>
+        <button type="button" class="btn btn-primary">{{okay}}</button>
+    </form>
+</div>

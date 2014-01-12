@@ -107,6 +107,42 @@
         "en": "List all music files in the cloud",
         "ru": "Показать список файлов в облаке"
     },
+    "cloudStudyBack": {
+        "en": "Back",
+        "ru": "Назад"
+    },
+    "cloudStudyCloudDescription": {
+        "en": "This is your private folder which can store music from VK. This folder and <strong>music in it will be always available</strong>: when you reinstall $1 app, when there's no internet connection and even when your favorite music is deleted from VK.",
+        "ru": "Это твоя личная папка, в которой может храниться музыка из ВКонтакте. Эта папка и <strong>аудиозаписи в ней будут доступны всегда</strong>: при переустановке приложения $1, когда нет интернета и даже если из ВКонтакте удалят твою любимую песню."
+    },
+    "cloudStudyForward": {
+        "en": "Next",
+        "ru": "Дальше"
+    },
+    "cloudStudyListing": {
+        "en": "Accessing your files in the cloud",
+        "ru": "Как посмотреть музыку в Облаке"
+    },
+    "cloudStudyListingDescription": {
+        "en": "There's an icon in the upper right corner of the app window with the number of the files in the cloud. You should click on it to see what's in the cloud right now.",
+        "ru": "В правом верхнем углу окна приложения будет находиться значок облака с количеством файлов в нем. Чтобы посмотреть, что есть в Облаке, нужно нажать на него."
+    },
+    "cloudStudyOkay": {
+        "en": "Okay, got it",
+        "ru": "Спасибо, я понял"
+    },
+    "cloudStudyUpload": {
+        "en": "Saving music into the cloud",
+        "ru": "Как загружать музыку в Облако"
+    },
+    "cloudStudyUploadDescription": {
+        "en": "There's a cloud icon near every song. You should click on it to save track to the cloud.",
+        "ru": "Возле каждой песни будет находиться значок облака. Чтобы сохранить песню в Облако, нужно нажать на него."
+    },
+    "cloudStudyWhatIsCloud": {
+        "en": "Google Drive cloud",
+        "ru": "Облако Google Drive"
+    },
     "cloudTitle": {
         "en": "Save into Google Drive cloud for further local access",
         "ru": "Сохранить в облако Google Drive для локального доступа"

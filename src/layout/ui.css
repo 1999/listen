@@ -460,6 +460,28 @@ figcaption a {
     opacity: 0;
 }
 
+.cloud-study h2 {
+    margin-top: 8px;
+}
+
+.cloud-study .faq-image {
+    vertical-align: bottom;
+}
+
+.cloud-study .cloud-upload-icon {
+    font-size: 64px;
+    line-height: 95px;
+    margin-right: 16px;
+    cursor: pointer;
+}
+
+.cloud-study .cloud-list-icon {
+    font-size: 64px;
+    line-height: 100px;
+    margin-right: 16px;
+    cursor: pointer;
+}
+
 /* Music */
 .music {
     padding: 16px 0 16px;

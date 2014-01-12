@@ -113,7 +113,6 @@ window.onerror = function(msg, url, line, column, err) {
 
                 // prevent new icon from blinking on fresh install
                 var seenChangelog;
-                var records = {};
 
                 try {
                     seenChangelog = Object.keys(chrome.runtime.getManifest().changelog);
@@ -121,9 +120,8 @@ window.onerror = function(msg, url, line, column, err) {
                     seenChangelog = [];
                 }
 
-                records["settings.changelog"] = seenChangelog;
-                records["settings.studyCloud"] = true;
-                chrome.storage.local.set(records);
+                chrome.storage.local.set({"settings.changelog": seenChangelog});
+                chrome.storage.sync.set({"settings.studyCloud": true});
                 break;
 
             case "update":
@@ -151,6 +149,43 @@ window.onerror = function(msg, url, line, column, err) {
                             ]
                         }, function () {});
                     }
+
+                    // starting from 5.0 there's a special cloud study "view"
+                    // it's shown to the new users, but upgrading users shouldn't see it
+                    // except those who didn't use cloud upload feature before this moment & didn't see this study view
+                    parallel({
+                        study: function (callback) {
+                            var settingsKey = "settings.studyCloud";
+
+                            chrome.storage.sync.get(settingsKey, function (records) {
+                                callback(records[settingsKey] !== undefined);
+                            });
+                        },
+                        syncfs: function (callback) {
+                            chrome.syncFileSystem.requestFileSystem(function (fs) {
+                                if (!fs || !fs.root) {
+                                    callback(1); // probably not authorized
+                                    return;
+                                }
+
+                                var dirReader = fs.root.createReader();
+                                dirReader.readEntries(function (results) {
+                                    var totalFiles = [].filter.call(results, function (fileEntry) {
+                                        return (/\.mp3$/.test(fileEntry.name));
+                                    });
+
+                                    callback(totalFiles.length);
+                                }, function (err) {
+                                    callback(1); // chrome issue, no info about files
+                                    throw new Error(err.message + " (code " + err.code + ")");
+                                });
+                            });
+                        }
+                    }, function (res) {
+                        if (!res.syncfs && !res.study) {
+                            chrome.storage.sync.set({"settings.studyCloud": true});
+                        }
+                    });
 
                     // show "call-to-action" notification
                     // chrome.storage.local.get({
