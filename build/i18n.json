@@ -256,8 +256,12 @@
         "ru": "Оценить в Web Store"
     },
     "removeTitle": {
-        "en": "Delete from Google Drive",
-        "ru": "Удалить из Облака"
+        "en": "Delete",
+        "ru": "Удалить"
+    },
+    "restoreTitle": {
+        "en": "Restore",
+        "ru": "Вернуть"
     },
     "saved": {
         "en": "Saved",

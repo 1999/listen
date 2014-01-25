@@ -193,6 +193,34 @@ VK = (function () {
             return pendingXHR;
         },
 
+        removeTrack: function VK_getCurrent(ownerId, audioId, callback) {
+            makeAPIRequest("audio.delete", {
+                owner_id: ownerId,
+                audio_id: audioId
+            }, function (xml) {
+                var responseNode = xml.querySelector("response");
+                var output = (responseNode && responseNode.textContent) ? responseNode.textContent : null;
+
+                callback(output);
+            }, function (err) {
+                callback(null);
+            });
+        },
+
+        restoreTrack: function VK_getCurrent(ownerId, audioId, callback) {
+            makeAPIRequest("audio.restore", {
+                owner_id: ownerId,
+                audio_id: audioId
+            }, function (xml) {
+                var responseNode = xml.querySelector("response");
+                var output = (responseNode && responseNode.textContent) ? responseNode.textContent : null;
+
+                callback(output);
+            }, function (err) {
+                callback(null);
+            });
+        },
+
         getAlbums: function VK_getAlbums(callback) {
             return makeAPIRequest("audio.getAlbums", {count: 1}, function (xml) {
                 var countNode = xml.querySelector("count");

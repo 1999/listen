@@ -519,6 +519,10 @@ figcaption a {
     text-overflow: ellipsis;
 }
 
+.song-about2delete {
+    opacity: .3;
+}
+
 .song .duration {
     margin-left: 8px;
 }
@@ -541,7 +545,8 @@ figcaption a {
 .song .cloud,
 .song .download,
 .song .add,
-.song .remove
+.song .remove,
+.song .restore
  {
     margin-right: 6px;
     cursor: pointer;
@@ -552,7 +557,7 @@ figcaption a {
     cursor: default;
 }
 
-.song .add-inactive {
+.song .act-inactive {
     color: #ccc;
     cursor: default;
     pointer-events: none;

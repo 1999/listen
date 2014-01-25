@@ -303,7 +303,10 @@ Navigation = (function () {
                         more: more,
                         showDownload: Settings.get("showDownloadButtons"),
                         type: "current",
-                        progress: true
+                        progress: true,
+                        showRemove: true,
+                        removeTitle: chrome.i18n.getMessage("removeTitle"),
+                        restoreTitle: chrome.i18n.getMessage("restoreTitle")
                     }, callback);
                 });
             },
@@ -403,7 +406,8 @@ Navigation = (function () {
                 hideCloud: true,
                 progress: true,
                 showRemove: true,
-                removeTitle: chrome.i18n.getMessage("removeTitle")
+                removeTitle: chrome.i18n.getMessage("removeTitle"),
+                restoreTitle: chrome.i18n.getMessage("restoreTitle")
             }, function (music) {
                 fillContent("", music, function () {
                     // update songs data from Google Drive syncable filesystem

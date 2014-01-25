@@ -421,7 +421,7 @@ parallel({
                 CPA.increaseCustomStat("push-list-cloud");
             }
         },
-        // remove file from Google Drive cloud
+        // remove file from Google Drive cloud & current list
         {
             selector: ".music .remove",
             evtType: "click",
@@ -429,12 +429,47 @@ parallel({
                 evt.stopImmediatePropagation();
                 var songElem = this.closestParent("p.song");
 
-                SyncFS.remove(songElem.data("vkid"), function () {
-                    songElem.remove();
-                    Sounds.updatePlaylist();
+                var self = this.addClass("act-inactive");
+                var ownerId = songElem.data("owner");
+                var id = songElem.data("vkid");
+
+                if (ownerId) {
+                    VK.removeTrack(ownerId, id, function (res) {
+                        self.removeClass("act-inactive").addClass("hidden");
+                        $(songElem, ".restore").removeClass("hidden");
+                        songElem.addClass("song-about2delete");
+                    });
+
+                    CPA.increaseCustomStat("push-list-removecurrent");
+                } else {
+                    SyncFS.remove(id, function () {
+                        songElem.remove();
+                        Sounds.updatePlaylist();
+                    });
+
+                    CPA.increaseCustomStat("push-list-removecloud");
+                }
+            }
+        },
+        // restore track
+        {
+            selector: ".music .restore",
+            evtType: "click",
+            callback: function (evt) {
+                evt.stopImmediatePropagation();
+                var songElem = this.closestParent("p.song");
+
+                var self = this.addClass("act-inactive");
+                var ownerId = songElem.data("owner");
+                var id = songElem.data("vkid");
+
+                VK.restoreTrack(ownerId, id, function (res) {
+                    self.removeClass("act-inactive").addClass("hidden");
+                    $(songElem, ".remove").removeClass("hidden");
+                    songElem.removeClass("song-about2delete");
                 });
 
-                CPA.increaseCustomStat("push-list-removecloud");
+                CPA.increaseCustomStat("push-list-restore");
             }
         },
         // add music file to own audio
@@ -444,7 +479,7 @@ parallel({
             callback: function (evt) {
                 evt.stopImmediatePropagation();
 
-                var self = this.addClass("add-inactive");
+                var self = this.addClass("act-inactive");
                 var songElem = this.closestParent("p.song");
 
                 VK.add(songElem.data("owner"), songElem.data("vkid"), function (audioId) {
