@@ -75,6 +75,7 @@ DND = (function () {
 
                     if (uploaded) {
                         progressElem.addClass("progress-bar-success");
+                        CPA.increaseCustomStat("dnd-upload");
                     } else {
                         progressElem.addClass("progress-bar-danger");
                     }

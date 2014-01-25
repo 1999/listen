@@ -28,11 +28,23 @@ CPA = (function() {
         },
 
         sendAppView: function CPA_sendAppView(viewName) {
+            this.increaseCustomStat("views", viewName);
+
             chrome.runtime.sendMessage({
                 action: "stat",
                 method: "sendAppView",
                 args: [viewName]
             });
+        },
+
+        increaseCustomStat: function CPA_increaseCustomStat(param, subParam) {
+            var key = (arguments.length === 1) ? "global." + param : param + "." + subParam;
+
+            var currentStat = Settings.get("stat");
+            currentStat[key] = currentStat[key] || 0;
+            currentStat[key] += 1;
+
+            Settings.set("stat", currentStat);
         }
     };
 })();

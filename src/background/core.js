@@ -64,7 +64,7 @@ window.onerror = function(msg, url, line, column, err) {
     });
 
 
-    // listen to messages from VK Offline extension (https://chrome.google.com/webstore/detail/vkontakte-offline/jinklgkideaicpdgmomlckebafjfibjk)
+    // listen to messages from VK Offline legacy app (https://chrome.google.com/webstore/detail/vkontakte-offline/jinklgkideaicpdgmomlckebafjfibjk)
     chrome.runtime.onMessageExternal.addListener(function (msg, sender, sendResponse) {
         if (["mmppkefmgokcbhknfjcdbfckchbcipll", "jinklgkideaicpdgmomlckebafjfibjk"].indexOf(sender.id) === -1)
             return sendResponse(false);
@@ -242,14 +242,9 @@ window.onerror = function(msg, url, line, column, err) {
             }
         });
 
-        chrome.alarms.get("appUsage", function (alarmInfo) {
-            if (!alarmInfo) {
-                chrome.alarms.create("appUsage", {
-                    when: Date.now() + 3 * 60 * 60 * 1000,
-                    periodInMinutes: 24 * 60
-                });
-            }
-        });
+        // prior to 5.2 there was also an "appUsage" alarm, which was designed to reset "appUsedToday" setting
+        // due to chrome.alarms "oversleeping" ability, it was an error-designed alarm
+        chrome.alarms.clear("appUsage");
 
         var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
         if (typeof chrome.runtime.setUninstallUrl === "function") {

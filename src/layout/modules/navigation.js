@@ -337,6 +337,7 @@ Navigation = (function () {
 
     function drawCloudStudy() {
         Settings.set("studyCloud", false);
+        CPA.increaseCustomStat("cloud-study", 1);
 
         SyncFS.requestCurrentFilesNum(function (num) {
             $("header span.header-local span.counter").text(num);
@@ -680,6 +681,7 @@ Navigation = (function () {
                         }
                     });
 
+                    return;
                     break;
 
                 case "settings":

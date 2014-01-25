@@ -19,6 +19,8 @@ Captcha = (function () {
 
             pendingCallbacks[src] = callback;
             Covers.loadImage(src);
+
+            CPA.increaseCustomStat("captcha-show");
         },
 
         checkCode: function Captcha_checkCode(src, code) {

@@ -22,6 +22,8 @@ parallel({
 }, function (res) {
     "use strict";
 
+    var changeVolumeTimeoutId;
+
     var evtHandlers = [
         // sendStat checkbox on guest page
         {
@@ -63,8 +65,8 @@ parallel({
                     if (!response.access_token)
                         return;
 
-                    // we got response.user_id here :)
                     Settings.set("vkToken", response.access_token);
+                    Settings.set("vkUID", parseInt(response.user_id, 10));
 
                     // @todo redraw every page
                     Navigation.dispatch("user");
@@ -152,6 +154,7 @@ parallel({
                 if (artist.length && album.length)
                     return Navigation.dispatch("searchAlbum", {artist: artist, album: album, searchQuery: searchQuery});
 
+                CPA.increaseCustomStat("push-search");
                 Navigation.dispatch("search", {searchQuery: searchQuery});
             }
         },
@@ -314,7 +317,9 @@ parallel({
                 var nextView = this.data("view");
 
                 if (!nextView) {
+                    CPA.increaseCustomStat("cloud-study-finished");
                     Navigation.dispatch("current");
+
                     return;
                 }
 
@@ -336,6 +341,8 @@ parallel({
 
                     btn.html(initialText).removeAttr("disabled");
                 }, timeoutMs);
+
+                CPA.increaseCustomStat("cloud-study", nextView);
             }
         },
         // show thumbs up con when user clicks on any icon during cloud studying
@@ -357,6 +364,8 @@ parallel({
                     return;
 
                 this.removeClass(origGlyphIcon).addClass(thumbsUpClass);
+                CPA.increaseCustomStat("ee-cloud-study");
+
                 setTimeout(function () {
                     icon.removeClass(thumbsUpClass).addClass(origGlyphIcon);
                 }, 500);
@@ -373,6 +382,7 @@ parallel({
                 Sounds.play(songContainer.data("url"));
 
                 evt.stopImmediatePropagation();
+                CPA.increaseCustomStat("push-list-play");
             }
         },
         // pause music file
@@ -382,6 +392,8 @@ parallel({
             callback: function (evt) {
                 Sounds.pause();
                 evt.stopImmediatePropagation();
+
+                CPA.increaseCustomStat("push-list-pause");
             }
         },
         // save MP3 file into Google Drive cloud
@@ -406,6 +418,7 @@ parallel({
                 this.addClass("pending");
 
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Cloud downloads", 1);
+                CPA.increaseCustomStat("push-list-cloud");
             }
         },
         // remove file from Google Drive cloud
@@ -420,6 +433,8 @@ parallel({
                     songElem.remove();
                     Sounds.updatePlaylist();
                 });
+
+                CPA.increaseCustomStat("push-list-removecloud");
             }
         },
         // add music file to own audio
@@ -436,6 +451,8 @@ parallel({
                     var newClassName = audioId ? "glyphicon-ok" : "glyphicon-remove";
                     self.removeClass("glyphicon-plus").addClass(newClassName);
                 });
+
+                CPA.increaseCustomStat("push-list-add");
             }
         },
         // download MP3 file to local computer
@@ -445,6 +462,8 @@ parallel({
             callback: function (evt) {
                 evt.stopImmediatePropagation();
                 CPA.sendEvent("Lyfecycle", "Dayuse.New", "Local downloads", 1);
+
+                CPA.increaseCustomStat("push-list-download");
             }
         },
         // load more songs on window croll
@@ -529,6 +548,8 @@ parallel({
                 if (this.previousSibling && matchesSelectorFn.call(this.previousSibling, ".song-playing-bg")) {
                     Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
                 }
+
+                CPA.increaseCustomStat("push-list-songtime");
             }
         },
         // start playing songs from header
@@ -537,6 +558,7 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 Sounds.play();
+                CPA.increaseCustomStat("push-footer-play");
             }
         },
         // pause playing songs
@@ -545,6 +567,7 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 Sounds.pause();
+                CPA.increaseCustomStat("push-footer-pause");
             }
         },
         // play previous song
@@ -553,6 +576,7 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 Sounds.playPrev();
+                CPA.increaseCustomStat("push-footer-prev");
             }
         },
         // play next song
@@ -561,6 +585,7 @@ parallel({
             evtType: "click",
             callback: function (evt) {
                 Sounds.playNext();
+                CPA.increaseCustomStat("push-footer-next");
             }
         },
         // enable/disable shuffle/repeat playing modes
@@ -573,6 +598,8 @@ parallel({
                 } else {
                     Sounds.enableMode(this.data("mode"));
                 }
+
+                CPA.increaseCustomStat("push-footer-changemode");
             }
         },
         {
@@ -597,6 +624,12 @@ parallel({
             evtType: "change",
             callback: function (evt) {
                 Sounds.changeVolumeLevel(this.value);
+
+                if (changeVolumeTimeoutId) {
+                    window.clearTimeout(changeVolumeTimeoutId);
+                }
+
+                changeVolumeTimeoutId = window.setTimeout(CPA.increaseCustomStat.bind(CPA), 1000, "push-footer-soundlevel");
             }
         },
         // finish DND operations
@@ -710,11 +743,13 @@ parallel({
                     Sounds.pause();
                 }
 
+                CPA.increaseCustomStat("push-hotkey-playpause");
                 break;
 
             case 13: // return
                 if (!playerIsPaused) {
                     Sounds.updateCurrentTime(0);
+                    CPA.increaseCustomStat("push-hotkey-return0");
                 }
 
                 break;
@@ -722,11 +757,13 @@ parallel({
             case 37:  // left
             case 177: // multimedia.back
                 Sounds.playPrev();
+                CPA.increaseCustomStat("push-hotkey-prev");
                 break;
 
             case 39:  // right
             case 176: // multimedia.forward
                 Sounds.playNext();
+                CPA.increaseCustomStat("push-hotkey-next");
                 break;
 
             case 178: // multimedia.stop
@@ -842,7 +879,6 @@ parallel({
         }, 3000);
     });
 
-
     if (Settings.get("vkToken").length) {
         Navigation.dispatch("user");
     } else {
@@ -850,15 +886,14 @@ parallel({
     }
 
     // run needed tests
-    var neededTests = Settings.get("tests");
+    // var neededTests = Settings.get("tests");
+    // if (neededTests.length) {
+    //     neededTests.forEach(function (testName) {
+    //         Tests[testName]();
+    //     });
 
-    if (neededTests.length) {
-        neededTests.forEach(function (testName) {
-            Tests[testName]();
-        });
-
-        Settings.set("tests", []);
-    }
+    //     Settings.set("tests", []);
+    // }
 
     Settings.set("appUsedToday", true);
 });

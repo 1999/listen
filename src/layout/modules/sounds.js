@@ -223,7 +223,7 @@ Sounds = (function () {
     function getID3v1Data(audioSrc, callback) {
         var sampleHref = $("<a>").attr("href", audioSrc);
         var storageKey = sampleHref.href.replace(sampleHref.search, "");
-        var currentCachedKeys = Settings.get("id3v1tags");
+        var currentCachedKeys = Settings.get("id3v1Tags");
 
         // it can also be an empty object!
         if (currentCachedKeys[storageKey]) {
@@ -258,14 +258,14 @@ Sounds = (function () {
                         }, function (res) {
                             if (res.tag !== "TAG") {
                                 currentCachedKeys[storageKey] = {};
-                                Settings.set("id3v1tags", currentCachedKeys);
+                                Settings.set("id3v1Tags", currentCachedKeys);
 
                                 callback();
                                 return;
                             }
 
                             currentCachedKeys[storageKey] = res;
-                            Settings.set("id3v1tags", currentCachedKeys);
+                            Settings.set("id3v1Tags", currentCachedKeys);
 
                             callback(res);
                         });
@@ -386,8 +386,11 @@ Sounds = (function () {
                     }
 
                     playingTrack = new Track(audioSrc);
-
                     CPA.sendEvent("Lyfecycle", "Dayuse.New", "Songs played", 1);
+
+                    var sampleHref = $("<a>").attr("href", audioSrc);
+                    var cutURL = sampleHref.href.replace(sampleHref.search, "");
+                    CPA.increaseCustomStat("songs", cutURL);
 
                     // update statistics
                     var songsPlayed = Settings.get("songsPlayed");
