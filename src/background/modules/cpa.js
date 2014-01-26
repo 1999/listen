@@ -66,27 +66,29 @@ CPA = (function () {
 
                     // send custom data for the number played songs
                     // prior to 5.2 vkUID was not saved during OAuth process, so it's time to get it here
-                    if (records["settings.vkUID"]) {
-                        CPA.sendEvent("Lyfecycle", "Dayuse.UsersTop", records["settings.vkUID"], totalSongsPlayed);
-                    } else {
-                        loadResource("https://api.vk.com/method/users.get.xml", {
-                            responseType: "xml",
-                            data: {
-                                access_token: records["settings.vkToken"],
-                                v: "5.0"
-                            },
-                            onload: function (xml) {
-                                var error = xml.querySelector("error");
-                                if (error)
-                                    return;
+                    if (totalSongsPlayed) {
+                        if (records["settings.vkUID"]) {
+                            CPA.sendEvent("Lyfecycle", "Dayuse.UsersTop", records["settings.vkUID"], totalSongsPlayed);
+                        } else {
+                            loadResource("https://api.vk.com/method/users.get.xml", {
+                                responseType: "xml",
+                                data: {
+                                    access_token: records["settings.vkToken"],
+                                    v: "5.0"
+                                },
+                                onload: function (xml) {
+                                    var error = xml.querySelector("error");
+                                    if (error)
+                                        return;
 
-                                var node = xml.querySelector("response > user > id");
-                                var uid = parseInt(node.textContent);
+                                    var node = xml.querySelector("response > user > id");
+                                    var uid = parseInt(node.textContent);
 
-                                CPA.sendEvent("Lyfecycle", "Dayuse.UsersTop", uid, totalSongsPlayed);
-                                chrome.storage.local.set({"settings.vkUID": uid});
-                            }
-                        });
+                                    CPA.sendEvent("Lyfecycle", "Dayuse.UsersTop", uid, totalSongsPlayed);
+                                    chrome.storage.local.set({"settings.vkUID": uid});
+                                }
+                            });
+                        }
                     }
 
                     // reset "appUsedToday" and "stat" settings
