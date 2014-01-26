@@ -66,7 +66,7 @@ CPA = (function () {
 
                     // send custom data for the number played songs
                     // prior to 5.2 vkUID was not saved during OAuth process, so it's time to get it here
-                    if (totalSongsPlayed) {
+                    if (isAuthorized && totalSongsPlayed) {
                         if (records["settings.vkUID"]) {
                             CPA.sendEvent("Lyfecycle", "Dayuse.UsersTop", records["settings.vkUID"], totalSongsPlayed);
                         } else {
