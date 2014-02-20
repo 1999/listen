@@ -168,6 +168,10 @@ Sounds = (function () {
         });
     }
 
+    function onErrorLoading() {
+        Sounds.playNext(true);
+    }
+
     function updateRateCounter() {
         // headerPayOverlay should be shown after %return% songs
         // take Fibonacci numbers where second number is 100
@@ -296,7 +300,8 @@ Sounds = (function () {
             .bind("timeupdate", updateProgressElem)
             .bind("play", onPlayContinue)
             .bind("durationchange", onDurationChange)
-            .bind("ended", onEndedSwitchTrack);
+            .bind("ended", onEndedSwitchTrack)
+            .bind("error", onErrorLoading);
 
         document.body.append(this.dom);
         this.dom.play();
@@ -307,7 +312,8 @@ Sounds = (function () {
             .unbind("timeupdate", updateProgressElem)
             .unbind("play", onPlayContinue)
             .unbind("durationchange", onDurationChange)
-            .unbind("ended", onEndedSwitchTrack);
+            .unbind("ended", onEndedSwitchTrack)
+            .unbind("error", onErrorLoading);
 
         this.dom.remove();
     };
