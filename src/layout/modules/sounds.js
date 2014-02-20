@@ -34,8 +34,8 @@ Sounds = (function () {
         notificationTimeoutId = null;
 
         switch (buttonIndex) {
-            case 0: Sounds.playPrev(); break;
-            case 1: Sounds.playNext(); break;
+            case 0: Sounds.playPrev(true); break;
+            case 1: Sounds.playNext(true); break;
         }
     });
 
@@ -465,7 +465,7 @@ Sounds = (function () {
             }
         },
 
-        playPrev: function Sounds_playPrev() {
+        playPrev: function Sounds_playPrev(selectedFromNotification) {
             if (!playlist.length) {
                 this.updatePlaylist();
 
@@ -495,6 +495,14 @@ Sounds = (function () {
             }
 
             this.play(nextTrackIndex);
+
+            if (selectedFromNotification) {
+                showNotification({
+                    artist: playlist[nextTrackIndex].artist.trim(),
+                    track: playlist[nextTrackIndex].title.trim(),
+                    cover: (Navigation.currentView === "searchAlbum") ? $(".info .album-cover").attr("src") : null
+                });
+            }
         },
 
         pause: function Sounds_pause() {
