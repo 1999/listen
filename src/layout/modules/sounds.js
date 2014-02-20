@@ -427,6 +427,8 @@ Sounds = (function () {
             var songTitleElem = $("footer .song-title").removeClass("hidden");
             $(songTitleElem, ".track-artist").attr("href", "artist:" + playlist[playlistIndex].artist).html(playlist[playlistIndex].artist);
             $(songTitleElem, ".track-title").text(playlist[playlistIndex].title);
+
+            document.title = playlist[playlistIndex].artist + " - " + playlist[playlistIndex].title;
         },
 
         playNext: function Sounds_playNext(autoSwitch) {
