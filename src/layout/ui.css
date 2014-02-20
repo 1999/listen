@@ -579,7 +579,7 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    box-shadow: 0 0 6px #888;
+    border-top: 1px solid #ccc;
 }
 
 footer .footer-player {
@@ -637,10 +637,20 @@ footer input[type='range'] {
     margin-left: 8px;
 }
 
-footer .song-playing-progress {
-    position: absolute;
-    top: 0;
-    left: 0;
+.rewind-container {
+    position: fixed;
     bottom: 0;
-    background: #e8e8e8;
+    left: 0;
+    width: 100%;
+    height: 12px;
+    z-index: 100;
+}
+
+.rewind {
+    width: 24px;
+    height: 12px;
+    background: #aaa;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0px 1px 2px #222;
 }

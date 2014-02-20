@@ -91,12 +91,16 @@ Sounds = (function () {
     function updateProgressElem() {
         var audioSrc = this.attr("src");
         var trackContainer = $(".music p.song[data-url='" + audioSrc.replace(/'/g, "\\'") + "']");
-        var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
 
-        $("footer .song-playing-progress").css("width", width);
+        var rewindContainer = $(".rewind-container").removeClass("invisible");
+        var rewindSlider = $(".rewind");
+        var footerAvailableWidth = document.body.clientWidth - 24; // document.body.clientWidth - (half slider's width left) - (half slider's width right);
+        var sliderPosition = Math.floor(footerAvailableWidth * this.currentTime / this.duration) + "px";
+        rewindSlider.css("marginLeft", sliderPosition);
 
         if (trackContainer) {
             var progressElem = $(".music div.song-playing-bg").removeClass("hidden");
+            var width = Math.ceil(document.body.clientWidth * this.currentTime / this.duration) + "px";
             $(progressElem, ".song-playing-progress").css("width", width);
 
             if (trackContainer.previousSibling !== progressElem) {

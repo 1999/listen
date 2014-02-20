@@ -667,6 +667,15 @@ parallel({
                 changeVolumeTimeoutId = window.setTimeout(CPA.increaseCustomStat.bind(CPA), 1000, "push-footer-soundlevel");
             }
         },
+        // rewind song with click
+        {
+            selector: ".rewind-container",
+            evtType: "click",
+            callback: function (evt) {
+                Sounds.updateCurrentTime(evt.layerX / this.clientWidth);
+                CPA.increaseCustomStat("rewind-click");
+            }
+        },
         // finish DND operations
         {
             selector: ".dnd-ready-container .dnd-finish",

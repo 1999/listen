@@ -205,6 +205,12 @@ Navigation = (function () {
             blink: blink
         }, function (html) {
             $(document.body).html(html);
+
+            // update rewind slider position
+            var rewindContainer = $(".rewind-container");
+            var footer = $("footer");
+            rewindContainer.css("bottom", (footer.clientHeight - 5) + "px");
+
             callback && callback();
         });
     }
