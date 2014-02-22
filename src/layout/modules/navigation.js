@@ -455,13 +455,15 @@ Navigation = (function () {
 
             parallel({
                 info: function (callback) {
+                    var hasArtistDescription = res.lastfm.info !== null && res.lastfm.info.trim().length;
+
                     Templates.render("info-artist", {
-                        hasArtistDescription: (res.lastfm.info !== null && res.lastfm.info.trim().length),
+                        hasArtistDescription: hasArtistDescription,
                         artistDescription: createValidHTML(res.lastfm.info || ""),
                         artist: searchQuery,
-                        albums: res.lastfm.albums,
+                        albums: hasArtistDescription ? res.lastfm.albums : [],
                         similarArtists: chrome.i18n.getMessage("similarArtists"),
-                        similarList: res.lastfm.similar
+                        similarList: hasArtistDescription ? res.lastfm.similar : []
                     }, callback);
                 },
                 music: function (callback) {
