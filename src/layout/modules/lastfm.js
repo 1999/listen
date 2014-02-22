@@ -139,12 +139,14 @@ Lastfm = (function () {
                 var cover = (xml.querySelector("album > image[size='large']") || xml.querySelector("album > image[size='medium']") || xml.querySelector("album > image[size='small']"));
                 var shortDescriptionNode = xml.querySelector("album > wiki > summary");
                 var fullDescriptionNode = xml.querySelector("album > wiki > content");
+                var releaseDateNode = xml.querySelector("album > releasedate");
 
                 var output = {
                     artist: xml.querySelector("album > artist").textContent,
                     title: xml.querySelector("album > name").textContent,
-                    albumDescription: shortDescriptionNode ? shortDescriptionNode.textContent : "",
-                    fullDescription: fullDescriptionNode ? fullDescriptionNode.textContent : "",
+                    albumSummary: shortDescriptionNode ? shortDescriptionNode.textContent : "",
+                    albumDescription: fullDescriptionNode ? fullDescriptionNode.textContent : "",
+                    releaseDate: releaseDateNode ? releaseDateNode.textContent.trim() : "",
                     cover: cover ? cover.textContent : "",
                     songs: []
                 };

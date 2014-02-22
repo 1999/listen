@@ -308,6 +308,15 @@ parallel({
                 }, 0);
             }
         },
+        // see album description
+        {
+            selector: ".more-album-description",
+            evtType: "click",
+            callback: function (evt) {
+                $(".album-summary").addClass("hidden");
+                $(".album-description").removeClass("hidden");
+            }
+        },
         // see next/prev cloud study page
         {
             selector: ".cloud-study button",

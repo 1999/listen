@@ -255,6 +255,10 @@
         "en": "Rate in Web Store",
         "ru": "Оценить в Web Store"
     },
+    "releaseDate": {
+        "en": "Release date",
+        "ru": "Дата выхода"
+    },
     "removeTitle": {
         "en": "Delete",
         "ru": "Удалить"

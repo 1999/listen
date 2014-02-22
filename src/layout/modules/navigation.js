@@ -593,11 +593,20 @@ Navigation = (function () {
         var onAlbumInfoReady = function (album) {
             parallel({
                 info: function (callback) {
+                    var albumSummary = (album.albumSummary || "") || (album.albumDescription || "");
+                    var hasDescription = (album.albumSummary || "").length && (album.albumDescription || "").length;
+
                     Templates.render("info-album", {
                         albumCover: album.cover,
                         artist: album.artist,
                         title: album.title,
-                        albumDescription: createValidHTML(album.albumDescription)
+                        albumSummary: createValidHTML(albumSummary),
+                        albumDescription: createValidHTML(album.albumDescription || ""),
+                        hasDescription: hasDescription,
+                        hasReleaseDate: (album.releaseDate.length > 0),
+                        releaseDate: album.releaseDate || "",
+                        more: chrome.i18n.getMessage("more"),
+                        releaseDateI18n: chrome.i18n.getMessage("releaseDate")
                     }, callback);
                 },
                 music: function (callback) {

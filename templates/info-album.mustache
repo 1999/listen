@@ -12,4 +12,19 @@
     <li class="active">{{title}}</li>
 </ol>
 
-<p>{{{albumDescription}}}</p>
+{{#hasReleaseDate}}
+    <p class="release-date">
+        <strong>{{releaseDateI18n}}: {{releaseDate}}</strong>
+    </p>
+{{/hasReleaseDate}}
+
+<p class="album-summary">
+    {{{albumSummary}}}
+
+    {{#hasDescription}}
+        &nbsp;
+        <a href="#" class="more-album-description">{{more}}&hellip;</a>
+    {{/hasDescription}}
+</p>
+
+<p class="album-description hidden">{{{albumDescription}}}</p>

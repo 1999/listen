@@ -143,8 +143,6 @@ YMusic = (function () {
                     var output = {
                         artist: xml.querySelector("album > artist[role='performer'] > name").textContent,
                         title: xml.querySelector("album > title").textContent,
-                        albumDescription: "",
-                        fullDescription: "",
                         cover: coverNode ? getCover(albumNode.getAttribute("storage-dir"), coverNode.getAttribute("id"), 300) : "",
                         songs: []
                     };
