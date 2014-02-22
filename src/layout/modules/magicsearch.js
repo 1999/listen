@@ -54,11 +54,14 @@ MagicSearch = (function () {
                 pendingXHR = null;
 
                 if (data.count) {
-                    var trackIndex = 0; // по умолчанию отдаем первый трек
+                    var trackIndex = 0; // output first track by default
                     var bestTrack;
+                    var timeDiff;
 
                     for (var i = 0; i < data.songs.length; i++) {
-                        if (!duration || data.songs[i].originalDuration == duration) {
+                        timeDiff = Math.abs(data.songs[i].originalDuration - duration);
+
+                        if (!duration || timeDiff <= 3) {
                             trackIndex = i;
                             break;
                         }
