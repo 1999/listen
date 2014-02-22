@@ -591,6 +591,7 @@ footer .player-buttons,
 footer .mode-volume {
     position: relative;
     top: 2px;
+    background: white;
 }
 
 footer .mode-volume {
