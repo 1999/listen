@@ -147,28 +147,10 @@ VK = (function () {
         },
 
         searchMusicByArtist: function VK_searchMusicByArtist(query, params, callback) {
-            var pendingXHR;
-
-            params = copyOwnProperties(params, {
-                q: query,
+            return this.searchMusic(query, {
                 auto_complete: 0,
-                lyrics: 0,
                 performer_only: 1,
-                sort: 2
-            });
-
-            parallel({
-                vkdata: function (callback) {
-                    pendingXHR = makeAPIRequest("audio.search", params, callback);
-                },
-                syncfs: function (callback) {
-                    SyncFS.isWorking(callback);
-                }
-            }, function (results) {
-                callback(xmlToArray(results.vkdata, {syncfs: results.syncfs}));
-            });
-
-            return pendingXHR;
+            }, callback);
         },
 
         getCurrent: function VK_getCurrent(offset, callback) {
