@@ -1,6 +1,6 @@
 {
     "name" : "Listen! DEV",
-    "version" : "5.2",
+    "version" : "5.3",
     "manifest_version" : 2,
     "minimum_chrome_version" : "29",
     "description" : "__MSG_appDescription__",
@@ -22,6 +22,12 @@
     },
 
     "changelog": {
+        "5.3": [
+            "albums",
+            "album_info",
+            "footer_slider",
+            "notifications"
+        ],
         "5.0": [
             "cloud"
         ],

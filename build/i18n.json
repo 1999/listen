@@ -103,6 +103,22 @@
         "en": "Working with Google Drive cloud is now better than before: progress bar is shown when you save file into the cloud and all errors are processed",
         "ru": "Улучшена работа с Облаком: теперь при сохранении аудиозаписей в Облако виден прогресс, а возможные ошибки устранены"
     },
+    "changelog_5_3_albums": {
+        "en": "<strong>VK Playlists</strong> or so-called \"albums\" are now supported in $1 app",
+        "ru": "Теперь в приложении поддерживаются <strong>плейлисты ВКонтакте</strong>, они же альбомы"
+    },
+    "changelog_5_3_album_info": {
+        "en": "Popular albums now contain release dates and more detailed description",
+        "ru": "У известных альбомов показывается дата релиза и более подробная информация"
+    },
+    "changelog_5_3_footer_slider": {
+        "en": "You can rewind track by clicking in the footer slides's area now as before",
+        "ru": "Вернулась возможность перемотки трека в виде ползунка в нижней части окна. Нравится?"
+    },
+    "changelog_5_3_notifications": {
+        "en": "Notification doesn't hide now when you select to play the next/prev song from it",
+        "ru": "При переключении песни из окна уведомления окно не будет пропадать"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"
