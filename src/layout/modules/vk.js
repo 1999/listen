@@ -11,7 +11,7 @@ VK = (function () {
         }
 
         options.access_token = Settings.get("vkToken");
-        options.v = "5.0";
+        options.v = "5.11";
         options.count = options.count || 300;
         options.offset = options.offset || 0;
 
@@ -153,12 +153,17 @@ VK = (function () {
             }, callback);
         },
 
-        getCurrent: function VK_getCurrent(offset, callback) {
-            var pendingXHR;
-
+        getCurrent: function VK_getCurrent(offset, albumId, callback) {
             parallel({
                 vkdata: function (callback) {
-                    pendingXHR = makeAPIRequest("audio.get", {offset: offset}, callback);
+                    var options = {
+                        offset: offset
+                    };
+
+                    if (albumId)
+                        options.album_id = albumId;
+
+                    makeAPIRequest("audio.get", options, callback);
                 },
                 syncfs: function (callback) {
                     SyncFS.isWorking(callback);
@@ -171,8 +176,25 @@ VK = (function () {
 
                 callback(output);
             });
+        },
 
-            return pendingXHR;
+        requestAlbumsList: function VK_requestAlbumsList(callback) {
+            makeAPIRequest("audio.getAlbums", {
+                count: 100
+            }, function (xml) {
+                var output = [];
+
+                [].forEach.call(xml.querySelectorAll("items > album"), function (album) {
+                    output.push({
+                        id: album.querySelector("id").textContent,
+                        title: album.querySelector("title").textContent
+                    });
+                });
+
+                callback(output);
+            }, function (err) {
+                callback([]);
+            });
         },
 
         removeTrack: function VK_getCurrent(ownerId, audioId, callback) {

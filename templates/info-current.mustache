@@ -18,3 +18,14 @@
         </figure>
     {{/recommended}}
 {{/recommended.length}}
+
+{{#albums.length}}
+    <p class="lead recommended-artists">{{selectAlbum}}</p>
+
+    <select class="form-control select-album">
+        <option value="0">{{allTracks}}</option>
+        {{#albums}}
+            <option value="{{id}}">{{title}}</option>
+        {{/albums}}
+    </select>
+{{/albums.length}}

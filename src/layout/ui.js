@@ -380,6 +380,29 @@ parallel({
                 }, 500);
             }
         },
+        // select vk album
+        {
+            selector: ".select-album",
+            evtType: "change",
+            callback: function (evt) {
+                VK.getCurrent(0, this.val(), function (data) {
+                    var more = (data.count > data.songs.length);
+
+                    Templates.render("songs", {
+                        songs: data.songs,
+                        more: more,
+                        showDownload: Settings.get("showDownloadButtons"),
+                        type: "current",
+                        progress: true,
+                        showRemove: true,
+                        removeTitle: chrome.i18n.getMessage("removeTitle"),
+                        restoreTitle: chrome.i18n.getMessage("restoreTitle")
+                    }, function (html) {
+                        $(".music").html(html);
+                    });
+                });
+            }
+        },
         // play music file
         {
             selector: ".music .play",
@@ -539,7 +562,10 @@ parallel({
 
                 switch (searchType) {
                     case "current":
-                        VK.getCurrent(totalSongsListed, onDataReady);
+                        var albumSelectNode = $(".select-album");
+                        var albumId = albumSelectNode ? albumSelectNode.val() : null;
+
+                        VK.getCurrent(totalSongsListed, albumId, onDataReady);
                         break;
 
                     case "artist":

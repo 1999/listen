@@ -300,12 +300,34 @@ Navigation = (function () {
         $("header input[type='search']").val("");
 
         parallel({
-            vk: function (callback) {
-                VK.getCurrent(0, function (data) {
-                    var more = (data.count > data.songs.length);
+            vkCurrent: function (callback) {
+                VK.getCurrent(0, null, callback);
+            },
+            vkAlbums: function (callback) {
+                VK.requestAlbumsList(callback);
+            },
+            lastfm: function (callback) {
+                if (!Lastfm.isAuthorized)
+                    return callback([]);
+
+                Lastfm.getRecommendedArtists(callback);
+            }
+        }, function (res) {
+            parallel({
+                info: function (callback) {
+                    Templates.render("info-current", {
+                        recommended: res.lastfm,
+                        recommendedArtistsTitle: chrome.i18n.getMessage("lastFmRecommends"),
+                        albums: res.vkAlbums,
+                        selectAlbum: chrome.i18n.getMessage("selectAlbum"),
+                        allTracks: chrome.i18n.getMessage("allTracks")
+                    }, callback);
+                },
+                music: function (callback) {
+                    var more = (res.vkCurrent.count > res.vkCurrent.songs.length);
 
                     Templates.render("songs", {
-                        songs: data.songs,
+                        songs: res.vkCurrent.songs,
                         more: more,
                         showDownload: Settings.get("showDownloadButtons"),
                         type: "current",
@@ -314,29 +336,16 @@ Navigation = (function () {
                         removeTitle: chrome.i18n.getMessage("removeTitle"),
                         restoreTitle: chrome.i18n.getMessage("restoreTitle")
                     }, callback);
-                });
-            },
-            lastfm: function (callback) {
-                if (!Lastfm.isAuthorized)
-                    return callback({html: "", recommended: []});
+                }
+            }, function (resChunks) {
+                fillContent(resChunks.info, resChunks.music, function () {
+                    res.lastfm.forEach(function (artist) {
+                        if (!artist.cover)
+                            return;
 
-                Lastfm.getRecommendedArtists(function (recommendedList) {
-                    Templates.render("info-artists-similar", {
-                        recommended: recommendedList,
-                        recommendedArtistsTitle: chrome.i18n.getMessage("lastFmRecommends")
-                    }, function (html) {
-                        callback({html: html, recommended: recommendedList});
+                        // загружаем обложку исполнителя
+                        Covers.loadFigure(artist.cover);
                     });
-                });
-            }
-        }, function (res) {
-            fillContent(res.lastfm.html, res.vk, function () {
-                res.lastfm.recommended.forEach(function (artist) {
-                    if (!artist.cover)
-                        return;
-
-                    // загружаем обложку исполнителя
-                    Covers.loadFigure(artist.cover);
                 });
             });
         });
