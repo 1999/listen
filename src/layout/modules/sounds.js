@@ -106,6 +106,12 @@ Sounds = (function () {
             if (trackContainer.previousSibling !== progressElem) {
                 trackContainer.before(progressElem);
             }
+
+            // update play/pause buttons
+            if (!this.paused) {
+                $(trackContainer, ".play").addClass("hidden");
+                $(trackContainer, ".pause").removeClass("hidden");
+            }
         }
 
         // The track must be longer than 30 seconds.
