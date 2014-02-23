@@ -43,7 +43,11 @@ SyncFS = (function () {
 
     function onStatusChange(details) {
         requestFilesNum(function (num) {
-            $("header span.header-local span.counter").text(num || "");
+            var cntElem = $("header span.header-local span.counter");
+
+            if (cntElem) {
+                cntElem.text(num || "");
+            }
         });
     }
 
