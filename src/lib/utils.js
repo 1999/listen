@@ -399,4 +399,10 @@
 
         reader.readAsText(blob, "windows-1251");
     };
+
+    // @see http://stackoverflow.com/questions/8469145/how-to-detect-html5-audio-mp3-support
+    exports.supportsMP3 = function () {
+        var a = document.createElement('audio');
+        return !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+    };
 })(window);
