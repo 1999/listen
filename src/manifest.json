@@ -1,7 +1,7 @@
 {
     "name" : "Listen! DEV",
     "version" : "5.4",
-    "author": "Dmitry Sorin",
+    "author": "info@staypositive.ru",
     "manifest_version" : 2,
     "minimum_chrome_version" : "29",
     "description" : "__MSG_appDescription__",
