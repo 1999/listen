@@ -141,10 +141,11 @@ Sounds = (function () {
 
     function onPlayContinue() {
         var audioSrc = this.attr("src").replace(/'/g, "\\'");
-        var progressElem = $(".music div.song-playing-bg").data("url", audioSrc);
         var trackContainer = $(".music p.song[data-url='" + audioSrc + "']");
 
         if (trackContainer) {
+            var progressElem = $(".music div.song-playing-bg").data("url", audioSrc);
+
             // update song container buttons
             $(trackContainer, ".play").addClass("hidden");
             $(trackContainer, ".pause").removeClass("hidden");
