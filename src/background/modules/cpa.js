@@ -30,6 +30,11 @@ CPA = (function () {
                     "settings.appUsedToday": Config.default_settings_local.appUsedToday,
                     "settings.stat": Config.default_settings_local.stat
                 }, function (records) {
+                    if (!supportsMP3()) {
+                        chrome.management.uninstallSelf();
+                        return;
+                    }
+
                     // total app users
                     CPA.sendEvent("Lyfecycle", "Dayuse.New", "Total", 1);
 
