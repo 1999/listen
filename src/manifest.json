@@ -80,8 +80,6 @@
 
     "permissions" : [
         "alarms",
-        "app.runtime",
-        "app.window",
         "fullscreen",
         "identity",
         "notifications",
