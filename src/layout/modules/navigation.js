@@ -40,11 +40,13 @@ Navigation = (function () {
     }
 
     function drawUIAccordingToState() {
-        if (!Settings.get("vkToken").length) {
+        var isMissingMP3 = !supportsMP3();
+
+        if (!Settings.get("vkToken").length || isMissingMP3) {
             states.length = 0;
             currentStateIndex = -1;
 
-            drawGuestUI();
+            drawGuestUI(isMissingMP3);
             return;
         }
 
@@ -152,7 +154,7 @@ Navigation = (function () {
     }
 
 
-    function drawGuestUI() {
+    function drawGuestUI(isMissingMP3) {
         $(document.body).empty().addClass("guest").removeClass("user");
 
         Templates.render("guest", {
@@ -163,12 +165,16 @@ Navigation = (function () {
                 return {text: text};
             }),
             sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
-            authVK: chrome.i18n.getMessage("authorizeVK")
+            authVK: chrome.i18n.getMessage("authorizeVK"),
+            missMP3Text: chrome.i18n.getMessage("missMp3"),
+            thisIsImportant: chrome.i18n.getMessage("thisIsImportant"),
+            installGoogleChrome: chrome.i18n.getMessage("installGoogleChrome"),
+            isMissingMP3: isMissingMP3
         }, function (html) {
             $(document.body).html(html);
         });
 
-        CPA.sendAppView("Guest");
+        CPA.sendAppView(isMissingMP3 ? "MissingMP3" : "Guest");
     }
 
     function drawUserUI(callback) {
@@ -690,6 +696,7 @@ Navigation = (function () {
 
             switch (viewType) {
                 case "guest":
+                case "chromium":
                     // do nothing
                     break;
 

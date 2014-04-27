@@ -73,6 +73,15 @@ parallel({
                 });
             }
         },
+        // install google chrome for mp3-missing browsers
+        {
+            selector: ".googlechrome",
+            evtType: "click",
+            callback: function (evt) {
+                window.open("https://www.google.com/chrome");
+                chrome.management.uninstallSelf();
+            }
+        },
         // opening settings UI
         {
             selector: "header .header-settings",
@@ -958,10 +967,14 @@ parallel({
         }, 3000);
     });
 
-    if (Settings.get("vkToken").length) {
-        Navigation.dispatch("user");
+    if (supportsMP3()) {
+        if (Settings.get("vkToken").length) {
+            Navigation.dispatch("user");
+        } else {
+            Navigation.dispatch("guest");
+        }
     } else {
-        Navigation.dispatch("guest");
+        Navigation.dispatch("chromium");
     }
 
     // run needed tests

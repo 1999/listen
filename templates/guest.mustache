@@ -3,15 +3,24 @@
 
     <p class="lead">{{{welcomeText}}}</p>
 
-    <div class="bs-callout bs-callout-warning">
-        <h4>{{faqHeader}}</h4>
+    {{#isMissingMP3}}
+        <div class="bs-callout bs-callout-danger">
+            <h4>{{thisIsImportant}}</h4>
+            <p>{{{missMP3Text}}}</p>
+        </div>
+    {{/isMissingMP3}}
 
-        <ol>
-            {{#faqItems}}
-                <li>{{{text}}}</li>
-            {{/faqItems}}
-        </ol>
-    </div>
+    {{^isMissingMP3}}
+        <div class="bs-callout bs-callout-warning">
+            <h4>{{faqHeader}}</h4>
+
+            <ol>
+                {{#faqItems}}
+                    <li>{{{text}}}</li>
+                {{/faqItems}}
+            </ol>
+        </div>
+    {{/isMissingMP3}}
 
     <form role="form" class="text-center">
         <div class="checkbox">
@@ -19,6 +28,13 @@
                 <input checked name="sendStat" type="checkbox"> {{sendStat}}
             </label>
         </div>
-        <button type="button" class="btn btn-primary btn-lg auth">{{authVK}}</button>
+
+        {{#isMissingMP3}}
+            <button type="button" class="btn btn-primary btn-lg googlechrome">{{installGoogleChrome}}</button>
+        {{/isMissingMP3}}
+
+        {{^isMissingMP3}}
+            <button type="button" class="btn btn-primary btn-lg auth">{{authVK}}</button>
+        {{/isMissingMP3}}
     </form>
 </section>

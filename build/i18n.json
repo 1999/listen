@@ -215,6 +215,10 @@
         "en": "So you like <strong>$1</strong> app? Repost info about app in <a href='$2' target='_blank'>VK</a> and don't forget to rate app in <a href='$3' target='_blank'>Chrome Web Store</a>.",
         "ru": "Нравится <strong>$1</strong>? Тогда сделай репост <a href='$2' target='_blank'>ВКонтакте</a> и не забудь оценить приложение в <a href='$3' target='_blank'>Chrome Web Store</a>."
     },
+    "installGoogleChrome": {
+        "en": "Install Google Chrome",
+        "ru": "Установить Google Chrome"
+    },
     "lastFmAuthTitle": {
         "en": "LastFM authorization and scrobbling",
         "ru": "Авторизация и скробблинг в LastFM"
@@ -226,6 +230,10 @@
     "localTitle": {
         "en": "Saved songs",
         "ru": "Сохраненные песни"
+    },
+    "missMp3": {
+        "en": "Things could probably be different, but <strong>your browser is missing MP3 files support and VK uses MP3 to store music data</strong>. It's likely because you are using not Google Chrome but Chromium or one of its forks. App will work properly only in Google Chrome.",
+        "ru": "Возможно все могло сложиться по-другому, но <strong>твой браузер не поддерживает проигрывание mp3-файлов</strong>, а ВКонтакте хранит всю музыку именно в этом формате. Скорее всего это из-за того, что ты пользуешься не Google Chrome, а Chromium или каким-нибудь из его форков. Приложение будет работать только в Google Chrome."
     },
     "modeRepeat": {
         "en": "Repeat playing track",
@@ -334,6 +342,10 @@
     "syncfsBrokenTip2": {
         "en": "Google Chrome developers have already <a href='$1' target='_blank'>fixed</a> this problem, and expect fix to land in the next Chrome release",
         "ru": "Разработчики Google Chrome <a href='$1' target='_blank'>обещают</a> исправить эту проблему в следующей версии браузера"
+    },
+    "thisIsImportant": {
+        "en": "This is important",
+        "ru": "Это важно"
     },
     "unknownArtist": {
         "en": "Unknown artist",
