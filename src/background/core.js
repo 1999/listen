@@ -248,8 +248,8 @@ window.onerror = function(msg, url, line, column, err) {
         chrome.alarms.clear("appUsage");
 
         var uninstallUrl = Config.constants.goodbye_page_link + "?ver=" + currentVersion;
-        if (typeof chrome.runtime.setUninstallUrl === "function") {
-            chrome.runtime.setUninstallUrl(uninstallUrl);
+        if (typeof chrome.runtime.setUninstallURL === "function") {
+            chrome.runtime.setUninstallURL(uninstallUrl);
         }
 
         chrome.storage.local.get("appInstallDate", function (records) {
