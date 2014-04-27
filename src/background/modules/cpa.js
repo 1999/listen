@@ -48,9 +48,6 @@ CPA = (function () {
                     var isAuthorized = (records["settings.vkToken"].length > 0);
                     CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is authorized", isAuthorized);
 
-                    // whether this is google chrome (issue #94)
-                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Supports MP3", supportsMP3());
-
                     // LFM users
                     var isLFMAuthorized = (records["settings.lastfmToken"].length > 0);
                     CPA.sendEvent("Lyfecycle", "Dayuse.New", "Is scrobbling", isAuthorized && isLFMAuthorized);
