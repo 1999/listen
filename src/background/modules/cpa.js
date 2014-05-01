@@ -28,21 +28,32 @@ CPA = (function () {
                     "settings.vkToken": Config.default_settings_local.vkToken,
                     "settings.vkUID": Config.default_settings_local.vkUID,
                     "settings.appUsedToday": Config.default_settings_local.appUsedToday,
-                    "settings.stat": Config.default_settings_local.stat
+                    "settings.stat": Config.default_settings_local.stat,
+                    appInstallDate: Date.now(),
+                    firstStatSent: false
                 }, function (records) {
                     if (!supportsMP3()) {
                         chrome.management.uninstallSelf();
                         return;
                     }
 
+                    var isAppUsed = records["settings.appUsedToday"];
+                    var isFirstStat = !records.firstStatSent;
+
                     // total app users
                     CPA.sendEvent("Lyfecycle", "Dayuse.New", "Total", 1);
+
+                    // active newbie users
+                    // @see https://github.com/1999/listen/issues/95
+                    if (isFirstStat) {
+                        CPA.sendEvent("Lyfecycle", "Dayuse.New", "Active newbies", isAppUsed);
+                    }
 
                     // total users, who opened app today
                     // actually not today, but rather after previous alarm's fire event
                     // because alarm can run after the scheduledTime and re-set the scheduledTime = Date.now() + periodInMinutes,
                     // this value is not totally precise
-                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Active users", records["settings.appUsedToday"]);
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Active users", isAppUsed);
 
                     // authorized users: total and event value
                     var isAuthorized = (records["settings.vkToken"].length > 0);
@@ -99,7 +110,8 @@ CPA = (function () {
                     // reset "appUsedToday" and "stat" settings
                     chrome.storage.local.set({
                         "settings.appUsedToday": false,
-                        "settings.stat": {}
+                        "settings.stat": {},
+                        firstStatSent: true
                     });
                 });
 
