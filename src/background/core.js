@@ -123,6 +123,20 @@ window.onerror = function(msg, url, line, column, err) {
 
                 chrome.storage.local.set({"settings.changelog": seenChangelog});
                 chrome.storage.sync.set({"settings.studyCloud": true});
+
+                // try to import token from VK Offline app
+                chrome.runtime.sendMessage(Config.constants.vk_offline_app_id, {action: "importAuthToken"}, function (res) {
+                    if (!res)
+                        return;
+
+                    chrome.storage.local.set({
+                        "settings.vkToken": res.token,
+                        "settings.vkUID": res.user_id
+                    });
+
+                    CPA.sendEvent("Lyfecycle", "Dayuse.New", "Import token from VK Offline");
+                });
+
                 break;
 
             case "update":
