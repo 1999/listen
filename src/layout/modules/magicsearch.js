@@ -54,8 +54,7 @@ MagicSearch = (function () {
                 pendingXHR = null;
 
                 if (data.count) {
-                    var trackIndex = 0; // output first track by default
-                    var bestTrack;
+                    var trackIndex;
                     var timeDiff;
 
                     for (var i = 0; i < data.songs.length; i++) {
@@ -67,7 +66,7 @@ MagicSearch = (function () {
                         }
                     }
 
-                    bestTrack = data.songs[trackIndex];
+                    var bestTrack = data.songs[trackIndex || 0]; // output first track by default
 
                     Templates.render("songs", {
                         songs: [bestTrack],

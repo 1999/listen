@@ -3,7 +3,7 @@
         <div class="lead">{{mostPopularTracks}}</div>
 
         {{#popular}}
-            <p class="song-queue" data-artist="{{artist}}" data-track="{{song}}" data-duration="{{duration}}">
+            <p class="song-queue" data-artist="{{artist}}" data-track="{{song}}" data-duration="{{duration}}" data-download-url="{{lastFmDownloadUrl}}">
                 <strong><a href="artist:{{artist}}">{{artist}}</a></strong> - {{song}}
             </p>
         {{/popular}}

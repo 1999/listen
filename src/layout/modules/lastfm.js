@@ -94,11 +94,21 @@ Lastfm = (function () {
                                 return;
                             }
 
-                            tracks.push({
+                            var trackData = {
                                 song: title,
                                 duration: track.querySelector("duration").textContent
-                            });
+                            };
 
+                            var download = track.querySelector("downloadurl");
+                            if (download) {
+                                var downloadUrl = download.textContent.trim();
+
+                                if (downloadUrl.length) {
+                                    trackData.lastFmDownloadUrl = downloadUrl;
+                                }
+                            }
+
+                            tracks.push(trackData);
                             trackTitles[title] = 1;
                         });
 
