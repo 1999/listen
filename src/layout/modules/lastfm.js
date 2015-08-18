@@ -83,7 +83,7 @@ Lastfm = (function () {
                         var trackTitles = {};
 
                         [].forEach.call(xml.querySelectorAll("toptracks > track"), function (track, index) {
-                            var duration = 0;
+                            var duration;
                             if (tracks.length >= 10) {
                                 return;
                             }
@@ -97,7 +97,7 @@ Lastfm = (function () {
 
                             var trackData = {
                                 song: title,
-                                duration: (duration = track.querySelector("duration")) ? duration.textContent : duration
+                                duration: (duration = track.querySelector("duration")) ? duration.textContent : 0
                             };
 
                             var download = track.querySelector("downloadurl");
