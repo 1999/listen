@@ -6,7 +6,8 @@
     "Dmitry Sorin <dsorin@yandex-team.ru>"
   ],
   "dependencies": {
-    "backbone": "git://github.com/jashkenas/backbone.git#1.2.2"
+    "backbone": "git://github.com/jashkenas/backbone.git#1.2.2",
+    "jquery": "git://github.com/jquery/jquery.git#2.1.4"
   },
   "ignore": [
     "**/.*",
