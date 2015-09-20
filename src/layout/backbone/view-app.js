@@ -13,8 +13,23 @@ var app = app || {};
         },
 
         render: function AppAppView_render() {
-            var route;
+            var method;
 
+            if (supportsMP3()) {
+                if (Settings.get("vkToken").length) {
+                    this.drawUserUI();
+                } else {
+                    this.drawGuestUI(false);
+                }
+            } else {
+                this.drawGuestUI(true);
+            }
+
+            Settings.set("appUsedToday", true);
+            return this;
+        },
+
+        drawUserUI: function AppAppView_drawUserUI() {
             $(document.body).empty().addClass("user").removeClass("guest");
 
             var blink = false;
@@ -53,28 +68,30 @@ var app = app || {};
                 var rewindContainer = $(".rewind-container");
                 var footer = $("footer");
                 rewindContainer.css("bottom", (footer.clientHeight - 5) + "px");
+            });
+        },
 
-                // callback && callback();
+        drawGuestUI: function AppAppView_drawGuestUI(isMissingMP3) {
+            $(document.body).empty().addClass("guest").removeClass("user");
+
+            Templates.render("guest", {
+                welcomeHeader: chrome.i18n.getMessage("welcomeHeader"),
+                welcomeText: chrome.i18n.getMessage("welcomeText"),
+                faqHeader: chrome.i18n.getMessage("faqHeader"),
+                faqItems: chrome.i18n.getMessage("faqText", chrome.runtime.getManifest().name).split("|").map(function (text) {
+                    return {text: text};
+                }),
+                sendStat: chrome.i18n.getMessage("faqSendStatCheckbox"),
+                authVK: chrome.i18n.getMessage("authorizeVK"),
+                missMP3Text: chrome.i18n.getMessage("missMp3"),
+                thisIsImportant: chrome.i18n.getMessage("thisIsImportant"),
+                installGoogleChrome: chrome.i18n.getMessage("installGoogleChrome"),
+                isMissingMP3: isMissingMP3
+            }, function (html) {
+                $(document.body).html(html);
             });
 
-            // if (supportsMP3()) {
-            //     if (Settings.get("vkToken").length) {
-            //         route = 'current';
-            //     } else {
-            //         route = 'guest';
-            //     }
-            // } else {
-            //     route = 'chromium';
-            // }
-
-            // app.router.navigate(route, {
-            //     trigger: true,
-            //     replace: true
-            // });
-
-            Settings.set("appUsedToday", true);
-
-            return this;
+            CPA.sendAppView(isMissingMP3 ? "MissingMP3" : "Guest");
         }
     });
 })();
