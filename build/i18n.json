@@ -119,6 +119,10 @@
         "en": "Notification doesn't hide now when you select to play the next/prev song from it",
         "ru": "При переключении песни из окна уведомления окно не будет пропадать"
     },
+    "changelog_5_10_upload": {
+        "en": "Uploading process to Google Drive cloud is now working again",
+        "ru": "Исправлена индикация загрузки треков в облако Google Drive"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"

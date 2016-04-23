@@ -22,6 +22,9 @@
     },
 
     "changelog": {
+        "5.10": [
+            "upload"
+        ],
         "5.3": [
             "albums",
             "album_info",
