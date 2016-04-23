@@ -313,14 +313,14 @@
 
         if (options.onprogress) {
             xhr.onprogress = function (evt) {
-                var percents = Math.floor((evt.position / evt.totalSize) * 100);
+                var percents = Math.floor((evt.loaded / evt.total) * 100);
                 options.onprogress.call(ctx || xhr, percents);
             };
         }
 
         if (options.onUploadProgress) {
             xhr.upload.onprogress = function (evt) {
-                var percents = Math.floor((evt.position / evt.totalSize) * 100);
+                var percents = Math.floor((evt.loaded / evt.total) * 100);
                 options.onUploadProgress.call(ctx || xhr, percents);
             };
         }

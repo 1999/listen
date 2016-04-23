@@ -210,6 +210,18 @@ SyncFS = (function () {
         reader.readAsBinaryString(blob);
     }
 
+    /**
+     * Create simple filename for MP3 file
+     * 
+     * @param {String} artist
+     * @param {String} title
+     * @return {String}
+     * @see https://github.com/1999/listen/issues/111
+     */
+    function createFilename(artist, title) {
+        return (`${artist} - ${title}.mp3`).replace(/\/|\\/g, '');
+    }
+
 
     return {
         requestCurrentFilesList: function SyncFS_requestCurrentFilesList(callback) {
@@ -367,15 +379,15 @@ SyncFS = (function () {
 
                             chrome.notifications.clear(notificationId, function () {});
 
-                            chrome.syncFileSystem.requestFileSystem(function (fs) {
-                                fs.root.getFile(artist + " - " + title + ".mp3", {create: true}, function (fileEntry) {
-                                    fileEntry.createWriter(function (fileWriter) {
-                                        fileWriter.onwriteend = function (evt) {
+                            chrome.syncFileSystem.requestFileSystem((fs) => {
+                                fs.root.getFile(createFilename(artist, title), {create: true}, fileEntry => {
+                                    fileEntry.createWriter(fileWriter => {
+                                        fileWriter.onwriteend = evt => {
                                             onStatusChange();
 
                                             CPA.sendEvent("Actions", "saveGoogleDrive", {
-                                                artist: artist,
-                                                title: title
+                                                artist,
+                                                title
                                             });
 
                                             downloadingURL = null;
@@ -387,13 +399,13 @@ SyncFS = (function () {
                                             }
                                         };
 
-                                        fileWriter.onprogress = function (evt) {
+                                        fileWriter.onprogress = evt => {
                                             var percents = Math.floor((evt.loaded / evt.total) * 100);
                                             console.log("[%s] %i percents of file written", url, percents);
                                         };
 
-                                        fileWriter.onerror = function (evt) {
-                                            console.error("Write failed: " + evt);
+                                        fileWriter.onerror = evt => {
+                                            console.error(`Write failed: ${evt}`);
                                             downloadingURL = null;
 
                                             if (pendingQueue.length) {
@@ -401,7 +413,7 @@ SyncFS = (function () {
                                                 SyncFS.queueFile(args.artist, args.title, args.url, args.audioId);
                                             }
 
-                                            throw new Error("Failed writing file: " + evt.type);
+                                            throw new Error(`Failed writing file: ${evt.type}`);
                                         };
 
                                         fileWriter.write(resultBlob);
@@ -435,7 +447,6 @@ SyncFS = (function () {
                         throw new Error("Failed downloading file: " + evt.type);
                     },
                     onprogress: function (percents) {
-                        console.log("[%s] %i percents downloaded", url, percents);
                         chrome.notifications.update(notificationId, {progress: percents}, function () {});
                     }
                 });
