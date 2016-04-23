@@ -274,16 +274,30 @@ Navigation = (function () {
             appName: chrome.runtime.getManifest().name
         };
 
-        Object.keys(changelog).sort(function (a, b) {
-            return 0 - a.localeCompare(b);
-        }).forEach(function (key) {
-            var changelogData = changelog[key].map(function (i18nKey) {
+        console.log(changelog);
+
+        Object.keys(changelog).sort((a, b) => {
+            var aParts = a.split('.');
+            var bParts = b.split('.');
+
+            for (var i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                aParts[i] = Number(aParts[i] || 0);
+                bParts[i] = Number(bParts[i] || 0);
+
+                if (aParts[i] === bParts[i]) {
+                    continue;
+                }
+
+                return Number(bParts[i]) - Number(aParts[i]);
+            }
+        }).forEach((key) => {
+            var changelogData = changelog[key].map((i18nKey) => {
                 return chrome.i18n.getMessage("changelog_" + key.replace(/\./g, "_") + "_" + i18nKey, appName);
             });
 
             tplData.changelogKeys.push({
                 changelog: changelogData,
-                key: key
+                key
             });
 
             if (seenChangelog.indexOf(key) === -1) {
