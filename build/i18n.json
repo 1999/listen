@@ -123,6 +123,10 @@
         "en": "Uploading process to Google Drive cloud is now working again",
         "ru": "Исправлена индикация загрузки треков в облако Google Drive"
     },
+    "changelog_5_11_no_music": {
+        "en": "Unfortunately VK closes access to audio (https://vk.com/dev/audio_api) from non-official apps. You can still access your music via VK apps for iOS, Android or via official site. Thank you for being with us, you're awesome :)",
+        "ru": "К сожалению ВКонтакте закрыл доступ к аудиозаписям (https://vk.com/dev/audio_api) из сторонних приложений. Слушайте музыку из официальных приложений ВКонтакте или на сайте vk.com. Приложение Listen! прекращает свою работу, спасибо что были с нами :)"
+    },
     "close": {
         "en": "Close",
         "ru": "Закрыть"
