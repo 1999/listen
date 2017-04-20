@@ -1,0 +1,20 @@
+{
+  "name": "listen",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:1999/listen.git"
+  },
+  "author": "Dmitry Sorin <info@staypositive.ru>",
+  "devDependencies": {
+    "bower": "1.5.2",
+    "yargs": "3.25.0"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/.bin/bower install --log-level=info"
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}
